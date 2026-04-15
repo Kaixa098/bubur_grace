@@ -187,7 +187,7 @@
         }
         .fab-wa:active { transform: scale(0.9); }
 
-        /* --- CART MODAL --- */
+        /* --- MODAL --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); z-index: 3000;
@@ -354,7 +354,7 @@
             <button class="cat-pill" onclick="filterCat('jajanan')">Jajanan</button>
             <button class="cat-pill" onclick="filterCat('mie')">Mie & Kwetiau</button>
             <button class="cat-pill" onclick="filterCat('baso')">Baso & Pangsit</button>
-            <!-- Tombol Nasi & Sate DIHAPUS sesuai permintaan -->
+            <!-- Tombol Nasi & Sate DIHAPUS -->
             <button class="cat-pill" onclick="filterCat('kopi')">Kopi</button>
             <button class="cat-pill" onclick="filterCat('minuman')">Minuman</button>
             <button class="cat-pill" onclick="filterCat('santan')">Bubur Santan</button>
@@ -379,7 +379,7 @@
                 <div class="card-body"><div class="card-title">Bubur Polos / Putih</div><div class="card-footer"><span class="price">Rp 15.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
             
-            <!-- EXTRA MENU BARU BUBUR -->
+            <!-- EXTRA MENU BUBUR -->
             <div class="menu-card" data-category="bubur"><img src="https://picsum.photos/seed/extraMerah/300/200" class="card-img-top"><div class="card-body"><div class="badge">Topping</div><div class="card-title">Extra Merah Telur Ayam Kampung</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
             <div class="menu-card" data-category="bubur"><img src="https://picsum.photos/seed/extraAyamRebus/300/200" class="card-img-top"><div class="card-body"><div class="badge">Topping</div><div class="card-title">Extra Ayam Rebus</div><div class="card-footer"><span class="price">Rp 12.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
         </div>
@@ -433,6 +433,7 @@
             <div class="menu-card" data-category="kopi"><img src="https://picsum.photos/seed/kopimilk/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kopi O + Susu</div><div class="card-footer"><span class="price">Rp 17.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
             <div class="menu-card" data-category="kopi"><img src="https://picsum.photos/seed/kopiegg2/300/200" class="card-img-top"><div class="card-body"><div class="badge">Special</div><div class="card-title">Kopi O + 2 Egg</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
             <div class="menu-card" data-category="kopi"><img src="https://picsum.photos/seed/kopiegg4/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kopi O + 4 Egg</div><div class="card-footer"><span class="price">Rp 35.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
+            
             <!-- MENU TELUR REBUS -->
             <div class="menu-card" data-category="kopi"><img src="https://picsum.photos/seed/telurrebus/300/200" class="card-img-top"><div class="card-body"><div class="badge">Pelengkap</div><div class="card-title">Telur Rebus</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
         </div>
@@ -464,7 +465,7 @@
         <!-- WEEKEND -->
         <div class="section-header"><h2>Menu Weekend</h2><div class="section-line"></div></div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="weekend"><img src="https://picsum.photos/seed/spacial/300/200" class="card-img-top"><div class="card-body"><div class="badge">Weekend Only</div><div class="card-title">Extra Merah Telur Ayam Kampung</div><div class="card-desc">Menu spesial tanggal merah & weekend.</div><div class="card-footer"><span class="price">Hubungi Kami</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
+            <!-- MENU INI DIHAPUS SESUAI PERMINTAAN: Extra Merah Telur Ayam Kampung -->
             
             <!-- ITEM NASI & SATE -->
             <div class="menu-card" data-category="weekend"><img src="https://picsum.photos/seed/nasipolos/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Nasi Uduk Polos</div><div class="card-footer"><span class="price">Rp 12.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
@@ -556,7 +557,7 @@
                     <span id="cartTotal">Rp 0</span>
                 </div>
                 <button class="btn-checkout" onclick="checkout()">
-                    <i class="fa-brands fa-whatsapp"></i> Order via WhatsApp
+                    <i class="fa-brands fa-whatsapp"></i> Bayar via WhatsApp
                 </button>
             </div>
         </div>
