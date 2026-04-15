@@ -35,7 +35,6 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             line-height: 1.5;
-            /* Padding bawah aman untuk iPhone */
             padding-bottom: calc(80px + env(safe-area-inset-bottom)); 
             -webkit-font-smoothing: antialiased;
         }
@@ -110,6 +109,31 @@
         .menu-grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 
         .no-result { text-align: center; padding: 40px 20px; color: #888; grid-column: 1 / -1; font-size: 0.9rem; display: none; }
+
+        /* --- SUB SECTION SEPARATOR --- */
+        .sub-section-divider {
+            grid-column: 1 / -1;
+            margin: 10px 0;
+            text-align: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sub-section-divider::before {
+            content: ''; position: absolute; top: 50%; left: 0; right: 0;
+            height: 1px; background: #ddd; z-index: 0;
+        }
+        .sub-section-divider span {
+            background: var(--bg-color);
+            padding: 5px 15px;
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 1;
+            border: 1px solid #eee;
+            border-radius: 20px;
+        }
 
         /* --- MENU CARD --- */
         .menu-card {
@@ -305,7 +329,7 @@
             .card-title { font-size: 1.1rem; }
             .card-desc { display: -webkit-box; font-size: 0.85rem; color: #777; margin-bottom: 15px; }
             .add-btn { width: 50px; height: 50px; font-size: 1.3rem; }
-            .category-nav { top: 110px; } /* Sesuaikan jika header desktop berubah */
+            .category-nav { top: 110px; } 
             header { padding: 20px 5%; flex-direction: row; flex-wrap: wrap; }
             .brand-text h1 { font-size: 1.8rem; }
         }
@@ -387,14 +411,28 @@
         <!-- MIE & KWETIAU -->
         <div class="section-header"><h2>Mie Ayam & Kwetiau GRace</h2><div class="section-line"></div></div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="mie" data-price="27000"><img src="https://picsum.photos/seed/miebiasa/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Mie Ayam Biasa</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
-            <div class="menu-card" data-category="mie" data-price="32000"><img src="https://picsum.photos/seed/miebaso/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Mie Ayam Baso</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
-            <div class="menu-card" data-category="mie" data-price="32000"><img src="https://picsum.photos/seed/miepangsit/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Mie Ayam Pangsit Rebus</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
-            <div class="menu-card" data-category="mie" data-price="37000"><img src="https://picsum.photos/seed/miekomplit/300/200" class="card-img-top"><div class="card-body"><div class="badge">Komplit</div><div class="card-title">Mie Ayam Komplit</div><div class="card-desc">Pangsit Rebus + Baso</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
+            <!-- MENU MIE (Dengan Varian Kecil/Lebar) -->
+            <div class="menu-card" data-category="mie" data-price="27000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
+                <img src="https://picsum.photos/seed/miebiasa/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Mie Ayam Biasa</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="mie" data-price="32000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
+                <img src="https://picsum.photos/seed/miebaso/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Mie Ayam Baso</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="mie" data-price="32000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
+                <img src="https://picsum.photos/seed/miepangsit/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Mie Ayam Pangsit Rebus</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="mie" data-price="37000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
+                <img src="https://picsum.photos/seed/miekomplit/300/200" class="card-img-top"><div class="card-body"><div class="badge">Komplit</div><div class="card-title">Mie Ayam Komplit</div><div class="card-desc">Pangsit Rebus + Baso. (Kecil/Lebar)</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+
+            <!-- PEMISAH VISUAL KWETIAU -->
+            <div class="sub-section-divider"><span>KWETIAU & BIHUN</span></div>
+
+            <!-- MENU KWETIAU (Tanpa varian Kecil/Lebar) -->
             <div class="menu-card" data-category="mie" data-price="27000"><img src="https://picsum.photos/seed/kwetiau/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau / Bihun Ayam Biasa</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
             <div class="menu-card" data-category="mie" data-price="32000"><img src="https://picsum.photos/seed/kwetiaubaso/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau / Bihun Baso</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
             <div class="menu-card" data-category="mie" data-price="32000"><img src="https://picsum.photos/seed/kwetiaupangsit/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau / Bihun Pangsit Rebus</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
-            <div class="menu-card" data-category="mie" data-price="37000"><img src="https://picsum.photos/seed/kwetiaukomplit/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau / Bihun Komplit</div><div class="card-desc">Pangsit Rebus + Baso. (Asin/Manis, Kecil/Lebar)</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
+            <div class="menu-card" data-category="mie" data-price="37000"><img src="https://picsum.photos/seed/kwetiaukomplit/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau / Bihun Komplit</div><div class="card-desc">Pangsit Rebus + Baso. (Asin/Manis)</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
         </div>
 
         <!-- BASO -->
@@ -558,7 +596,6 @@
                         showVariantModal(card);
                     } else {
                         const name = card.querySelector('.card-title').innerText;
-                        // Mengambil harga langsung dari atribut data-price (Lebih aman)
                         const price = parseInt(card.dataset.price); 
                         const category = card.getAttribute('data-category');
                         addToCart(name, price, category);
@@ -615,7 +652,6 @@
             
             const selectedOpt = document.querySelector('input[name="variantOpt"]:checked').value;
             const baseName = currentVariantCard.querySelector('.card-title').innerText;
-            // Ambil harga dari dataset varian card
             const price = parseInt(currentVariantCard.dataset.price); 
             const category = currentVariantCard.getAttribute('data-category');
             
@@ -782,7 +818,6 @@
                 
                 let hasGlobalResult = false;
                 
-                // Loop per section untuk mengecek apakah ada hasil di section tersebut
                 menuGrids.forEach((grid, index) => {
                     const header = sectionHeaders[index];
                     const cardsInGrid = grid.querySelectorAll('.menu-card');
@@ -802,12 +837,16 @@
                     });
 
                     // Tampilkan header hanya jika ada item yang cocok di grid tersebut
+                    // Tampilkan juga separator (divider) jika ada yang terlihat
+                    const dividers = grid.querySelectorAll('.sub-section-divider');
                     if (hasResultInGrid) {
                         header.style.display = 'flex';
                         header.classList.remove('hidden');
+                        dividers.forEach(div => div.style.display = 'flex');
                     } else {
                         header.style.display = 'none';
                         header.classList.add('hidden');
+                        dividers.forEach(div => div.style.display = 'none');
                     }
                 });
 
@@ -822,16 +861,12 @@
             clearSearchBtn.style.display = 'none';
             
             cards.forEach(card => card.style.display = 'flex');
+            document.querySelectorAll('.sub-section-divider').forEach(div => div.style.display = 'flex');
             sectionHeaders.forEach(header => {
                 header.style.display = 'flex';
                 header.classList.remove('hidden');
             });
             noResultMsg.style.display = 'none';
-            
-            // Reset kategori ke aktif (opsional, tergantung preferensi UX)
-            // filterCat('all'); 
-            // document.querySelector('.cat-pill.active').classList.remove('active');
-            // document.querySelectorAll('.cat-pill')[0].classList.add('active');
         }
 
         const catPills = document.querySelectorAll('.cat-pill');
@@ -850,12 +885,9 @@
                 }
             });
 
-            // Sembunyikan header jika section kosong saat filter kategori
+            // Logic untuk menyembunyikan divider/section header jika tidak ada item terlihat
             menuGrids.forEach((grid, index) => {
                 const header = sectionHeaders[index];
-                const visibleCards = grid.querySelectorAll('.menu-card[style="display: flex;"]');
-                // Perlu cek style inline yang di-set oleh JS, atau gunakan logic offsetHeight
-                // Cara simpler: cek apakah ada anak yang tidak display:none
                 let hasVisible = false;
                 Array.from(grid.children).forEach(child => {
                     if (child.style.display !== 'none') hasVisible = true;
