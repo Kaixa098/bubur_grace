@@ -276,6 +276,16 @@
         }
         .qty-btn:active { background: #eee; transform: scale(0.9); }
 
+        /* --- INPUT NO MEJA (NEW) --- */
+        .table-input-container { margin-bottom: 15px; }
+        .input-label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--secondary); font-size: 0.9rem; }
+        .table-input-field {
+            width: 100%; padding: 12px 15px; border: 2px solid #eee; border-radius: 10px;
+            font-family: 'Poppins', sans-serif; font-size: 1rem; outline: none; transition: all 0.2s;
+            background: #fafafa;
+        }
+        .table-input-field:focus { border-color: var(--primary); background: white; }
+
         /* --- TAKEAWAY TOGGLE --- */
         .takeaway-container {
             display: flex; justify-content: space-between; align-items: center;
@@ -615,6 +625,12 @@
                 <p style="text-align:center; color:#999; margin-top:20px;">Keranjang masih kosong.</p>
             </div>
             
+            <!-- INPUT NO MEJA (TAMBAHAN BARU) -->
+            <div class="table-input-container">
+                <label class="input-label">Nomor Meja Anda <span style="color:var(--primary)">*</span></label>
+                <input type="number" id="tableNumberInput" class="table-input-field" placeholder="Contoh: 5">
+            </div>
+
             <div class="takeaway-container">
                 <div class="takeaway-label">
                     <label class="switch">
@@ -645,7 +661,6 @@
         let cart = [];
         let currentVariantCard = null;
         const PACKAGING_FEE_PER_ITEM = 3000;
-        // Menambahkan 'bihun' ke kategori eligible untuk biaya kemasan
         const ELIGIBLE_CATEGORIES = ['bubur', 'mie', 'kwetiau', 'bihun', 'nasi', 'baso', 'weekend'];
 
         // Delegasi Event Listener
@@ -823,9 +838,22 @@
 
         function checkout() {
             if (cart.length === 0) return alert("Keranjang kosong!");
+
+            // Validasi Nomor Meja (BARU)
+            const tableNumberInput = document.getElementById('tableNumberInput');
+            const tableNumber = tableNumberInput.value.trim();
+            
+            if (!tableNumber) {
+                alert("Mohon isi Nomor Meja Anda terlebih dahulu!");
+                tableNumberInput.focus();
+                return;
+            }
             
             const isTakeAway = document.getElementById('takeawayToggle').checked;
-            let message = "Halo Bubur Grace, saya mau pesan:%0A";
+            
+            // Format Pesan Baru: Dimulai dengan Nomor Meja (Bold)
+            let message = `*NOMOR MEJA:* ${tableNumber}%0A%0A`;
+            message += "Halo Bubur Grace, saya mau pesan:%0A";
             
             let subtotal = 0;
             let eligibleCount = 0;
