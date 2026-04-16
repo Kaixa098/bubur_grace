@@ -276,15 +276,15 @@
         }
         .qty-btn:active { background: #eee; transform: scale(0.9); }
 
-        /* --- INPUT NO MEJA (NEW) --- */
-        .table-input-container { margin-bottom: 15px; }
+        /* --- INPUT AREA (MEJA & NAMA) --- */
+        .input-section-container { margin-bottom: 15px; }
         .input-label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--secondary); font-size: 0.9rem; }
-        .table-input-field {
+        .input-field {
             width: 100%; padding: 12px 15px; border: 2px solid #eee; border-radius: 10px;
             font-family: 'Poppins', sans-serif; font-size: 1rem; outline: none; transition: all 0.2s;
             background: #fafafa;
         }
-        .table-input-field:focus { border-color: var(--primary); background: white; }
+        .input-field:focus { border-color: var(--primary); background: white; }
 
         /* --- TAKEAWAY TOGGLE --- */
         .takeaway-container {
@@ -324,6 +324,9 @@
             opacity: 0; transition: opacity 0.3s, bottom 0.3s;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
+        /* Style tambahan untuk error toast */
+        #toast.error { background-color: #e74c3c; }
+        
         #toast.show { visibility: visible; opacity: 1; bottom: 120px; }
 
         footer { background: var(--secondary); color: white; text-align: center; padding: 40px 20px 120px; margin-top: 50px; }
@@ -404,10 +407,9 @@
             <div class="menu-card" data-category="bubur" data-price="12000"><img src="foto/extraayamrebus.jpeg" class="card-img-top"><div class="card-body"><div class="badge">Topping</div><div class="card-title">Extra Ayam Rebus</div><div class="card-footer"><span class="price">Rp 12.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
         </div>
 
-        <!-- MIE & KWETIAU (Section Header Tetap Satu, tapi kontennya dipisah kategori) -->
+        <!-- MIE & KWETIAU -->
         <div class="section-header"><h2>Mie Ayam Grace</h2><div class="section-line"></div></div>
         <div class="menu-grid">
-            <!-- MENU MIE AYAM (Category: 'mie') -->
             <div class="menu-card" data-category="mie" data-price="27000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
                 <img src="foto/mieayambiasa.JPG" class="card-img-top"><div class="card-body"><div class="card-title">Mie Ayam Biasa</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
@@ -421,7 +423,7 @@
                 <img src="https://picsum.photos/seed/miekomplit/300/200" class="card-img-top"><div class="card-body"><div class="badge">Komplit</div><div class="card-title">Mie Ayam Komplit</div><div class="card-desc">Pangsit Rebus + Baso. (Kecil/Lebar)</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
 
-            <!-- MENU MIE YAMIN (Category: 'mie') -->
+            <!-- MENU MIE YAMIN -->
             <div class="menu-card" data-category="mie" data-price="27000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
                 <img src="https://picsum.photos/seed/mieyaminbiasa/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Mie Yamin Biasa</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
@@ -438,14 +440,14 @@
             <!-- PEMISAH VISUAL KWETIAU -->
             <div class="sub-section-divider" data-category="kwetiau"><span>KWETIAU</span></div>
 
-            <!-- MENU KWETIAU (Category: 'kwetiau') - Tidak ada "Bihun" lagi -->
+            <!-- MENU KWETIAU -->
             <div class="menu-card" data-category="kwetiau" data-price="27000"><img src="https://picsum.photos/seed/kwetiau/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau Ayam Biasa</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
             <div class="menu-card" data-category="kwetiau" data-price="32000"><img src="https://picsum.photos/seed/kwetiaubaso/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau Baso</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
             <div class="menu-card" data-category="kwetiau" data-price="32000"><img src="https://picsum.photos/seed/kwetiaupangsit/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau Pangsit Rebus</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
             <div class="menu-card" data-category="kwetiau" data-price="37000"><img src="https://picsum.photos/seed/kwetiaukomplit/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau Komplit</div><div class="card-desc">Pangsit Rebus + Baso.</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
         </div>
 
-        <!-- BIHUN (Section Baru) -->
+        <!-- BIHUN -->
         <div class="section-header"><h2>Bihun Grace</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="bihun" data-price="27000">
@@ -558,12 +560,10 @@
         <div class="menu-grid">
             <div class="menu-card" data-category="weekend" data-price="12000"><img src="https://picsum.photos/seed/nasipolos/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Nasi Uduk Polos</div><div class="card-footer"><span class="price">Rp 12.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
             
-            <!-- ITEM DENGAN VARIAN (AYAM GORENG) -->
             <div class="menu-card" data-category="weekend" data-price="37000" data-has-variants="true" data-options="Paha,Dada" data-variant-name="Ayam">
                 <img src="https://picsum.photos/seed/nasiayam/300/200" class="card-img-top"><div class="card-body"><div class="badge">Favorit</div><div class="card-title">Nasi Uduk + Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
             
-            <!-- ITEM DENGAN VARIAN (TELUR) -->
             <div class="menu-card" data-category="weekend" data-price="25000" data-has-variants="true" data-options="Dadar,Ceplok Balado" data-variant-name="Telur">
                 <img src="https://picsum.photos/seed/nasitelur/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Nasi Uduk + Telor</div><div class="card-desc">Dadar / Ceplok Balado</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
@@ -625,16 +625,25 @@
                 <p style="text-align:center; color:#999; margin-top:20px;">Keranjang masih kosong.</p>
             </div>
             
-            <!-- INPUT NO MEJA (TAMBAHAN BARU) -->
-            <div class="table-input-container">
+            <!-- BAGIAN INPUT: DINI-IN & TAKEAWAY -->
+            
+            <!-- 1. Input Nomor Meja (Default Ditampilkan) -->
+            <div class="input-section-container" id="dineInSection">
                 <label class="input-label">Nomor Meja Anda <span style="color:var(--primary)">*</span></label>
-                <input type="number" id="tableNumberInput" class="table-input-field" placeholder="Contoh: 5">
+                <input type="number" id="tableNumberInput" class="input-field" placeholder="Contoh: 5">
             </div>
 
+            <!-- 2. Input Nama Pemesan (Default Disembunyikan) -->
+            <div class="input-section-container" id="takeawaySection" style="display: none;">
+                <label class="input-label">Nama Panggilan Anda <span style="color:var(--primary)">*</span></label>
+                <input type="text" id="callerNameInput" class="input-field" placeholder="Contoh: Mas Budi">
+            </div>
+
+            <!-- TOGGLE TAKE AWAY -->
             <div class="takeaway-container">
                 <div class="takeaway-label">
                     <label class="switch">
-                        <input type="checkbox" id="takeawayToggle" onchange="updateTotal()">
+                        <input type="checkbox" id="takeawayToggle" onchange="toggleOrderType()">
                         <span class="slider round"></span>
                     </label>
                     <span>Take Away (+ 3 Ribu )</span>
@@ -830,29 +839,76 @@
             if (e.target.id === 'cartModal') toggleCart();
         }
 
-        function showToast() {
+        function showToast(message = "Item ditambahkan!") {
             const toast = document.getElementById("toast");
+            toast.innerText = message;
             toast.className = "show";
-            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 2000);
+            setTimeout(function(){ 
+                toast.className = toast.className.replace("show", ""); 
+                // Reset text after hiding
+                setTimeout(() => toast.innerText = "Item ditambahkan!", 300);
+            }, 3000);
+        }
+
+        // --- LOGIC SWITCH DINI-IN / TAKEAWAY ---
+        function toggleOrderType() {
+            const isTakeAway = document.getElementById('takeawayToggle').checked;
+            const dineInSection = document.getElementById('dineInSection');
+            const takeawaySection = document.getElementById('takeawaySection');
+            const tableInput = document.getElementById('tableNumberInput');
+            const nameInput = document.getElementById('callerNameInput');
+
+            // Ganti tampilan input
+            if (isTakeAway) {
+                dineInSection.style.display = 'none';
+                takeawaySection.style.display = 'block';
+                // Reset input agar tidak bingung
+                tableInput.value = ''; 
+                nameInput.focus();
+            } else {
+                dineInSection.style.display = 'block';
+                takeawaySection.style.display = 'none';
+                nameInput.value = '';
+                tableInput.focus();
+            }
+
+            updateTotal(); // Hitung ulang total karena ada biaya kemasan
         }
 
         function checkout() {
-            if (cart.length === 0) return alert("Keranjang kosong!");
-
-            // Validasi Nomor Meja (BARU)
-            const tableNumberInput = document.getElementById('tableNumberInput');
-            const tableNumber = tableNumberInput.value.trim();
-            
-            if (!tableNumber) {
-                alert("Mohon isi Nomor Meja Anda terlebih dahulu!");
-                tableNumberInput.focus();
+            if (cart.length === 0) {
+                showToast("Keranjang masih kosong!");
                 return;
             }
-            
+
             const isTakeAway = document.getElementById('takeawayToggle').checked;
+            const tableNumberInput = document.getElementById('tableNumberInput');
+            const callerNameInput = document.getElementById('callerNameInput');
             
-            // Format Pesan Baru: Dimulai dengan Nomor Meja (Bold)
-            let message = `*NOMOR MEJA:* ${tableNumber}%0A%0A`;
+            let identifier = "";
+            let identifierType = "";
+
+            // Validasi Input berdasarkan tipe pesanan
+            if (isTakeAway) {
+                identifier = callerNameInput.value.trim();
+                if (!identifier) {
+                    showToast("Mohon isi Nama Panggilan Anda!");
+                    callerNameInput.focus();
+                    return;
+                }
+                identifierType = "NAMA PANGGILAN";
+            } else {
+                identifier = tableNumberInput.value.trim();
+                if (!identifier) {
+                    showToast("Mohon isi Nomor Meja Anda!");
+                    tableNumberInput.focus();
+                    return;
+                }
+                identifierType = "NOMOR MEJA";
+            }
+            
+            // Format Pesan WA
+            let message = `*${identifierType}:* ${identifier}%0A%0A`;
             message += "Halo Bubur Grace, saya mau pesan:%0A";
             
             let subtotal = 0;
@@ -869,13 +925,12 @@
 
             message += `%0A*Subtotal Makanan: ${formatRupiah(subtotal)}*%0A`;
 
-            if (isTakeAway && eligibleCount > 0) {
-                const packagingFee = eligibleCount * PACKAGING_FEE_PER_ITEM;
-                message += `*Biaya Kemasan (${eligibleCount} item Bubur/Mie/Kwetiau/Bihun/Nasi/Baso/Weekend): ${formatRupiah(packagingFee)}*%0A`;
-            }
-
             const packagingFee = isTakeAway ? (eligibleCount * PACKAGING_FEE_PER_ITEM) : 0;
             const grandTotal = subtotal + packagingFee;
+
+            if (isTakeAway && eligibleCount > 0) {
+                message += `*Biaya Kemasan (${eligibleCount} item Bubur/Mie/Kwetiau/Bihun/Nasi/Baso/Weekend): ${formatRupiah(packagingFee)}*%0A`;
+            }
 
             message += `%0A*TOTAL BAYAR: ${formatRupiah(grandTotal)}*%0A`;
             
@@ -926,8 +981,6 @@
                         }
                     });
 
-                    // Tampilkan header hanya jika ada item yang cocok di grid tersebut
-                    // Tampilkan juga separator (divider) jika ada yang terlihat
                     const dividers = grid.querySelectorAll('.sub-section-divider');
                     if (hasResultInGrid) {
                         header.style.display = 'flex';
@@ -975,7 +1028,6 @@
                 }
             });
 
-            // Logic untuk menyembunyikan divider/section header jika tidak ada item terlihat
             menuGrids.forEach((grid, index) => {
                 const header = sectionHeaders[index];
                 let hasVisible = false;
