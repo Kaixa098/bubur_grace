@@ -92,7 +92,7 @@
             padding: 0 20px; height: 44px;
             background: white; border: 1px solid #ddd;
             border-radius: 22px; font-size: 0.85rem; font-weight: 500;
-            color: var(--text-main); cursor: pointer; transition: all 0.2s;
+            color: var(--text-main); cursor: pointer; transition: all 0.3s ease;
             flex-shrink: 0;
             display: inline-flex; align-items: center; justify-content: center;
         }
@@ -109,6 +109,13 @@
         .menu-grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 
         .no-result { text-align: center; padding: 40px 20px; color: #888; grid-column: 1 / -1; font-size: 0.9rem; display: none; }
+        
+        /* Floating Icon Animation for Empty States */
+        .empty-state-icon {
+            font-size: 3rem; color: #e0e0e0; margin-bottom: 15px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
 
         /* --- SUB SECTION SEPARATOR --- */
         .sub-section-divider {
@@ -305,6 +312,19 @@
         .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
         .cart-header h3 { font-size: 1.2rem; }
         
+        /* Styling for Cart Actions (Clear & Close) */
+        .cart-actions { display: flex; align-items: center; gap: 15px; }
+        .btn-clear-cart { 
+            background: none; border: none; color: #e74c3c; font-size: 1.2rem; 
+            cursor: pointer; transition: transform 0.2s; padding: 5px;
+        }
+        .btn-clear-cart:active { transform: scale(0.9); }
+        .btn-close-cart { 
+            background: none; border: none; color: #888; font-size: 1.5rem; 
+            cursor: pointer; transition: transform 0.2s; padding: 0 5px;
+        }
+        .btn-close-cart:active { transform: scale(0.9); }
+
         .cart-items { overflow-y: auto; flex-grow: 1; margin-bottom: 15px; padding-right: 5px; -webkit-overflow-scrolling: touch; }
         
         .cart-item {
@@ -332,6 +352,13 @@
             background: #fafafa;
         }
         .input-field:focus { border-color: var(--primary); background: white; }
+        
+        /* Shake Animation Class */
+        .input-error {
+            border-color: #e74c3c !important;
+            background-color: #fff5f5 !important;
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
 
         .takeaway-container {
             display: flex; justify-content: space-between; align-items: center;
@@ -399,6 +426,17 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
     </style>
 </head>
 <body>
@@ -422,23 +460,23 @@
 
     <nav class="category-nav">
         <div class="cat-list">
-            <button class="cat-pill active" onclick="filterCat('all')">Semua</button>
-            <button class="cat-pill" onclick="filterCat('bubur')">Bubur</button>
-            <button class="cat-pill" onclick="filterCat('mie')">Mie Ayam</button>
-            <button class="cat-pill" onclick="filterCat('kwetiau')">Kwetiau</button>
-            <button class="cat-pill" onclick="filterCat('bihun')">Bihun</button>
-            <button class="cat-pill" onclick="filterCat('jajanan')">Aneka Jajanan</button>
-            <button class="cat-pill" onclick="filterCat('baso')">Baso & Pangsit</button>
-            <button class="cat-pill" onclick="filterCat('santan')">Bubur Santan</button>
-            <button class="cat-pill" onclick="filterCat('kopi')">Kopi</button>
-            <button class="cat-pill" onclick="filterCat('minuman')">Minuman</button>
-            <button class="cat-pill" onclick="filterCat('weekend')">Weekend</button>
+            <button class="cat-pill active" data-target="all" onclick="filterCat('all')">Semua</button>
+            <button class="cat-pill" data-target="bubur" onclick="filterCat('bubur')">Bubur</button>
+            <button class="cat-pill" data-target="mie" onclick="filterCat('mie')">Mie Ayam</button>
+            <button class="cat-pill" data-target="kwetiau" onclick="filterCat('kwetiau')">Kwetiau</button>
+            <button class="cat-pill" data-target="bihun" onclick="filterCat('bihun')">Bihun</button>
+            <button class="cat-pill" data-target="jajanan" onclick="filterCat('jajanan')">Aneka Jajanan</button>
+            <button class="cat-pill" data-target="baso" onclick="filterCat('baso')">Baso & Pangsit</button>
+            <button class="cat-pill" data-target="santan" onclick="filterCat('santan')">Bubur Santan</button>
+            <button class="cat-pill" data-target="kopi" onclick="filterCat('kopi')">Kopi</button>
+            <button class="cat-pill" data-target="minuman" onclick="filterCat('minuman')">Minuman</button>
+            <button class="cat-pill" data-target="weekend" onclick="filterCat('weekend')">Weekend</button>
         </div>
     </nav>
 
     <main class="container">
         <!-- BUBUR -->
-        <div class="section-header"><h2>Bubur Ayam GRace</h2><div class="section-line"></div></div>
+        <div class="section-header" data-category="bubur"><h2>Bubur Ayam GRace</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="bubur" data-price="22000">
                 <div class="card-img-wrapper"><img src="foto/buburbiasa.JPG" class="card-img-top" alt="Bubur Biasa"></div>
@@ -463,7 +501,7 @@
         </div>
 
         <!-- MIE & KWETIAU -->
-        <div class="section-header"><h2>Mie Ayam Grace</h2><div class="section-line"></div></div>
+        <div class="section-header" data-category="mie"><h2>Mie Ayam Grace</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="mie" data-price="27000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
                 <div class="card-img-wrapper"><img src="foto/mieayambiasa.JPG" class="card-img-top"></div>
@@ -517,7 +555,7 @@
         </div>
 
         <!-- BIHUN -->
-        <div class="section-header"><h2>Bihun Grace</h2><div class="section-line"></div></div>
+        <div class="section-header" data-category="bihun"><h2>Bihun Grace</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="bihun" data-price="27000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/bihunbiasa/300/200" class="card-img-top"></div>
@@ -538,7 +576,7 @@
         </div>
 
         <!-- JAJANAN -->
-        <div class="section-header"><h2>Aneka Jajanan & Sate</h2><div class="section-line"></div></div>
+        <div class="section-header" data-category="jajanan"><h2>Aneka Jajanan & Sate</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="jajanan" data-price="6000"><div class="card-img-wrapper"><img src="foto/ati.JPG" class="card-img-top"></div><div class="card-body"><div class="card-title">Sate Ati</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
             <div class="menu-card" data-category="jajanan" data-price="6000"><div class="card-img-wrapper"><img src="foto/ampla.JPG" class="card-img-top"></div><div class="card-body"><div class="card-title">Sate Ampela</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
@@ -554,7 +592,7 @@
         </div>
 
         <!-- BASO -->
-        <div class="section-header"><h2>Aneka Baso & Pangsit</h2><div class="section-line"></div></div>
+        <div class="section-header" data-category="baso"><h2>Aneka Baso & Pangsit</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="baso" data-price="27000"><div class="card-img-wrapper"><img src="https://picsum.photos/seed/basosawi/300/200" class="card-img-top"></div><div class="card-body"><div class="card-title">Baso Sawi GRace (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
             <div class="menu-card" data-category="baso" data-price="27000"><div class="card-img-wrapper"><img src="https://picsum.photos/seed/basosapi/300/200" class="card-img-top"></div><div class="card-body"><div class="card-title">Baso Sapi (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
@@ -566,7 +604,7 @@
         </div>
 
         <!-- SANTAN -->
-        <div class="section-header"><h2>Bubur Santan GRace</h2><div class="section-line"></div></div>
+        <div class="section-header" data-category="santan"><h2>Bubur Santan GRace</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="santan" data-price="20000" data-has-variants="true" data-options="Tidak Dingin,Dingin" data-variant-name="Suhu">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/bkacangijo/300/200" class="card-img-top"></div>
@@ -583,7 +621,7 @@
         </div>
 
         <!-- KOPI -->
-        <div class="section-header"><h2>Aneka Kopi O</h2><div class="section-line"></div></div>
+        <div class="section-header" data-category="kopi"><h2>Aneka Kopi O</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="kopi" data-price="15000" data-has-variants="true" data-options="Panas,Dingin" data-variant-name="Suhu">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kopio/300/200" class="card-img-top"></div>
@@ -612,7 +650,7 @@
         </div>
 
         <!-- MINUMAN -->
-        <div class="section-header"><h2>Minuman</h2><div class="section-line"></div></div>
+        <div class="section-header" data-category="minuman"><h2>Minuman</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="minuman" data-price="17000" data-has-variants="true" data-options="Panas,Dingin" data-variant-name="Suhu">
                 <div class="card-img-wrapper"><img src="foto/kacangijo.JPG" class="card-img-top"></div>
@@ -661,7 +699,7 @@
         </div>
 
         <!-- WEEKEND -->
-        <div class="section-header"><h2>Menu Weekend</h2><div class="section-line"></div></div>
+        <div class="section-header" data-category="weekend"><h2>Menu Weekend</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="weekend" data-price="12000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasipolos/300/200" class="card-img-top"></div>
@@ -694,8 +732,8 @@
         </div>
 
         <div class="no-result" id="noResultMsg">
-            <i class="fa-regular fa-face-frown-open" style="font-size: 2rem; color: #ccc; margin-bottom: 10px;"></i>
-            <br>Menu tidak ditemukan.
+            <i class="fa-solid fa-utensils empty-state-icon"></i>
+            <div style="margin-top:10px;">Yah, menu yang dicari tidak ketemu.</div>
         </div>
         <div style="text-align: center; margin-top: 40px; font-style: italic; color: #888; font-size: 0.8rem; padding-bottom: 20px;"><p>&copy; 2026 Bubur Grace. Enak dan Sehat.</p></div>
     </main>
@@ -732,10 +770,21 @@
         <div class="cart-modal">
             <div class="cart-header">
                 <h3>Keranjang Pesanan</h3>
-                <button onclick="toggleCart()" style="background:none; font-size: 1.5rem; color: #888; padding: 0 5px;"><i class="fa-solid fa-xmark"></i></button>
+                <!-- Action Buttons Container -->
+                <div class="cart-actions">
+                    <button onclick="clearCart()" class="btn-clear-cart" title="Hapus Semua Item">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                    <button onclick="toggleCart()" class="btn-close-cart">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
             </div>
             <div class="cart-items" id="cartItemsContainer">
-                <p style="text-align:center; color:#999; margin-top:20px;">Keranjang masih kosong.</p>
+                <div style="text-align:center; color:#999; margin-top:40px;">
+                    <i class="fa-solid fa-basket-shopping empty-state-icon" style="color:#eee;"></i>
+                    <p style="margin-top:10px;">Keranjang masih kosong.</p>
+                </div>
             </div>
             
             <div class="input-section-container" id="dineInSection">
@@ -781,7 +830,42 @@
                 card.style.animationDelay = `${delay}ms`;
             });
             window.addEventListener('scroll', handleScroll);
+            initSpyScroll();
         });
+
+        // --- SPY SCROLL LOGIC (Auto Highlight Category) ---
+        let isFilterActive = false;
+
+        function initSpyScroll() {
+            const sections = document.querySelectorAll('.section-header');
+            const navPills = document.querySelectorAll('.cat-pill');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '-20% 0px -60% 0px', // Active when section is in middle of screen
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                if(isFilterActive) return; // Don't auto-highlight if user just clicked a filter
+
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const category = entry.target.getAttribute('data-category');
+                        
+                        navPills.forEach(pill => pill.classList.remove('active'));
+                        const activePill = document.querySelector(`.cat-pill[data-target="${category}"]`);
+                        if(activePill) {
+                            activePill.classList.add('active');
+                            // Scroll nav bar horizontally if needed to keep active pill in view
+                            activePill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => observer.observe(section));
+        }
 
         function handleScroll() {
             const scrollBtn = document.getElementById("scrollTopBtn");
@@ -893,13 +977,27 @@
             }
         }
 
+        function clearCart() {
+            if (cart.length === 0) {
+                showToast("Keranjang sudah kosong.");
+                return;
+            }
+            cart = []; // Kosongkan array keranjang
+            updateCartUI();
+            showToast("Semua item berhasil dihapus.");
+        }
+
         function updateCartUI() {
             const container = document.getElementById('cartItemsContainer');
             const badge = document.getElementById('cartBadge');
             container.innerHTML = '';
             let totalQty = 0;
             if (cart.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#999; margin-top:20px; font-size:0.9rem;">Keranjang masih kosong.</p>';
+                container.innerHTML = `
+                    <div style="text-align:center; color:#999; margin-top:40px;">
+                        <i class="fa-solid fa-basket-shopping empty-state-icon" style="color:#eee;"></i>
+                        <p style="margin-top:10px;">Keranjang masih kosong.</p>
+                    </div>`;
                 badge.style.display = 'none';
             } else {
                 badge.style.display = 'flex';
@@ -980,6 +1078,10 @@
             const tableInput = document.getElementById('tableNumberInput');
             const nameInput = document.getElementById('callerNameInput');
 
+            // Remove error styles when switching
+            tableInput.classList.remove('input-error');
+            nameInput.classList.remove('input-error');
+
             if (isTakeAway) {
                 dineInSection.style.display = 'none';
                 takeawaySection.style.display = 'block';
@@ -1015,12 +1117,27 @@
             let identifier = "";
             let identifierType = "";
 
+            // Helper for Shake Animation
+            const triggerShake = (elId) => {
+                const el = document.getElementById(elId);
+                el.classList.add('input-error');
+                setTimeout(() => el.classList.remove('input-error'), 500);
+            };
+
+            // Helper to Reset Button
+            const resetBtn = () => {
+                btn.disabled = false;
+                document.getElementById('checkoutText').innerText = originalText;
+                btn.querySelector('i').className = originalIcon;
+            }
+
             if (isTakeAway) {
                 identifier = callerNameInput.value.trim();
                 if (!identifier) {
                     showToast("Mohon isi Nama Panggilan Anda!");
                     callerNameInput.focus();
-                    resetCheckoutButton(btn, originalText, originalIcon);
+                    triggerShake('callerNameInput');
+                    resetBtn();
                     return;
                 }
                 identifierType = "NAMA PANGGILAN";
@@ -1028,8 +1145,9 @@
                 identifier = tableNumberInput.value.trim();
                 if (!identifier) {
                     showToast("Mohon isi Nomor Meja Anda!");
-                    tableNumberInput.focus();
-                    resetCheckoutButton(btn, originalText, originalIcon);
+                    tableNumberInput.focus(); // FIX: Corrected variable name
+                    triggerShake('tableNumberInput');
+                    resetBtn();
                     return;
                 }
                 identifierType = "NOMOR MEJA";
@@ -1069,14 +1187,8 @@
                 
                 window.open(`https://wa.me/62817776175?text=${message}`, '_blank');
                 
-                resetCheckoutButton(btn, originalText, originalIcon);
+                resetBtn();
             }, 800); 
-        }
-
-        function resetCheckoutButton(btn, text, iconClass) {
-            btn.disabled = false;
-            document.getElementById('checkoutText').innerText = text;
-            btn.querySelector('i').className = iconClass;
         }
 
         // --- SEARCH & FILTER LOGIC ---
@@ -1140,6 +1252,8 @@
         function filterCat(category) {
             if(searchInput.value !== '') resetSearch();
             
+            isFilterActive = true; // Enable filter mode to prevent Spy Scroll interference
+            
             catPills.forEach(pill => pill.classList.remove('active'));
             event.target.classList.add('active');
             
@@ -1161,7 +1275,6 @@
                 }
             });
 
-            // Update Headers visibility logic (existing)
             menuGrids.forEach((grid, index) => {
                 const header = sectionHeaders[index];
                 let hasVisible = false;
@@ -1176,22 +1289,21 @@
                 }
             });
 
-            // --- SMART SCROLL LOGIC ---
+            // Smart Scroll Logic
             if (category === 'all') {
                 window.scrollTo({ top: document.querySelector('.category-nav').offsetTop - 120, behavior: 'smooth' });
             } else if (firstVisibleCard) {
-                // Find the parent grid of the first visible card
                 const grid = firstVisibleCard.closest('.menu-grid');
-                // Find the section header immediately preceding the grid
                 const sectionHeader = grid.previousElementSibling;
                 
                 if (sectionHeader) {
-                    // Calculate absolute position of the header
                     const headerTop = sectionHeader.getBoundingClientRect().top + window.pageYOffset;
-                    // Scroll to it, subtracting sticky header height (approx 180px for safe margin)
                     window.scrollTo({ top: headerTop - 180, behavior: 'smooth' });
                 }
             }
+
+            // Re-enable Spy Scroll after animation settles (2 seconds)
+            setTimeout(() => { isFilterActive = false; }, 2000);
         }
     </script>
 </body>
