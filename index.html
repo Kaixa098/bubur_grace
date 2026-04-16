@@ -1004,7 +1004,6 @@
             const originalText = document.getElementById('checkoutText').innerText;
             const originalIcon = btn.querySelector('i').className;
 
-            // Set Loading State
             btn.disabled = true;
             document.getElementById('checkoutText').innerText = "Sedang Memproses...";
             btn.querySelector('i').className = "fa-solid fa-circle-notch fa-spin";
@@ -1016,7 +1015,6 @@
             let identifier = "";
             let identifierType = "";
 
-            // FIX BUG: Menggunakan nama variabel yang benar (tableNumberInput)
             if (isTakeAway) {
                 identifier = callerNameInput.value.trim();
                 if (!identifier) {
@@ -1030,7 +1028,7 @@
                 identifier = tableNumberInput.value.trim();
                 if (!identifier) {
                     showToast("Mohon isi Nomor Meja Anda!");
-                    tableNumberInput.focus(); // Sekarang menggunakan variabel yang benar
+                    tableNumberInput.focus();
                     resetCheckoutButton(btn, originalText, originalIcon);
                     return;
                 }
@@ -1141,9 +1139,11 @@
         const catPills = document.querySelectorAll('.cat-pill');
         function filterCat(category) {
             if(searchInput.value !== '') resetSearch();
+            
             catPills.forEach(pill => pill.classList.remove('active'));
             event.target.classList.add('active');
-            window.scrollTo({ top: document.querySelector('.category-nav').offsetTop - 120, behavior: 'smooth' });
+            
+            let firstVisibleCard = null;
 
             cards.forEach(card => {
                 const cardCat = card.getAttribute('data-category');
@@ -1152,11 +1152,16 @@
                     card.style.animation = 'none';
                     card.offsetHeight; /* trigger reflow */
                     card.style.animation = 'fadeInUp 0.4s ease forwards';
+                    
+                    if (!firstVisibleCard && (category === 'all' || cardCat === category)) {
+                        firstVisibleCard = card;
+                    }
                 } else {
                     card.style.display = 'none';
                 }
             });
 
+            // Update Headers visibility logic (existing)
             menuGrids.forEach((grid, index) => {
                 const header = sectionHeaders[index];
                 let hasVisible = false;
@@ -1170,6 +1175,23 @@
                     header.style.display = 'flex';
                 }
             });
+
+            // --- SMART SCROLL LOGIC ---
+            if (category === 'all') {
+                window.scrollTo({ top: document.querySelector('.category-nav').offsetTop - 120, behavior: 'smooth' });
+            } else if (firstVisibleCard) {
+                // Find the parent grid of the first visible card
+                const grid = firstVisibleCard.closest('.menu-grid');
+                // Find the section header immediately preceding the grid
+                const sectionHeader = grid.previousElementSibling;
+                
+                if (sectionHeader) {
+                    // Calculate absolute position of the header
+                    const headerTop = sectionHeader.getBoundingClientRect().top + window.pageYOffset;
+                    // Scroll to it, subtracting sticky header height (approx 180px for safe margin)
+                    window.scrollTo({ top: headerTop - 180, behavior: 'smooth' });
+                }
+            }
         }
     </script>
 </body>
