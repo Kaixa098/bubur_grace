@@ -34,7 +34,7 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            line-height: 1.5;
+            line-height:1.5;
             padding-bottom: calc(80px + env(safe-area-inset-bottom)); 
             -webkit-font-smoothing: antialiased;
         }
@@ -362,7 +362,8 @@
             <button class="cat-pill active" onclick="filterCat('all')">Semua</button>
             <button class="cat-pill" onclick="filterCat('bubur')">Bubur</button>
             <button class="cat-pill" onclick="filterCat('mie')">Mie Ayam</button>
-            <button class="cat-pill" onclick="filterCat('kwetiau')">Kwetiau & Bihun</button>
+            <button class="cat-pill" onclick="filterCat('kwetiau')">Kwetiau</button>
+            <button class="cat-pill" onclick="filterCat('bihun')">Bihun</button>
             <button class="cat-pill" onclick="filterCat('jajanan')">Aneka Jajanan</button>
             <button class="cat-pill" onclick="filterCat('baso')">Baso & Pangsit</button>
             <button class="cat-pill" onclick="filterCat('santan')">Bubur Santan</button>
@@ -394,7 +395,7 @@
         </div>
 
         <!-- MIE & KWETIAU (Section Header Tetap Satu, tapi kontennya dipisah kategori) -->
-        <div class="section-header"><h2>Mie Ayam Grace</h2><div class="section-line"></div></div>
+        <div class="section-header"><h2>Mie Ayam & Kwetiau GRace</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <!-- MENU MIE AYAM (Category: 'mie') -->
             <div class="menu-card" data-category="mie" data-price="27000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
@@ -424,14 +425,31 @@
                 <img src="https://picsum.photos/seed/mieyaminkomplit/300/200" class="card-img-top"><div class="card-body"><div class="badge">Komplit</div><div class="card-title">Mie Yamin Komplit</div><div class="card-desc">Pangsit Rebus + Baso. (Kecil/Lebar)</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
 
-            <!-- PEMISAH VISUAL KWETIAU (Category: 'kwetiau' supaya hilang saat filter Mie) -->
-            <div class="sub-section-divider" data-category="kwetiau"><span>KWETIAU & BIHUN</span></div>
+            <!-- PEMISAH VISUAL KWETIAU -->
+            <div class="sub-section-divider" data-category="kwetiau"><span>KWETIAU</span></div>
 
-            <!-- MENU KWETIAU (Category: 'kwetiau') -->
-            <div class="menu-card" data-category="kwetiau" data-price="27000"><img src="https://picsum.photos/seed/kwetiau/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau / Bihun Ayam Biasa</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
-            <div class="menu-card" data-category="kwetiau" data-price="32000"><img src="https://picsum.photos/seed/kwetiaubaso/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau / Bihun Baso</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
-            <div class="menu-card" data-category="kwetiau" data-price="32000"><img src="https://picsum.photos/seed/kwetiaupangsit/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau / Bihun Pangsit Rebus</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
-            <div class="menu-card" data-category="kwetiau" data-price="37000"><img src="https://picsum.photos/seed/kwetiaukomplit/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau / Bihun Komplit</div><div class="card-desc">Pangsit Rebus + Baso. (Asin/Manis)</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
+            <!-- MENU KWETIAU (Category: 'kwetiau') - Tidak ada "Bihun" lagi -->
+            <div class="menu-card" data-category="kwetiau" data-price="27000"><img src="https://picsum.photos/seed/kwetiau/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau Ayam Biasa</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
+            <div class="menu-card" data-category="kwetiau" data-price="32000"><img src="https://picsum.photos/seed/kwetiaubaso/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau Baso</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
+            <div class="menu-card" data-category="kwetiau" data-price="32000"><img src="https://picsum.photos/seed/kwetiaupangsit/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau Pangsit Rebus</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
+            <div class="menu-card" data-category="kwetiau" data-price="37000"><img src="https://picsum.photos/seed/kwetiaukomplit/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Kwetiau Komplit</div><div class="card-desc">Pangsit Rebus + Baso.</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div></div>
+        </div>
+
+        <!-- BIHUN (Section Baru) -->
+        <div class="section-header"><h2>Menu Bihun</h2><div class="section-line"></div></div>
+        <div class="menu-grid">
+            <div class="menu-card" data-category="bihun" data-price="27000">
+                <img src="https://picsum.photos/seed/bihunbiasa/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Bihun Ayam Biasa</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="bihun" data-price="32000">
+                <img src="https://picsum.photos/seed/bihunbaso/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Bihun Baso</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="bihun" data-price="32000">
+                <img src="https://picsum.photos/seed/bihunpangsit/300/200" class="card-img-top"><div class="card-body"><div class="card-title">Bihun Pangsit Rebus</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="bihun" data-price="37000">
+                <img src="https://picsum.photos/seed/bihunkomplit/300/200" class="card-img-top"><div class="card-body"><div class="badge">Komplit</div><div class="card-title">Bihun Komplit</div><div class="card-desc">Pangsit Rebus + Baso.</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
         </div>
 
         <!-- JAJANAN -->
@@ -627,8 +645,8 @@
         let cart = [];
         let currentVariantCard = null;
         const PACKAGING_FEE_PER_ITEM = 3000;
-        // Menambahkan 'kwetiau' ke kategori eligible untuk biaya kemasan
-        const ELIGIBLE_CATEGORIES = ['bubur', 'mie', 'kwetiau', 'nasi', 'baso', 'weekend'];
+        // Menambahkan 'bihun' ke kategori eligible untuk biaya kemasan
+        const ELIGIBLE_CATEGORIES = ['bubur', 'mie', 'kwetiau', 'bihun', 'nasi', 'baso', 'weekend'];
 
         // Delegasi Event Listener
         document.body.addEventListener('click', function(e) {
@@ -711,7 +729,7 @@
             if (existingItem) {
                 existingItem.qty++;
             } else {
-                cart.push({ name, price, qty: 1, category });
+                cart.push({ name, price, qty:1, category });
             }
             updateCartUI();
             showToast();
@@ -825,7 +843,7 @@
 
             if (isTakeAway && eligibleCount > 0) {
                 const packagingFee = eligibleCount * PACKAGING_FEE_PER_ITEM;
-                message += `*Biaya Kemasan (${eligibleCount} item Bubur/Mie/Kwetiau/Nasi/Baso/Weekend): ${formatRupiah(packagingFee)}*%0A`;
+                message += `*Biaya Kemasan (${eligibleCount} item Bubur/Mie/Kwetiau/Bihun/Nasi/Baso/Weekend): ${formatRupiah(packagingFee)}*%0A`;
             }
 
             const packagingFee = isTakeAway ? (eligibleCount * PACKAGING_FEE_PER_ITEM) : 0;
@@ -886,7 +904,6 @@
                     if (hasResultInGrid) {
                         header.style.display = 'flex';
                         header.classList.remove('hidden');
-                        // Logic simple: jika ada hasil, show semua divider di grid ini (atau bisa diperluas logicnya)
                         dividers.forEach(div => div.style.display = 'flex');
                     } else {
                         header.style.display = 'none';
