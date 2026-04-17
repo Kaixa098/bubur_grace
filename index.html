@@ -509,10 +509,12 @@
             <button class="cat-pill" data-target="bihun" onclick="filterCat('bihun')">Bihun</button>
             <button class="cat-pill" data-target="jajanan" onclick="filterCat('jajanan')">Aneka Jajanan</button>
             <button class="cat-pill" data-target="baso" onclick="filterCat('baso')">Baso & Pangsit</button>
+            <button class="cat-pill" data-target="dimsum" onclick="filterCat('dimsum')">Dimsum</button>
             <button class="cat-pill" data-target="santan" onclick="filterCat('santan')">Bubur Santan</button>
             <button class="cat-pill" data-target="kopi" onclick="filterCat('kopi')">Kopi</button>
             <button class="cat-pill" data-target="minuman" onclick="filterCat('minuman')">Minuman</button>
             <button class="cat-pill" data-target="weekend" onclick="filterCat('weekend')">Weekend</button>
+            <button class="cat-pill" data-target="sate-manis" onclick="filterCat('sate-manis')">Sate Ayam Manis</button>
         </div>
     </nav>
 
@@ -620,9 +622,9 @@
         </div>
 
         <!-- JAJANAN -->
-        <div class="section-header" data-category="jajanan"><h2>Aneka Jajanan & Sate</h2><div class="section-line"></div></div>
+        <div class="section-header" data-category="jajanan"><h2>Aneka Jajanan & Sate (Goreng)</h2><div class="section-line"></div></div>
         <div class="menu-grid">
-            <!-- Semua item jajanan (Sate, Dimsum) tidak dikenakan biaya kemasan -->
+            <!-- Hanya Sate Goreng & Jajanan kecil yang tersisa -->
             <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/ati.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ati</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
@@ -650,22 +652,6 @@
             <div class="menu-card" data-category="jajanan" data-price="8000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/cakwe.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Cakwe Goreng</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="jajanan" data-price="25000" data-packaging="no">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/dimsum3/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Dimsum Ayam Isi 3</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="jajanan" data-price="35000" data-packaging="no">
-                <div class="card-img-wrapper"><img src="foto/dimsum5pcs.JPG" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Dimsum Ayam Isi 5</div><div class="card-footer"><span class="price">Rp 35.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="jajanan" data-price="67000" data-packaging="no">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/dimsum10/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="badge">Jumbo</div><div class="card-title">Dimsum Ayam Isi 10</div><div class="card-footer"><span class="price">Rp 67.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="jajanan" data-price="95000" data-packaging="no">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/dimsumfrozen/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="badge">Frozen</div><div class="card-title">Dimsum Ayam Frozen Isi 15</div><div class="card-footer"><span class="price">Rp 95.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
 
@@ -700,6 +686,27 @@
             <div class="menu-card" data-category="baso" data-price="10000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kulitpangsit/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Kulit Pangsit (3 Pcs)</div><div class="card-footer"><span class="price">Rp 10.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+        </div>
+
+        <!-- DIMSUM (KATEGORI BARU) -->
+        <div class="section-header" data-category="dimsum"><h2>Dimsum GRace</h2><div class="section-line"></div></div>
+        <div class="menu-grid">
+            <div class="menu-card" data-category="dimsum" data-price="25000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/dimsum3/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Dimsum Ayam Isi 3</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="dimsum" data-price="35000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="foto/dimsum5pcs.JPG" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Dimsum Ayam Isi 5</div><div class="card-footer"><span class="price">Rp 35.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="dimsum" data-price="67000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/dimsum10/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="badge">Jumbo</div><div class="card-title">Dimsum Ayam Isi 10</div><div class="card-footer"><span class="price">Rp 67.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="dimsum" data-price="95000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/dimsumfrozen/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="badge">Frozen</div><div class="card-title">Dimsum Ayam Frozen Isi 15</div><div class="card-footer"><span class="price">Rp 95.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
 
@@ -799,7 +806,7 @@
             </div>
         </div>
 
-        <!-- WEEKEND -->
+        <!-- WEEKEND (DIKURANGI MENU SATENYA) -->
         <div class="section-header" data-category="weekend">
             <h2>Menu Weekend</h2>
             <div class="section-line"></div>
@@ -828,15 +835,21 @@
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/ayamgoreng/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">New</div><div class="card-title">Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="weekend" data-price="25000" data-packaging="no">
+            <!-- SATE DIPINDAH KE KATEGORI BARU -->
+        </div>
+
+        <!-- SATE AYAM MANIS (KATEGORI BARU) -->
+        <div class="section-header" data-category="sate-manis"><h2>Sate Ayam Manis</h2><div class="section-line"></div></div>
+        <div class="menu-grid">
+            <div class="menu-card" data-category="sate-manis" data-price="25000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/satemanis3/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ayam Manis (3 Pcs)</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="weekend" data-price="35000" data-packaging="no">
+            <div class="menu-card" data-category="sate-manis" data-price="35000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/satemanis5/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ayam Manis (5 Pcs)</div><div class="card-footer"><span class="price">Rp 35.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="weekend" data-price="67000" data-packaging="no">
+            <div class="menu-card" data-category="sate-manis" data-price="67000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/satemanis10/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ayam Manis (10 Pcs)</div><div class="card-footer"><span class="price">Rp 67.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
@@ -1015,11 +1028,6 @@
                         const activePill = document.querySelector(`.cat-pill[data-target="${category}"]`);
                         if(activePill) {
                             activePill.classList.add('active');
-                            // --- FIX START: HAPUS AUTO SCROLL NAV ---
-                            // Scroll nav bar horizontally if needed to keep active pill in view
-                            // Baris ini DIPINDAH (dimatikan) agar scroll halaman tidak tertahan
-                            // activePill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-                            // --- FIX END ---
                         }
                     }
                 });
