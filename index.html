@@ -303,6 +303,8 @@
             border-radius: 20px 20px 0 0;
             padding: 25px 20px;
             animation: slideUp 0.3s ease;
+            max-height: 85vh;
+            overflow-y: auto;
         }
         .variant-title { font-size: 1.2rem; font-weight: bold; color: var(--secondary); margin-bottom: 15px; text-align: center; }
         .variant-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
@@ -335,6 +337,7 @@
         }
         .btn-confirm-variant:active { background: var(--primary-dark); transform: scale(0.98); }
 
+        /* --- CART MODAL & ITEMS (REVISI) --- */
         .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
         .cart-header h3 { font-size: 1.2rem; }
         
@@ -354,33 +357,99 @@
         .cart-items { overflow-y: auto; flex-grow: 1; margin-bottom: 15px; padding-right: 5px; -webkit-overflow-scrolling: touch; }
         
         .cart-item {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 12px; padding-bottom: 12px;
-            border-bottom: 1px solid #f9f9f9;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
             animation: fadeIn 0.3s ease;
         }
-        .item-info h4 { font-size: 0.95rem; color: var(--secondary); margin-bottom: 2px; pointer-events: none; }
-        .item-info p { font-size: 0.85rem; color: #777; pointer-events: none; }
-        .item-controls { display: flex; align-items: center; gap: 8px; background: #f8f8f8; border-radius: 20px; padding: 4px 10px; }
+
+        /* Baris Atas Item: Judul, Harga, Hapus */
+        .cart-item-header {
+            display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;
+        }
+        .item-title-group { flex: 1; padding-right: 10px; }
+        .item-title-group h4 { font-size: 0.9rem; color: var(--secondary); margin-bottom: 2px; font-weight: 600; line-height: 1.2; }
+        .item-title-group .item-price { font-size: 0.8rem; color: var(--primary); font-weight: bold; }
+        
+        /* Baris Tengah: Qty, Catatan, Tipe Pesanan */
+        .cart-item-details {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .item-controls {
+            display: flex; align-items: center; background: #f8f8f8; border-radius: 15px; padding: 2px 8px;
+        }
         
         .qty-btn { 
-            width: 30px; height: 30px; border-radius: 50%; background: white; font-weight: bold; 
-            display: flex; align-items: center; justify-content: center; font-size: 1rem; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); color: var(--primary); cursor: pointer;
+            width: 26px; height: 26px; border-radius: 50%; background: white; font-weight: bold; 
+            display: flex; align-items: center; justify-content: center; font-size: 0.9rem; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1); color: var(--primary); cursor: pointer;
         }
-        .qty-btn:active { background: #eee; transform: scale(0.9); }
+        .qty-btn:active { background: #eee; }
+        .qty-num { font-size: 0.9rem; font-weight: 600; min-width: 20px; text-align: center; }
 
-        .input-section-container { margin-bottom: 15px; }
-        .input-label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--secondary); font-size: 0.9rem; }
-        .input-field {
-            width: 100%; padding: 12px 15px; border: 2px solid #eee; border-radius: 10px;
-            font-family: 'Poppins', sans-serif; font-size: 1rem; outline: none; transition: all 0.2s;
-            background: #fafafa;
+        /* Input Catatan Kecil */
+        .item-note-input {
+            flex: 1;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            color: #555;
         }
-        /* Styling khusus untuk Textarea Catatan */
-        textarea.input-field {
-            resize: none;
-            line-height: 1.4;
+        .item-note-input:focus { border-color: var(--primary); background: #fff5eb; }
+
+        /* Tipe Pesanan Toggle (Kecil) */
+        .type-toggle {
+            display: flex; align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            padding: 2px;
+            cursor: pointer;
+            position: relative;
+            width: 70px; /* Lebar tetap untuk tombol kecil */
+            justify-content: space-between;
+        }
+        .type-toggle-icon {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem;
+            color: #aaa;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+        /* Background slider */
+        .type-toggle::before {
+            content: '';
+            position: absolute;
+            top: 3px; left: 3px; width: 28px; height: 26px;
+            background: var(--primary);
+            border-radius: 50%;
+            transition: transform 0.3s;
+            z-index: 1;
+        }
+        /* State Takeaway */
+        .type-toggle.takeaway .type-toggle-icon:last-child { color: white; }
+        .type-toggle.takeaway::before { transform: translateX(34px); background: #25D366; } /* Hijau WA */
+        
+        /* State Dine In (Default) */
+        .type-toggle.dine-in .type-toggle-icon:first-child { color: white; }
+
+        /* --- CHECKOUT SECTION --- */
+        .checkout-section { margin-top: 10px; border-top: 2px dashed #eee; padding-top: 15px; }
+        
+        .input-section-container { margin-bottom: 12px; }
+        .input-label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--secondary); font-size: 0.85rem; }
+        .input-field {
+            width: 100%; padding: 10px 12px; border: 2px solid #eee; border-radius: 8px;
+            font-family: 'Poppins', sans-serif; font-size: 0.9rem; outline: none; transition: all 0.2s;
+            background: #fafafa;
         }
         .input-field:focus { border-color: var(--primary); background: white; }
         
@@ -391,25 +460,14 @@
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
 
-        .takeaway-container {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 15px; padding: 12px;
-            background: #fff8e1; border: 1px solid #ffe0b2;
-            border-radius: 10px;
+        /* Total Row (Sekarang di web saja) */
+        .total-row { 
+            display: flex; justify-content: space-between; 
+            align-items: center; font-size: 1.2rem; font-weight: bold; 
+            margin: 15px 0; color: var(--secondary); 
         }
-        .takeaway-label { display: flex; align-items: center; gap: 10px; }
-        .takeaway-label span { font-size: 0.9rem; font-weight: 500; color: var(--secondary); pointer-events: none; }
-        .takeaway-price { font-size: 0.85rem; font-weight: bold; color: var(--primary); text-align: right; pointer-events: none;}
+        .final-total { font-size: 1.4rem; color: var(--primary); }
 
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(22px); }
-
-        .cart-footer { border-top: 2px dashed #eee; padding-top: 15px; background: #fff; }
-        .total-row { display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; color: var(--primary); pointer-events: none; }
         .btn-checkout {
             width: 100%; padding: 16px;
             background: #25D366; color: white;
@@ -468,17 +526,6 @@
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
-        
-        /* --- COOL FEATURES CSS --- */
-        /* Button Pulse Animation for Checkout */
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-        }
-        .btn-checkout.has-items {
-            animation: pulse-green 2s infinite;
-        }
     </style>
 </head>
 <body>
@@ -504,16 +551,21 @@
         <div class="cat-list">
             <button class="cat-pill active" data-target="all" onclick="filterCat('all')">Semua</button>
             <button class="cat-pill" data-target="bubur" onclick="filterCat('bubur')">Bubur</button>
-            <button class="cat-pill" data-target="mie" onclick="filterCat('mie')">Mie Ayam</button>
-            <button class="cat-pill" data-target="kwetiau" onclick="filterCat('kwetiau')">Kwetiau</button>
+            <!-- MIE SPLIT -->
+            <button class="cat-pill" data-target="mie-kecil" onclick="filterCat('mie-kecil')">Mie Kecil</button>
+            <button class="cat-pill" data-target="mie-lebar" onclick="filterCat('mie-lebar')">Mie Lebar</button>
             <button class="cat-pill" data-target="bihun" onclick="filterCat('bihun')">Bihun</button>
             <button class="cat-pill" data-target="jajanan" onclick="filterCat('jajanan')">Aneka Jajanan</button>
-            <button class="cat-pill" data-target="baso" onclick="filterCat('baso')">Baso & Pangsit</button>
+            <!-- BASO REVISI -->
+            <button class="cat-pill" data-target="baso" onclick="filterCat('baso')">Baso & Pangsit Rebus</button>
+            <button class="cat-pill" data-target="gorengan" onclick="filterCat('gorengan')">Cakwe & Pangsit Goreng</button>
             <button class="cat-pill" data-target="dimsum" onclick="filterCat('dimsum')">Dimsum</button>
             <button class="cat-pill" data-target="santan" onclick="filterCat('santan')">Bubur Santan</button>
             <button class="cat-pill" data-target="kopi" onclick="filterCat('kopi')">Kopi</button>
             <button class="cat-pill" data-target="minuman" onclick="filterCat('minuman')">Minuman</button>
-            <button class="cat-pill" data-target="weekend" onclick="filterCat('weekend')">Weekend</button>
+            <!-- WEEKEND SPLIT -->
+            <button class="cat-pill" data-target="nasi-ayam" onclick="filterCat('nasi-ayam')">Nasi Uduk + Ayam</button>
+            <button class="cat-pill" data-target="nasi-telur" onclick="filterCat('nasi-telur')">Nasi Uduk + Telur</button>
             <button class="cat-pill" data-target="sate-manis" onclick="filterCat('sate-manis')">Sate Ayam Manis</button>
         </div>
     </nav>
@@ -546,61 +598,49 @@
             </div>
         </div>
 
-        <!-- MIE & KWETIAU -->
-        <div class="section-header" data-category="mie"><h2>Mie Ayam Grace</h2><div class="section-line"></div></div>
+        <!-- MIE KECIL -->
+        <div class="section-header" data-category="mie-kecil"><h2>Mie Ayam Kecil</h2><div class="section-line"></div></div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="mie" data-price="27000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
+            <div class="menu-card" data-category="mie-kecil" data-price="27000" data-has-variants="true" data-options="Biasa,Yamin" data-variant-name="Jenis Mie">
                 <div class="card-img-wrapper"><img src="foto/mieayambiasa.JPG" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Mie Ayam Biasa</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+                <div class="card-body"><div class="card-title">Mie Ayam Biasa</div><div class="card-desc">Pilihan: Biasa / Yamin</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="mie" data-price="32000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
+            <div class="menu-card" data-category="mie-kecil" data-price="32000" data-has-variants="true" data-options="Baso,Pangsit Rebus" data-variant-name="Topping">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/miebaso/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Mie Ayam Baso</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+                <div class="card-body"><div class="card-title">Mie Ayam Baso</div><div class="card-desc">Pilihan: Baso / Pangsit Rebus</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="mie" data-price="32000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
+            <div class="menu-card" data-category="mie-kecil" data-price="32000" data-has-variants="true" data-options="Pangsit Rebus,Baso" data-variant-name="Topping">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/miepangsit/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Mie Ayam Pangsit Rebus</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+                <div class="card-body"><div class="card-title">Mie Ayam Pangsit Rebus</div><div class="card-desc">Pilihan: Pangsit Rebus / Baso</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="mie" data-price="37000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
+            <div class="menu-card" data-category="mie-kecil" data-price="37000" data-has-variants="true" data-options="Biasa,Yamin" data-variant-name="Jenis Mie">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/miekomplit/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="badge">Komplit</div><div class="card-title">Mie Ayam Komplit</div><div class="card-desc">Pangsit Rebus + Baso. (Kecil/Lebar)</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="mie" data-price="27000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/mieyaminbiasa/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Mie Yamin Biasa</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="mie" data-price="32000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/mieyaminbaso/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Mie Yamin Baso</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="mie" data-price="32000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/mieyaminpangsit/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Mie Yamin Pangsit Rebus</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="mie" data-price="37000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Jenis Mie">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/mieyaminkomplit/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="badge">Komplit</div><div class="card-title">Mie Yamin Komplit</div><div class="card-desc">Pangsit Rebus + Baso. (Kecil/Lebar)</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="sub-section-divider" data-category="kwetiau"><span>KWETIAU</span></div>
-            <div class="menu-card" data-category="kwetiau" data-price="27000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kwetiau/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Kwetiau Ayam Biasa</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="kwetiau" data-price="32000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kwetiaubaso/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Kwetiau Baso</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="kwetiau" data-price="32000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kwetiaupangsit/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Kwetiau Pangsit Rebus</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="kwetiau" data-price="37000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kwetiaukomplit/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Kwetiau Komplit</div><div class="card-desc">Pangsit Rebus + Baso.</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+                <div class="card-body"><div class="badge">Komplit</div><div class="card-title">Mie Ayam Komplit</div><div class="card-desc">Baso + Pangsit Rebus. (Biasa/Yamin)</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
 
-        <!-- BIHUN -->
+        <!-- MIE LEBAR -->
+        <div class="section-header" data-category="mie-lebar"><h2>Mie Ayam Lebar</h2><div class="section-line"></div></div>
+        <div class="menu-grid">
+            <div class="menu-card" data-category="mie-lebar" data-price="27000" data-has-variants="true" data-options="Biasa,Yamin" data-variant-name="Jenis Mie">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/mieyaminbiasa/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Mie Ayam Biasa</div><div class="card-desc">Pilihan: Biasa / Yamin</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="mie-lebar" data-price="32000" data-has-variants="true" data-options="Baso,Pangsit Rebus" data-variant-name="Topping">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/mieyaminbaso/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Mie Ayam Baso</div><div class="card-desc">Pilihan: Baso / Pangsit Rebus</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="mie-lebar" data-price="32000" data-has-variants="true" data-options="Pangsit Rebus,Baso" data-variant-name="Topping">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/mieyaminpangsit/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Mie Ayam Pangsit Rebus</div><div class="card-desc">Pilihan: Pangsit Rebus / Baso</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="mie-lebar" data-price="37000" data-has-variants="true" data-options="Biasa,Yamin" data-variant-name="Jenis Mie">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/mieyaminkomplit/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="badge">Komplit</div><div class="card-title">Mie Ayam Komplit</div><div class="card-desc">Baso + Pangsit Rebus. (Biasa/Yamin)</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+        </div>
+
+        <!-- BIHUN (REVISI: DI PISAH MENJADI 4 KARTU) -->
         <div class="section-header" data-category="bihun"><h2>Bihun Grace</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="bihun" data-price="27000">
@@ -617,12 +657,12 @@
             </div>
             <div class="menu-card" data-category="bihun" data-price="37000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/bihunkomplit/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="badge">Komplit</div><div class="card-title">Bihun Komplit</div><div class="card-desc">Pangsit Rebus + Baso.</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+                <div class="card-body"><div class="badge">Komplit</div><div class="card-title">Bihun Komplit</div><div class="card-desc">Baso + Pangsit Rebus</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
 
         <!-- JAJANAN -->
-        <div class="section-header" data-category="jajanan"><h2>Aneka Jajanan & Sate (Goreng)</h2><div class="section-line"></div></div>
+        <div class="section-header" data-category="jajanan"><h2>Aneka Jajanan</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <!-- Hanya Sate Goreng & Jajanan kecil yang tersisa -->
             <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
@@ -649,47 +689,35 @@
                 <div class="card-img-wrapper"><img src="foto/puyuh.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Telur Puyuh</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="8000" data-packaging="no">
+        </div>
+
+        <!-- BASO REVISI -->
+        <div class="section-header" data-category="baso"><h2>Baso & Pangsit Rebus</h2><div class="section-line"></div></div>
+        <div class="menu-grid">
+            <div class="menu-card" data-category="baso" data-price="27000" data-has-variants="true" data-options="Sawi,Sapi,Campur,Pangsit" data-variant-name="Isi">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/basosawi/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Baso GRace (5 Pcs)</div><div class="card-desc">Sawi/Sapi/Campur/Pangsit Rebus</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="baso" data-price="27000" data-has-variants="true" data-options="Sawi,Sapi,Campur" data-variant-name="Isi">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/pangsitrebus/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Pangsit Rebus GRace (5 Pcs)</div><div class="card-desc">Sawi/Sapi/Campur</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+        </div>
+
+        <!-- GORENGAN BARU -->
+        <div class="section-header" data-category="gorengan"><h2>Cakwe & Pangsit Goreng</h2><div class="section-line"></div></div>
+        <div class="menu-grid">
+            <div class="menu-card" data-category="gorengan" data-price="8000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/cakwe.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Cakwe Goreng</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-        </div>
-
-        <!-- BASO -->
-        <div class="section-header" data-category="baso"><h2>Aneka Baso & Pangsit</h2><div class="section-line"></div></div>
-        <div class="menu-grid">
-            <div class="menu-card" data-category="baso" data-price="27000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/basosawi/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Baso Sawi GRace (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="baso" data-price="27000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/basosapi/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Baso Sapi (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="baso" data-price="27000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/basocampur/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Baso Sawi & Sapi (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="baso" data-price="27000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/basopangsit/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Baso Sawi & Pangsit Rebus (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="baso" data-price="27000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/pangsitrebus/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Pangsit Rebus GRace (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="baso" data-price="27000">
+            <div class="menu-card" data-category="gorengan" data-price="27000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/pangsitgoreng/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Pangsit Goreng Isi Ayam (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <!-- Kulit Pangsit kecil, tidak kena biaya kemasan -->
-            <div class="menu-card" data-category="baso" data-price="10000" data-packaging="no">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kulitpangsit/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Kulit Pangsit (3 Pcs)</div><div class="card-footer"><span class="price">Rp 10.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
         </div>
 
-        <!-- DIMSUM (KATEGORI BARU) -->
+        <!-- DIMSUM -->
         <div class="section-header" data-category="dimsum"><h2>Dimsum GRace</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="dimsum" data-price="25000" data-packaging="no">
@@ -806,39 +834,41 @@
             </div>
         </div>
 
-        <!-- WEEKEND (DIKURANGI MENU SATENYA) -->
-        <div class="section-header" data-category="weekend">
-            <h2>Menu Weekend</h2>
+        <!-- NASI UDUK + AYAM (REVISI) -->
+        <div class="section-header" data-category="nasi-ayam">
+            <h2>Nasi Uduk + Ayam Goreng</h2>
             <div class="section-line"></div>
-            <div id="weekendStatus" class="weekend-status status-available">Tersedia</div>
+            <div id="weekendStatusAyam" class="weekend-status status-available">Tersedia</div>
         </div>
-        <div class="menu-grid" id="weekendGrid">
-            <!-- Overlay Warning (Hidden by default) -->
-            <div id="weekendOverlay" class="weekend-overlay">
-                <i class="fa-solid fa-calendar-xmark overlay-icon"></i>
-                <div class="overlay-text">Menu ini hanya<br>tersedia hari<br>Sabtu & Minggu</div>
-            </div>
-
-            <div class="menu-card" data-category="weekend" data-price="12000">
+        <div class="menu-grid" id="nasiAyamGrid">
+            <div class="menu-card" data-category="nasi-ayam" data-price="12000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasipolos/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Nasi Uduk Polos</div><div class="card-footer"><span class="price">Rp 12.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="weekend" data-price="37000" data-has-variants="true" data-options="Paha,Dada" data-variant-name="Ayam">
+            <div class="menu-card" data-category="nasi-ayam" data-price="37000" data-has-variants="true" data-options="Paha,Dada" data-variant-name="Ayam">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasiayam/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Favorit</div><div class="card-title">Nasi Uduk + Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="weekend" data-price="25000" data-has-variants="true" data-options="Dadar,Ceplok Balado" data-variant-name="Telur">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasitelur/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Nasi Uduk + Telor</div><div class="card-desc">Dadar / Ceplok Balado</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="weekend" data-price="25000">
+            <div class="menu-card" data-category="nasi-ayam" data-price="25000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/ayamgoreng/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">New</div><div class="card-title">Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <!-- SATE DIPINDAH KE KATEGORI BARU -->
         </div>
 
-        <!-- SATE AYAM MANIS (KATEGORI BARU) -->
+        <!-- NASI UDUK + TELUR (BARU) -->
+        <div class="section-header" data-category="nasi-telur">
+            <h2>Nasi Uduk + Telur</h2>
+            <div class="section-line"></div>
+            <div id="weekendStatusTelur" class="weekend-status status-available">Tersedia</div>
+        </div>
+        <div class="menu-grid" id="nasiTelurGrid">
+            <div class="menu-card" data-category="nasi-telur" data-price="25000" data-has-variants="true" data-options="Dadar,Ceplok Balado" data-variant-name="Telur">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasitelur/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Nasi Uduk + Telor</div><div class="card-desc">Dadar / Ceplok Balado</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+        </div>
+
+        <!-- SATE AYAM MANIS -->
         <div class="section-header" data-category="sate-manis"><h2>Sate Ayam Manis</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="sate-manis" data-price="25000" data-packaging="no">
@@ -880,21 +910,46 @@
     <button id="scrollTopBtn" onclick="scrollToTop()" title="Kembali ke atas"><i class="fa-solid fa-arrow-up"></i></button>
     <a href="https://wa.me/62817776175" class="fab-wa" target="_blank" aria-label="Chat WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
 
-    <!-- Variant Selection Modal -->
+    <!-- Variant Selection Modal (UPDATED) -->
     <div class="modal-overlay" id="variantModal" onclick="closeVariantModal(event)">
         <div class="variant-modal">
-            <div class="variant-title" id="variantTitle">Pilihan Menu</div>
+            <div class="variant-title" id="variantTitle">Pilih Menu</div>
+            
+            <!-- Bagian Pilihan Varian Produk -->
             <div class="variant-options" id="variantOptionsContainer"></div>
+            
+            <!-- Bagian Pilihan Jenis Pesanan (Dine In / Takeaway) -->
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; font-weight:600; margin-bottom:10px; color:var(--secondary);">Pesan Sebagai:</label>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <label class="variant-option-label selected" id="btnDineIn" onclick="selectOrderType('dine-in')">
+                        <input type="radio" name="orderType" value="dine-in" checked>
+                        <div class="radio-circle"></div>
+                        <div style="text-align:left;">
+                            <div style="font-weight:600;">Makan Di Tempat</div>
+                            <div style="font-size:0.75rem; color:#888;">Tidak ada biaya tambahan</div>
+                        </div>
+                    </label>
+                    <label class="variant-option-label" id="btnTakeaway" onclick="selectOrderType('takeaway')">
+                        <input type="radio" name="orderType" value="takeaway">
+                        <div class="radio-circle"></div>
+                        <div style="text-align:left;">
+                            <div style="font-weight:600; color:#25D366;">Bungkus (Takeaway)</div>
+                            <div style="font-size:0.75rem; color:#888;">+ Rp 3.000 / item</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
             <button class="btn-confirm-variant" onclick="confirmVariantSelection()">Konfirmasi</button>
         </div>
     </div>
 
-    <!-- Cart Modal -->
+    <!-- Cart Modal (UPDATED UI) -->
     <div class="modal-overlay" id="cartModal" onclick="closeCart(event)">
         <div class="cart-modal">
             <div class="cart-header">
                 <h3>Keranjang Pesanan</h3>
-                <!-- Action Buttons Container -->
                 <div class="cart-actions">
                     <button onclick="clearCart()" class="btn-clear-cart" title="Hapus Semua Item">
                         <i class="fa-solid fa-trash-can"></i>
@@ -905,43 +960,24 @@
                 </div>
             </div>
             <div class="cart-items" id="cartItemsContainer">
-                <div style="text-align:center; color:#999; margin-top:40px;">
-                    <i class="fa-solid fa-basket-shopping empty-state-icon" style="color:#eee;"></i>
-                    <p style="margin-top:10px;">Keranjang masih kosong.</p>
-                </div>
+                <!-- Items will be injected here via JS -->
             </div>
             
-            <div class="input-section-container" id="dineInSection">
-                <label class="input-label">Nomor Meja Anda <span style="color:var(--primary)">*</span></label>
-                <input type="number" id="tableNumberInput" class="input-field" placeholder="Contoh: 5">
-            </div>
-
-            <div class="input-section-container" id="takeawaySection" style="display: none;">
-                <label class="input-label">Nama Panggilan Anda <span style="color:var(--primary)">*</span></label>
-                <input type="text" id="callerNameInput" class="input-field" placeholder="Contoh: Mas Budi">
-            </div>
-
-            <!-- FITUR BARU: CATATAN TAMBAHAN -->
-            <div class="input-section-container">
-                <label class="input-label">Catatan Tambahan (Opsional)</label>
-                <textarea id="notesInput" class="input-field" rows="2" placeholder="Contoh: Jangan pakai bawang"></textarea>
-            </div>
-
-            <div class="takeaway-container">
-                <div class="takeaway-label">
-                    <label class="switch">
-                        <input type="checkbox" id="takeawayToggle" onchange="toggleOrderType()">
-                        <span class="slider round"></span>
-                    </label>
-                    <span>Take Away (+ 3 Ribu )</span>
+            <!-- Dynamic Inputs -->
+            <div class="checkout-section">
+                <div class="input-section-container" id="dineInSection">
+                    <label class="input-label">Nomor Meja Anda <span style="color:var(--primary)">*</span></label>
+                    <input type="number" id="tableNumberInput" class="input-field" placeholder="Contoh: 5">
                 </div>
-                <span class="takeaway-price">Khusus Makanan Berat*</span>
-            </div>
 
-            <div class="cart-footer">
+                <div class="input-section-container" id="takeawaySection" style="display: none;">
+                    <label class="input-label">Nama Panggilan Anda <span style="color:var(--primary)">*</span></label>
+                    <input type="text" id="callerNameInput" class="input-field" placeholder="Contoh: Gilten">
+                </div>
+
                 <div class="total-row">
                     <span>Total</span>
-                    <span id="cartTotal">Rp 0</span>
+                    <span class="final-total" id="cartTotal">Rp 0</span>
                 </div>
                 <button class="btn-checkout" id="btnCheckout" onclick="checkout()">
                     <i class="fa-brands fa-whatsapp"></i> <span id="checkoutText">Order via WhatsApp</span>
@@ -961,78 +997,62 @@
             });
             window.addEventListener('scroll', handleScroll);
             initSpyScroll();
-            checkWeekendAvailability(); // Jalankan pengecekan hari saat load
+            checkWeekendAvailability();
         });
 
-        // --- REAL TIME WEEKEND FEATURE (REVISI VISUAL) ---
+        // --- WEEKEND LOGIC (Updated for 2 grids) ---
         function checkWeekendAvailability() {
             const now = new Date();
-            const day = now.getDay(); // 0 = Minggu, 6 = Sabtu
-            
-            // 0 (Minggu) atau 6 (Sabtu) = Weekend
+            const day = now.getDay(); 
             const isWeekend = (day === 0 || day === 6);
             
-            const weekendGrid = document.getElementById('weekendGrid');
-            const statusBadge = document.getElementById('weekendStatus');
-            const overlay = document.getElementById('weekendOverlay');
-            const weekendCards = weekendGrid.querySelectorAll('.menu-card');
+            const grids = [
+                { grid: document.getElementById('nasiAyamGrid'), status: document.getElementById('weekendStatusAyam') },
+                { grid: document.getElementById('nasiTelurGrid'), status: document.getElementById('weekendStatusTelur') }
+            ];
 
-            if (isWeekend) {
-                // Jika hari Sabtu/Minggu
-                statusBadge.innerText = "Tersedia";
-                statusBadge.className = "weekend-status status-available";
-                overlay.style.display = 'none'; // Sembunyikan overlay (tetapi gambar terlihat penuh)
-                
-                weekendCards.forEach(card => {
-                    card.classList.remove('weekend-locked');
-                    const btn = card.querySelector('.add-btn');
-                    btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
-                    btn.classList.remove('locked-btn');
-                });
-            } else {
-                // Jika hari Biasa (Senin - Jumat)
-                statusBadge.innerText = "Tutup";
-                statusBadge.className = "weekend-status status-closed";
-                overlay.style.display = 'none'; // Hapus overlay putih agar gambar terlihat berwarna
-                
-                weekendCards.forEach(card => {
-                    card.classList.add('weekend-locked'); // Tambah class untuk memblokir pointer events
-                    const btn = card.querySelector('.add-btn');
-                    btn.innerHTML = '<i class="fa-solid fa-lock"></i>'; // Ikon gembok
-                    btn.classList.add('locked-btn'); // Warna tombol abu-abu
-                });
-            }
+            grids.forEach(section => {
+                if(!section.grid) return;
+                const weekendCards = section.grid.querySelectorAll('.menu-card');
+                if (isWeekend) {
+                    section.status.innerText = "Tersedia";
+                    section.status.className = "weekend-status status-available";
+                    weekendCards.forEach(card => {
+                        card.classList.remove('weekend-locked');
+                        const btn = card.querySelector('.add-btn');
+                        btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+                        btn.classList.remove('locked-btn');
+                    });
+                } else {
+                    section.status.innerText = "Tutup";
+                    section.status.className = "weekend-status status-closed";
+                    weekendCards.forEach(card => {
+                        card.classList.add('weekend-locked');
+                        const btn = card.querySelector('.add-btn');
+                        btn.innerHTML = '<i class="fa-solid fa-lock"></i>';
+                        btn.classList.add('locked-btn');
+                    });
+                }
+            });
         }
 
-        // --- SPY SCROLL LOGIC (Auto Highlight Category) ---
+        // --- SPY SCROLL ---
         let isFilterActive = false;
-
         function initSpyScroll() {
             const sections = document.querySelectorAll('.section-header');
             const navPills = document.querySelectorAll('.cat-pill');
-
-            const observerOptions = {
-                root: null,
-                rootMargin: '-20% 0px -60% 0px', // Active when section is in middle of screen
-                threshold: 0
-            };
-
+            const observerOptions = { root: null, rootMargin: '-20% 0px -60% 0px', threshold: 0 };
             const observer = new IntersectionObserver((entries) => {
-                if(isFilterActive) return; // Don't auto-highlight if user just clicked a filter
-
+                if(isFilterActive) return;
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const category = entry.target.getAttribute('data-category');
-                        
                         navPills.forEach(pill => pill.classList.remove('active'));
                         const activePill = document.querySelector(`.cat-pill[data-target="${category}"]`);
-                        if(activePill) {
-                            activePill.classList.add('active');
-                        }
+                        if(activePill) activePill.classList.add('active');
                     }
                 });
             }, observerOptions);
-
             sections.forEach(section => observer.observe(section));
         }
 
@@ -1046,39 +1066,25 @@
                 setTimeout(() => scrollBtn.style.display = "none", 300);
             }
         }
-
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
         // --- CART SYSTEM ---
         let cart = [];
         let currentVariantCard = null;
+        let selectedOrderType = 'dine-in'; // Default state
         const PACKAGING_FEE_PER_ITEM = 3000;
-        const ELIGIBLE_CATEGORIES = ['bubur', 'mie', 'kwetiau', 'bihun', 'nasi', 'baso', 'weekend'];
 
         document.body.addEventListener('click', function(e) {
             const btn = e.target.closest('.add-btn');
             if (btn) {
                 const card = btn.closest('.menu-card');
-                
-                // NEW: Cek jika tombol diklik adalah menu yang dikunci (Weekend)
                 if(card.classList.contains('weekend-locked')) {
                     showToast("Menu Weekend hanya tersedia hari Sabtu & Minggu");
                     return;
                 }
-
                 if (card) {
-                    if (card.getAttribute('data-has-variants') === 'true') {
-                        showVariantModal(card);
-                    } else {
-                        const name = card.querySelector('.card-title').innerText;
-                        const price = parseInt(card.dataset.price); 
-                        const category = card.getAttribute('data-category');
-                        // Cek atribut packaging (default 'yes' jika tidak ada)
-                        const packaging = card.getAttribute('data-packaging') || 'yes';
-                        addToCart(name, price, category, packaging);
-                    }
+                    // Buka modal untuk setiap item untuk pilih Dine-In/Takeaway
+                    showVariantModal(card);
                 }
             }
         });
@@ -1086,30 +1092,62 @@
         function showVariantModal(card) {
             currentVariantCard = card;
             const baseName = card.querySelector('.card-title').innerText;
-            const variantName = card.getAttribute('data-variant-name');
-            const optionsStr = card.getAttribute('data-options');
-            const options = optionsStr.split(',');
+            const hasVariants = card.getAttribute('data-has-variants') === 'true';
+            
+            // Reset Order Type to Dine In default
+            selectedOrderType = 'dine-in';
+            document.getElementById('btnDineIn').classList.add('selected');
+            document.getElementById('btnDineIn').querySelector('input').checked = true;
+            document.getElementById('btnTakeaway').classList.remove('selected');
+            document.getElementById('btnTakeaway').querySelector('input').checked = false;
+
             const modalTitle = document.getElementById('variantTitle');
             const container = document.getElementById('variantOptionsContainer');
-            modalTitle.innerText = `Pilih ${variantName}`;
-            container.innerHTML = '';
-            options.forEach((opt, index) => {
-                const isSelected = index === 0 ? 'selected' : '';
-                const isChecked = index === 0 ? 'checked' : '';
-                const label = document.createElement('label');
-                label.className = `variant-option-label ${isSelected}`;
-                label.onclick = function() {
-                    document.querySelectorAll('.variant-option-label').forEach(l => l.classList.remove('selected'));
-                    this.classList.add('selected');
-                    this.querySelector('input').checked = true;
-                };
-                label.innerHTML = `
-                    <input type="radio" name="variantOpt" value="${opt}" ${isChecked}>
-                    <div class="radio-circle"></div>
-                    <span>${opt}</span>
-                `;
-                container.appendChild(label);
-            });
+            
+            modalTitle.innerText = baseName;
+            container.innerHTML = ''; // Clear prev
+
+            if (hasVariants) {
+                const variantName = card.getAttribute('data-variant-name');
+                const optionsStr = card.getAttribute('data-options');
+                const options = optionsStr.split(',');
+                
+                const variantLabel = document.createElement('div');
+                variantLabel.style.marginBottom = "10px";
+                variantLabel.style.fontWeight = "600";
+                variantLabel.style.color = "var(--secondary)";
+                variantLabel.innerText = `Pilih ${variantName}`;
+                container.appendChild(variantLabel);
+
+                options.forEach((opt, index) => {
+                    const isSelected = index === 0 ? 'selected' : '';
+                    const isChecked = index === 0 ? 'checked' : '';
+                    const label = document.createElement('label');
+                    label.className = `variant-option-label ${isSelected}`;
+                    label.onclick = function() {
+                        document.querySelectorAll('#variantOptionsContainer .variant-option-label').forEach(l => l.classList.remove('selected'));
+                        this.classList.add('selected');
+                        this.querySelector('input').checked = true;
+                    };
+                    label.innerHTML = `
+                        <input type="radio" name="variantOpt" value="${opt}" ${isChecked}>
+                        <div class="radio-circle"></div>
+                        <span>${opt}</span>
+                    `;
+                    container.appendChild(label);
+                });
+            } else {
+                // Jika tidak ada varian produk, tampilkan pesan bahwa produk ini tetap bisa dine in/takeaway
+                const msg = document.createElement('div');
+                msg.style.padding = "10px";
+                msg.style.background = "#f9f9f9";
+                msg.style.borderRadius = "8px";
+                msg.style.fontSize = "0.9rem";
+                msg.style.color = "#666";
+                msg.style.marginBottom = "10px";
+                msg.innerHTML = "<i class='fa-solid fa-info-circle'></i> Silakan pilih cara penyajian di bawah.";
+                container.appendChild(msg);
+            }
             document.getElementById('variantModal').classList.add('active');
         }
 
@@ -1117,26 +1155,41 @@
             if (e.target.id === 'variantModal') document.getElementById('variantModal').classList.remove('active');
         }
 
+        function selectOrderType(type) {
+            selectedOrderType = type;
+            document.getElementById('btnDineIn').classList.toggle('selected', type === 'dine-in');
+            document.getElementById('btnDineIn').querySelector('input').checked = (type === 'dine-in');
+            document.getElementById('btnTakeaway').classList.toggle('selected', type === 'takeaway');
+            document.getElementById('btnTakeaway').querySelector('input').checked = (type === 'takeaway');
+        }
+
         function confirmVariantSelection() {
             if (!currentVariantCard) return;
-            const selectedOpt = document.querySelector('input[name="variantOpt"]:checked').value;
-            const baseName = currentVariantCard.querySelector('.card-title').innerText;
+            
+            let finalName = currentVariantCard.querySelector('.card-title').innerText;
+            const hasVariants = currentVariantCard.getAttribute('data-has-variants') === 'true';
+            
+            if (hasVariants) {
+                const selectedOpt = document.querySelector('input[name="variantOpt"]:checked').value;
+                const variantName = currentVariantCard.getAttribute('data-variant-name');
+                finalName = `${finalName} (${selectedOpt})`; 
+            }
+
             const price = parseInt(currentVariantCard.dataset.price); 
             const category = currentVariantCard.getAttribute('data-category');
-            const finalName = `${baseName} (${selectedOpt})`;
-            // Cek packaging untuk item variant (default yes)
             const packaging = currentVariantCard.getAttribute('data-packaging') || 'yes';
-            addToCart(finalName, price, category, packaging);
+            
+            addToCart(finalName, price, category, packaging, selectedOrderType);
             document.getElementById('variantModal').classList.remove('active');
             currentVariantCard = null;
         }
 
-        function addToCart(name, price, category, packaging = 'yes') {
-            const existingItem = cart.find(item => item.name === name);
+        function addToCart(name, price, category, packaging = 'yes', orderType = 'dine-in') {
+            const existingItem = cart.find(item => item.name === name && item.orderType === orderType); // Strict match including order type
             if (existingItem) {
                 existingItem.qty++;
             } else {
-                cart.push({ name, price, qty:1, category, packaging });
+                cart.push({ name, price, qty:1, category, packaging, orderType, notes: '' });
             }
             updateCartUI();
             showToast();
@@ -1156,15 +1209,20 @@
                 updateCartUI();
             }
         }
+        
+        // Toggle Dine In / Takeaway in cart
+        function toggleItemOrderType(index) {
+            const item = cart[index];
+            const newType = item.orderType === 'dine-in' ? 'takeaway' : 'dine-in';
+            item.orderType = newType;
+            updateCartUI();
+        }
 
         function clearCart() {
-            if (cart.length === 0) {
-                showToast("Keranjang sudah kosong.");
-                return;
-            }
-            cart = []; // Kosongkan array keranjang
+            if (cart.length === 0) return;
+            cart = []; 
             updateCartUI();
-            showToast("Semua item berhasil dihapus.");
+            showToast("Keranjang kosong.");
         }
 
         function updateCartUI() {
@@ -1173,6 +1231,7 @@
             const checkoutBtn = document.getElementById('btnCheckout');
             container.innerHTML = '';
             let totalQty = 0;
+
             if (cart.length === 0) {
                 container.innerHTML = `
                     <div style="text-align:center; color:#999; margin-top:40px;">
@@ -1180,26 +1239,43 @@
                         <p style="margin-top:10px;">Keranjang masih kosong.</p>
                     </div>`;
                 badge.style.display = 'none';
-                // Remove pulse class if cart is empty
                 checkoutBtn.classList.remove('has-items');
             } else {
                 badge.style.display = 'flex';
-                // Add pulse class if cart has items
                 checkoutBtn.classList.add('has-items');
                 
                 cart.forEach((item, index) => {
                     totalQty += item.qty;
+                    
+                    // Calculate unit price including packaging if applicable
+                    let unitPrice = item.price;
+                    if (item.orderType === 'takeaway' && item.packaging !== 'no') {
+                        unitPrice += PACKAGING_FEE_PER_ITEM;
+                    }
+
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'cart-item';
                     itemDiv.innerHTML = `
-                        <div class="item-info">
-                            <h4>${item.name}</h4>
-                            <p>${formatRupiah(item.price)}</p>
+                        <div class="cart-item-header">
+                            <div class="item-title-group">
+                                <h4>${item.name}</h4>
+                                <div class="item-price">${formatRupiah(unitPrice)} / pcs</div>
+                            </div>
+                            <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#ccc;"><i class="fa-solid fa-xmark"></i></button>
                         </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
-                            <span style="font-size:0.9rem; font-weight:600; min-width:20px; text-align:center;">${item.qty}</span>
-                            <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+                        <div class="cart-item-details">
+                            <div class="item-controls">
+                                <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+                                <span class="qty-num">${item.qty}</span>
+                                <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+                            </div>
+                            
+                            <input type="text" class="item-note-input" placeholder="Catatan..." value="${item.notes}" onchange="updateItemNote(${index}, this.value)">
+                            
+                            <div class="type-toggle ${item.orderType}" onclick="toggleItemOrderType(${index})" title="Klik untuk ubah Makan/Bungkus">
+                                <div class="type-toggle-icon"><i class="fa-solid fa-utensils"></i></div>
+                                <div class="type-toggle-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                            </div>
                         </div>
                     `;
                     container.appendChild(itemDiv);
@@ -1207,25 +1283,34 @@
                 badge.innerText = totalQty;
             }
             updateTotal();
+            updateCheckoutInputsVisibility();
+        }
+
+        function updateItemNote(index, val) {
+            cart[index].notes = val;
         }
 
         function updateTotal() {
             const totalEl = document.getElementById('cartTotal');
-            const isTakeAway = document.getElementById('takeawayToggle').checked;
-            let subtotal = 0;
-            let eligibleCount = 0;
+            let total = 0;
             cart.forEach(item => {
-                subtotal += item.price * item.qty;
-                // LOGIC REVISI: Hanya hitung kemasan jika:
-                // 1. Item ada di kategori makanan berat (ELIGIBLE_CATEGORIES)
-                // 2. DAN item tidak ditandai 'no' di data-packaging
-                if (ELIGIBLE_CATEGORIES.includes(item.category) && item.packaging !== 'no') {
-                    eligibleCount += item.qty;
+                let unitPrice = item.price;
+                if (item.orderType === 'takeaway' && item.packaging !== 'no') {
+                    unitPrice += PACKAGING_FEE_PER_ITEM;
                 }
+                total += unitPrice * item.qty;
             });
-            const packagingFee = isTakeAway ? (eligibleCount * PACKAGING_FEE_PER_ITEM) : 0;
-            const total = subtotal + packagingFee;
             totalEl.innerText = formatRupiah(total);
+        }
+
+        function updateCheckoutInputsVisibility() {
+            const hasDineIn = cart.some(i => i.orderType === 'dine-in');
+            const hasTakeaway = cart.some(i => i.orderType === 'takeaway');
+            const dineSection = document.getElementById('dineInSection');
+            const awaySection = document.getElementById('takeawaySection');
+
+            dineSection.style.display = hasDineIn ? 'block' : 'none';
+            awaySection.style.display = hasTakeaway ? 'block' : 'none';
         }
 
         function formatRupiah(number) {
@@ -1234,8 +1319,7 @@
 
         function toggleCart() {
             const modal = document.getElementById('cartModal');
-            if (modal.classList.contains('active')) modal.classList.remove('active'); 
-            else modal.classList.add('active');
+            modal.classList.contains('active') ? modal.classList.remove('active') : modal.classList.add('active');
         }
 
         function closeCart(e) {
@@ -1246,10 +1330,7 @@
             const toast = document.getElementById("toast");
             toast.innerText = message;
             toast.className = "show";
-            setTimeout(function(){ 
-                toast.className = toast.className.replace("show", ""); 
-                setTimeout(() => toast.innerText = "Item ditambahkan!", 300);
-            }, 3000);
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); setTimeout(() => toast.innerText = "Item ditambahkan!", 300); }, 3000);
         }
 
         function triggerCartPulse() {
@@ -1260,146 +1341,91 @@
             setTimeout(() => badge.classList.remove('pulse'), 300);
         }
 
-        function toggleOrderType() {
-            const isTakeAway = document.getElementById('takeawayToggle').checked;
-            const dineInSection = document.getElementById('dineInSection');
-            const takeawaySection = document.getElementById('takeawaySection');
-            const tableInput = document.getElementById('tableNumberInput');
-            const nameInput = document.getElementById('callerNameInput');
-
-            // Remove error styles when switching
-            tableInput.classList.remove('input-error');
-            nameInput.classList.remove('input-error');
-
-            if (isTakeAway) {
-                dineInSection.style.display = 'none';
-                takeawaySection.style.display = 'block';
-                tableInput.value = ''; 
-                nameInput.focus();
-            } else {
-                dineInSection.style.display = 'block';
-                takeawaySection.style.display = 'none';
-                nameInput.value = '';
-                tableInput.focus();
-            }
-            updateTotal();
-        }
-
         function checkout() {
-            if (cart.length === 0) {
-                showToast("Keranjang masih kosong!");
-                return;
-            }
+            if (cart.length === 0) { showToast("Keranjang masih kosong!"); return; }
 
             const btn = document.getElementById('btnCheckout');
             const originalText = document.getElementById('checkoutText').innerText;
             const originalIcon = btn.querySelector('i').className;
-
             btn.disabled = true;
-            document.getElementById('checkoutText').innerText = "Sedang Memproses...";
+            document.getElementById('checkoutText').innerText = "Memproses...";
             btn.querySelector('i').className = "fa-solid fa-circle-notch fa-spin";
 
-            const isTakeAway = document.getElementById('takeawayToggle').checked;
-            const tableNumberInput = document.getElementById('tableNumberInput');
-            const callerNameInput = document.getElementById('callerNameInput');
-            const notesInput = document.getElementById('notesInput'); // NEW: Ambil notes
-            
-            let identifier = "";
-            let identifierType = "";
+            const hasDineIn = cart.some(i => i.orderType === 'dine-in');
+            const hasTakeaway = cart.some(i => i.orderType === 'takeaway');
+            const tableInput = document.getElementById('tableNumberInput');
+            const nameInput = document.getElementById('callerNameInput');
 
-            // Helper Shake Animation
-            const triggerShake = (elId) => {
-                const el = document.getElementById(elId);
-                el.classList.add('input-error');
-                setTimeout(() => el.classList.remove('input-error'), 500);
-            };
-
-            const resetBtn = () => {
-                btn.disabled = false;
-                document.getElementById('checkoutText').innerText = originalText;
-                btn.querySelector('i').className = originalIcon;
+            // Validation
+            let errorMsg = "";
+            if(hasDineIn && !tableInput.value.trim()) {
+                errorMsg = "Mohon isi Nomor Meja";
+                tableInput.classList.add('input-error');
+            } else {
+                tableInput.classList.remove('input-error');
             }
 
-            if (isTakeAway) {
-                identifier = callerNameInput.value.trim();
-                if (!identifier) {
-                    showToast("Mohon isi Nama Panggilan Anda!");
-                    callerNameInput.focus();
-                    triggerShake('callerNameInput');
-                    resetBtn();
-                    return;
-                }
-                identifierType = "NAMA PANGGILAN";
+            if(hasTakeaway && !nameInput.value.trim()) {
+                errorMsg = errorMsg ? errorMsg + " & Nama Panggilan" : "Mohon isi Nama Panggilan";
+                nameInput.classList.add('input-error');
             } else {
-                identifier = tableNumberInput.value.trim();
-                if (!identifier) {
-                    showToast("Mohon isi Nomor Meja Anda!");
-                    tableNumberInput.focus();
-                    triggerShake('tableNumberInput');
-                    resetBtn();
-                    return;
-                }
-                
-                // VALIDASI NOMOR MEJA (Max 9)
-                const tableNum = parseInt(identifier);
-                if (tableNum > 9) {
-                    showToast("Maaf kita tidak punya meja sebanyak itu");
-                    tableNumberInput.focus();
-                    triggerShake('tableNumberInput');
-                    resetBtn();
-                    return;
-                }
-                
-                identifierType = "NOMOR MEJA";
+                nameInput.classList.remove('input-error');
+            }
+
+            if(errorMsg) {
+                showToast(errorMsg + "!");
+                setTimeout(() => { 
+                    btn.disabled = false;
+                    document.getElementById('checkoutText').innerText = originalText;
+                    btn.querySelector('i').className = originalIcon;
+                }, 1000);
+                return;
             }
 
             setTimeout(() => {
-                let message = `*${identifierType}:* ${identifier}%0A%0A`;
-                message += "Halo Bubur Grace, saya mau pesan:%0A";
-                
-                let subtotal = 0;
-                let eligibleCount = 0;
-                cart.forEach(item => {
-                    const itemTotal = item.price * item.qty;
-                    subtotal += itemTotal;
-                    // Hitung item yang dikenakan biaya kemasan
-                    if (ELIGIBLE_CATEGORIES.includes(item.category) && item.packaging !== 'no') {
-                        eligibleCount += item.qty;
-                    }
-                    message += `- ${item.name} (${item.qty}x)%0A`;
-                });
+                let message = "";
 
-                // TAMBAHAN LOGIC: Jika ada catatan, masukan ke pesan WA
-                if (notesInput.value.trim() !== "") {
-                    message += `%0A%0A*Catatan:* ${notesInput.value}`;
-                }
-
-                message += `%0A*Subtotal Makanan: ${formatRupiah(subtotal)}*%0A`;
-                const packagingFee = isTakeAway ? (eligibleCount * PACKAGING_FEE_PER_ITEM) : 0;
-                const grandTotal = subtotal + packagingFee;
-
-                if (isTakeAway && eligibleCount > 0) {
-                    message += `*Biaya Kemasan (${eligibleCount} item): ${formatRupiah(packagingFee)}*%0A`;
-                }
-                message += `%0A*TOTAL BAYAR: ${formatRupiah(grandTotal)}*%0A`;
-                
-                if (isTakeAway && eligibleCount > 0) {
-                    message += "%0A(Mohon dibungkus untuk makanan berat)";
-                } else if (isTakeAway && eligibleCount === 0) {
-                    message += "%0A(Tidak ada biaya kemasan tambahan)";
+                // 1. HEADER LOGIC
+                if(hasDineIn && !hasTakeaway) {
+                    // Only Dine In
+                    message += `*NO MEJA - ${tableInput.value}*%0A`;
+                } else if (!hasDineIn && hasTakeaway) {
+                    // Only Takeaway
+                    message += `*NAMA: ${nameInput.value}*%0A`;
                 } else {
-                    message += "%0A(Makan di tempat)";
+                    // Mixed
+                    message += `*NO MEJA: ${tableInput.value}*%0A`;
+                    message += `*NAMA: ${nameInput.value}*%0A`;
                 }
-                
-                message += "%0A%0AMohon diproses ya. Terima kasih!";
+                message += "%0A";
+
+                // 2. DINE IN SECTION
+                if(hasDineIn) {
+                    message += `*DINE IN:*%0A`;
+                    cart.filter(i => i.orderType === 'dine-in').forEach(i => {
+                        message += `- (${i.qty}x) ${i.name}%0A`;
+                        if(i.notes) message += `*${i.notes}*%0A`;
+                    });
+                }
+
+                // 3. TAKE AWAY SECTION
+                if(hasTakeaway) {
+                    message += `%0A*TAKE AWAY:*%0A`;
+                    cart.filter(i => i.orderType === 'takeaway').forEach(i => {
+                        message += `- (${i.qty}x) ${i.name}%0A`;
+                        if(i.notes) message += `*${i.notes}*%0A`;
+                    });
+                }
                 
                 window.open(`https://wa.me/62817776175?text=${message}`, '_blank');
                 
-                resetBtn();
+                btn.disabled = false;
+                document.getElementById('checkoutText').innerText = originalText;
+                btn.querySelector('i').className = originalIcon;
             }, 800); 
         }
 
-        // --- SEARCH & FILTER LOGIC ---
+        // --- SEARCH & FILTER ---
         const searchInput = document.getElementById('searchInput');
         const clearSearchBtn = document.getElementById('clearSearchBtn');
         const cards = document.querySelectorAll('.menu-card');
@@ -1418,8 +1444,7 @@
                     let hasResultInGrid = false;
                     cardsInGrid.forEach(card => {
                         const title = card.querySelector('.card-title').innerText.toLowerCase();
-                        const desc = card.querySelector('.card-desc') ? card.querySelector('.card-desc').innerText.toLowerCase() : '';
-                        if(title.includes(term) || desc.includes(term)) {
+                        if(title.includes(term)) {
                             card.style.display = 'flex';
                             hasResultInGrid = true;
                             hasGlobalResult = true;
@@ -1427,15 +1452,12 @@
                             card.style.display = 'none';
                         }
                     });
-                    const dividers = grid.querySelectorAll('.sub-section-divider');
                     if (hasResultInGrid) {
                         header.style.display = 'flex';
                         header.classList.remove('hidden');
-                        dividers.forEach(div => div.style.display = 'flex');
                     } else {
                         header.style.display = 'none';
                         header.classList.add('hidden');
-                        dividers.forEach(div => div.style.display = 'none');
                     }
                 });
                 noResultMsg.style.display = hasGlobalResult ? 'none' : 'block';
@@ -1448,7 +1470,6 @@
             searchInput.value = '';
             clearSearchBtn.style.display = 'none';
             cards.forEach(card => card.style.display = 'flex');
-            document.querySelectorAll('.sub-section-divider').forEach(div => div.style.display = 'flex');
             sectionHeaders.forEach(header => {
                 header.style.display = 'flex';
                 header.classList.remove('hidden');
@@ -1459,25 +1480,16 @@
         const catPills = document.querySelectorAll('.cat-pill');
         function filterCat(category) {
             if(searchInput.value !== '') resetSearch();
-            
-            isFilterActive = true; // Enable filter mode to prevent Spy Scroll interference
-            
+            isFilterActive = true;
             catPills.forEach(pill => pill.classList.remove('active'));
             event.target.classList.add('active');
             
             let firstVisibleCard = null;
-
             cards.forEach(card => {
                 const cardCat = card.getAttribute('data-category');
                 if(category === 'all' || cardCat === category) {
                     card.style.display = 'flex';
-                    card.style.animation = 'none';
-                    card.offsetHeight; /* trigger reflow */
-                    card.style.animation = 'fadeInUp 0.4s ease forwards';
-                    
-                    if (!firstVisibleCard && (category === 'all' || cardCat === category)) {
-                        firstVisibleCard = card;
-                    }
+                    if (!firstVisibleCard) firstVisibleCard = card;
                 } else {
                     card.style.display = 'none';
                 }
@@ -1489,30 +1501,18 @@
                 Array.from(grid.children).forEach(child => {
                     if (child.style.display !== 'none') hasVisible = true;
                 });
-
-                if(!hasVisible) {
-                    header.style.display = 'none';
-                } else {
-                    header.style.display = 'flex';
-                }
+                header.style.display = hasVisible ? 'flex' : 'none';
             });
 
-            // Smart Scroll Logic - FIX: Jangan scroll 'all' ke atas otomatis
-            if (category === 'all') {
-                // Kita biarkan user dimana dia, jangan pindahkan ke atas
-                // Jika user ingin ke atas, mereka bisa scroll sendiri atau tekan tombol back
-            } else if (firstVisibleCard) {
+            if (category !== 'all' && firstVisibleCard) {
                 const grid = firstVisibleCard.closest('.menu-grid');
                 const sectionHeader = grid.previousElementSibling;
-                
                 if (sectionHeader) {
                     const headerTop = sectionHeader.getBoundingClientRect().top + window.pageYOffset;
                     window.scrollTo({ top: headerTop - 180, behavior: 'smooth' });
                 }
             }
-
-            // Re-enable Spy Scroll after animation settles (2 seconds)
-            setTimeout(() => { isFilterActive = false; }, 2000);
+            setTimeout(() => { isFilterActive = false; },2000);
         }
     </script>
 </body>
