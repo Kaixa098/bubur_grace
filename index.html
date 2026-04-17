@@ -58,10 +58,12 @@
 
         .header-top { display: flex; justify-content: space-between; align-items: center; }
 
-        .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .brand i { font-size: 1.5rem; color: var(--primary); pointer-events: none; }
-        .brand-text h1 { font-size: 1.2rem; line-height: 1.1; color: var(--primary); margin: 0; pointer-events: none; }
-        .brand-text span { font-size: 0.7rem; font-weight: 300; letter-spacing: 1px; color: var(--secondary); text-transform: uppercase; pointer-events: none; }
+        /* --- FIX: BRAND LOGO --- */
+        /* Menghapus cursor pointer dan pointer-events manipulasi agar tidak menangkap klik saat scroll */
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .brand i { font-size: 1.5rem; color: var(--primary); }
+        .brand-text h1 { font-size: 1.2rem; line-height: 1.1; color: var(--primary); margin: 0; }
+        .brand-text span { font-size: 0.7rem; font-weight: 300; letter-spacing: 1px; color: var(--secondary); text-transform: uppercase; }
 
         .search-wrapper { position: relative; width: 100%; max-width: 500px; margin: 0 auto; }
         .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 0.9rem; pointer-events: none; }
@@ -385,7 +387,7 @@
             border-radius: 12px; font-size: 1.1rem; font-weight: 600;
             display: flex; align-items: center; justify-content: center; gap: 10px;
             box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, transform 0.2s;
         }
         .btn-checkout:active { transform: scale(0.98); background: #1ebc57; }
         .btn-checkout:disabled { background-color: #95a5a6; cursor: not-allowed; transform: none; box-shadow: none; }
@@ -437,13 +439,25 @@
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
+        
+        /* --- COOL FEATURES CSS --- */
+        /* Button Pulse Animation for Checkout */
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+        .btn-checkout.has-items {
+            animation: pulse-green 2s infinite;
+        }
     </style>
 </head>
 <body>
 
     <header>
         <div class="header-top">
-            <div class="brand" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            <!-- FIX: Removed onclick event from .brand div to prevent accidental scroll-to-top -->
+            <div class="brand">
                 <i class="fa-solid fa-bowl-rice"></i>
                 <div class="brand-text">
                     <h1>Bubur GRace</h1>
@@ -490,11 +504,13 @@
                 <div class="card-img-wrapper"><img src="foto/buburpolos.JPG" class="card-img-top" alt="Bubur Polos"></div>
                 <div class="card-body"><div class="card-title">Bubur Polos / Putih</div><div class="card-footer"><span class="price">Rp 15.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="bubur" data-price="6000">
+            <!-- Extra Toppings: Tidak dikenakan biaya kemasan -->
+            <div class="menu-card" data-category="bubur" data-price="6000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/extraayamkmpung.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Topping</div><div class="card-title">Extra Merah Telur Ayam Kampung</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="bubur" data-price="12000">
+            <!-- Extra Toppings: Tidak dikenakan biaya kemasan -->
+            <div class="menu-card" data-category="bubur" data-price="12000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/extraayamrebus.jpeg" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Topping</div><div class="card-title">Extra Ayam Rebus</div><div class="card-footer"><span class="price">Rp 12.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
@@ -578,47 +594,48 @@
         <!-- JAJANAN -->
         <div class="section-header" data-category="jajanan"><h2>Aneka Jajanan & Sate</h2><div class="section-line"></div></div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="jajanan" data-price="6000">
+            <!-- Semua item jajanan (Sate, Dimsum) tidak dikenakan biaya kemasan -->
+            <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/ati.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ati</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="6000">
+            <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/ampla.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ampela</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="6000">
+            <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/usus.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Usus</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="6000">
+            <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/jantung.jpeg" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Jantung</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="6000">
+            <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/jendil.jpeg" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Jendil</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="6000">
+            <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/puyuh.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Telur Puyuh</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="8000">
+            <div class="menu-card" data-category="jajanan" data-price="8000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/cakwe.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Cakwe Goreng</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="25000">
+            <div class="menu-card" data-category="jajanan" data-price="25000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/dimsum3/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Dimsum Ayam Isi 3</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="35000">
+            <div class="menu-card" data-category="jajanan" data-price="35000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/dimsum5pcs.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Dimsum Ayam Isi 5</div><div class="card-footer"><span class="price">Rp 35.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="67000">
+            <div class="menu-card" data-category="jajanan" data-price="67000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/dimsum10/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Jumbo</div><div class="card-title">Dimsum Ayam Isi 10</div><div class="card-footer"><span class="price">Rp 67.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="95000">
+            <div class="menu-card" data-category="jajanan" data-price="95000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/dimsumfrozen/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Frozen</div><div class="card-title">Dimsum Ayam Frozen Isi 15</div><div class="card-footer"><span class="price">Rp 95.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
@@ -651,7 +668,8 @@
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/pangsitgoreng/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Pangsit Goreng Isi Ayam (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="baso" data-price="10000">
+            <!-- Kulit Pangsit kecil, tidak kena biaya kemasan -->
+            <div class="menu-card" data-category="baso" data-price="10000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kulitpangsit/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Kulit Pangsit (3 Pcs)</div><div class="card-footer"><span class="price">Rp 10.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
@@ -697,7 +715,8 @@
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kopiegg4/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Kopi O + 4 Egg</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 35.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="kopi" data-price="8000">
+            <!-- Telur rebut tambahan, tidak kena biaya kemasan -->
+            <div class="menu-card" data-category="kopi" data-price="8000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/telurrebus/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Pelengkap</div><div class="card-title">Telur Rebus</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
@@ -755,31 +774,38 @@
         <!-- WEEKEND -->
         <div class="section-header" data-category="weekend"><h2>Menu Weekend</h2><div class="section-line"></div></div>
         <div class="menu-grid">
+            <!-- Nasi Uduk Polos -->
             <div class="menu-card" data-category="weekend" data-price="12000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasipolos/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Nasi Uduk Polos</div><div class="card-footer"><span class="price">Rp 12.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
+            <!-- Nasi Uduk + Ayam -->
             <div class="menu-card" data-category="weekend" data-price="37000" data-has-variants="true" data-options="Paha,Dada" data-variant-name="Ayam">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasiayam/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Favorit</div><div class="card-title">Nasi Uduk + Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
+            <!-- Nasi Uduk + Telor -->
             <div class="menu-card" data-category="weekend" data-price="25000" data-has-variants="true" data-options="Dadar,Ceplok Balado" data-variant-name="Telur">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasitelur/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Nasi Uduk + Telor</div><div class="card-desc">Dadar / Ceplok Balado</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
+            <!-- Ayam Goreng -->
             <div class="menu-card" data-category="weekend" data-price="25000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/ayamgoreng/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">New</div><div class="card-title">Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="weekend" data-price="25000">
+            <!-- Sate Ayam Manis Snack (No Packaging) -->
+            <div class="menu-card" data-category="weekend" data-price="25000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/satemanis3/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ayam Manis (3 Pcs)</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="weekend" data-price="35000">
+            <!-- Sate Ayam Manis Snack (No Packaging) -->
+            <div class="menu-card" data-category="weekend" data-price="35000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/satemanis5/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ayam Manis (5 Pcs)</div><div class="card-footer"><span class="price">Rp 35.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="weekend" data-price="67000">
+            <!-- Sate Ayam Manis Snack (No Packaging) -->
+            <div class="menu-card" data-category="weekend" data-price="67000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/satemanis10/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ayam Manis (10 Pcs)</div><div class="card-footer"><span class="price">Rp 67.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
@@ -911,8 +937,11 @@
                         const activePill = document.querySelector(`.cat-pill[data-target="${category}"]`);
                         if(activePill) {
                             activePill.classList.add('active');
+                            // --- FIX START: HAPUS AUTO SCROLL NAV ---
                             // Scroll nav bar horizontally if needed to keep active pill in view
-                            activePill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                            // Baris ini DIPINDAH (dimatikan) agar scroll halaman tidak tertahan
+                            // activePill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                            // --- FIX END ---
                         }
                     }
                 });
@@ -953,7 +982,9 @@
                         const name = card.querySelector('.card-title').innerText;
                         const price = parseInt(card.dataset.price); 
                         const category = card.getAttribute('data-category');
-                        addToCart(name, price, category);
+                        // Cek atribut packaging (default 'yes' jika tidak ada)
+                        const packaging = card.getAttribute('data-packaging') || 'yes';
+                        addToCart(name, price, category, packaging);
                     }
                 }
             }
@@ -1000,17 +1031,19 @@
             const price = parseInt(currentVariantCard.dataset.price); 
             const category = currentVariantCard.getAttribute('data-category');
             const finalName = `${baseName} (${selectedOpt})`;
-            addToCart(finalName, price, category);
+            // Cek packaging untuk item variant (default yes)
+            const packaging = currentVariantCard.getAttribute('data-packaging') || 'yes';
+            addToCart(finalName, price, category, packaging);
             document.getElementById('variantModal').classList.remove('active');
             currentVariantCard = null;
         }
 
-        function addToCart(name, price, category) {
+        function addToCart(name, price, category, packaging = 'yes') {
             const existingItem = cart.find(item => item.name === name);
             if (existingItem) {
                 existingItem.qty++;
             } else {
-                cart.push({ name, price, qty:1, category });
+                cart.push({ name, price, qty:1, category, packaging });
             }
             updateCartUI();
             showToast();
@@ -1044,6 +1077,7 @@
         function updateCartUI() {
             const container = document.getElementById('cartItemsContainer');
             const badge = document.getElementById('cartBadge');
+            const checkoutBtn = document.getElementById('btnCheckout');
             container.innerHTML = '';
             let totalQty = 0;
             if (cart.length === 0) {
@@ -1053,8 +1087,13 @@
                         <p style="margin-top:10px;">Keranjang masih kosong.</p>
                     </div>`;
                 badge.style.display = 'none';
+                // Remove pulse class if cart is empty
+                checkoutBtn.classList.remove('has-items');
             } else {
                 badge.style.display = 'flex';
+                // Add pulse class if cart has items
+                checkoutBtn.classList.add('has-items');
+                
                 cart.forEach((item, index) => {
                     totalQty += item.qty;
                     const itemDiv = document.createElement('div');
@@ -1084,7 +1123,10 @@
             let eligibleCount = 0;
             cart.forEach(item => {
                 subtotal += item.price * item.qty;
-                if (ELIGIBLE_CATEGORIES.includes(item.category)) {
+                // LOGIC REVISI: Hanya hitung kemasan jika:
+                // 1. Item ada di kategori makanan berat (ELIGIBLE_CATEGORIES)
+                // 2. DAN item tidak ditandai 'no' di data-packaging
+                if (ELIGIBLE_CATEGORIES.includes(item.category) && item.packaging !== 'no') {
                     eligibleCount += item.qty;
                 }
             });
@@ -1226,7 +1268,10 @@
                 cart.forEach(item => {
                     const itemTotal = item.price * item.qty;
                     subtotal += itemTotal;
-                    if (ELIGIBLE_CATEGORIES.includes(item.category)) eligibleCount += item.qty;
+                    // Hitung item yang dikenakan biaya kemasan
+                    if (ELIGIBLE_CATEGORIES.includes(item.category) && item.packaging !== 'no') {
+                        eligibleCount += item.qty;
+                    }
                     message += `- ${item.name} (${item.qty}x)%0A`;
                 });
 
@@ -1235,14 +1280,14 @@
                 const grandTotal = subtotal + packagingFee;
 
                 if (isTakeAway && eligibleCount > 0) {
-                    message += `*Biaya Kemasan (${eligibleCount} item Bubur/Mie/Kwetiau/Bihun/Nasi/Baso/Weekend): ${formatRupiah(packagingFee)}*%0A`;
+                    message += `*Biaya Kemasan (${eligibleCount} item): ${formatRupiah(packagingFee)}*%0A`;
                 }
                 message += `%0A*TOTAL BAYAR: ${formatRupiah(grandTotal)}*%0A`;
                 
                 if (isTakeAway && eligibleCount > 0) {
                     message += "%0A(Mohon dibungkus untuk makanan berat)";
                 } else if (isTakeAway && eligibleCount === 0) {
-                    message += "%0A(Tidak ada biaya kemasan karena hanya memesan minuman/snack)";
+                    message += "%0A(Tidak ada biaya kemasan tambahan)";
                 } else {
                     message += "%0A(Makan di tempat)";
                 }
@@ -1353,9 +1398,10 @@
                 }
             });
 
-            // Smart Scroll Logic
+            // Smart Scroll Logic - FIX: Jangan scroll 'all' ke atas otomatis
             if (category === 'all') {
-                window.scrollTo({ top: document.querySelector('.category-nav').offsetTop - 120, behavior: 'smooth' });
+                // Kita biarkan user dimana dia, jangan pindahkan ke atas
+                // Jika user ingin ke atas, mereka bisa scroll sendiri atau tekan tombol back
             } else if (firstVisibleCard) {
                 const grid = firstVisibleCard.closest('.menu-grid');
                 const sectionHeader = grid.previousElementSibling;
