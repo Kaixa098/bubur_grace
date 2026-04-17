@@ -58,8 +58,6 @@
 
         .header-top { display: flex; justify-content: space-between; align-items: center; }
 
-        /* --- FIX: BRAND LOGO --- */
-        /* Menghapus cursor pointer dan pointer-events manipulasi agar tidak menangkap klik saat scroll */
         .brand { display: flex; align-items: center; gap: 10px; }
         .brand i { font-size: 1.5rem; color: var(--primary); }
         .brand-text h1 { font-size: 1.2rem; line-height: 1.1; color: var(--primary); margin: 0; }
@@ -108,7 +106,16 @@
         .section-header h2 { font-size: 1.4rem; margin: 0; }
         .section-line { height: 2px; background: var(--primary); flex-grow: 1; opacity: 0.3; }
         
-        .menu-grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+        /* --- WEEKEND STATUS --- */
+        .weekend-status {
+            font-size: 0.75rem; padding: 2px 8px; border-radius: 4px;
+            font-weight: 600; text-transform: uppercase;
+            margin-left: auto; margin-right: 0;
+        }
+        .status-available { background: #d4edda; color: #155724; }
+        .status-closed { background: #f8d7da; color: #721c24; }
+
+        .menu-grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); position: relative; }
 
         .no-result { text-align: center; padding: 40px 20px; color: #888; grid-column: 1 / -1; font-size: 0.9rem; display: none; }
         
@@ -161,6 +168,14 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.08);
         }
 
+        /* --- REVISI: WEEKEND LOCKED VISUALS --- */
+        /* Kita HAPUS filter grayscale agar tetap berwarna */
+        .menu-card.weekend-locked {
+            pointer-events: none; /* Mencegah klik */
+        }
+        /* Overlay dikosongkan agar gambar tetap terlihat penuh */
+        .weekend-overlay { display: none; }
+
         .card-img-wrapper {
             width: 100%;
             height: 140px;
@@ -176,7 +191,8 @@
             transition: transform 0.5s ease;
         }
 
-        .menu-card:hover .card-img-top {
+        /* Hanya hover zoom jika TIDAK terkunci */
+        .menu-card:not(.weekend-locked):hover .card-img-top {
             transform: scale(1.1); 
         }
         
@@ -199,6 +215,14 @@
             border: 1px solid var(--primary);
         }
         .add-btn:active { background: var(--primary); color: white; transform: scale(0.95); }
+
+        /* Tampilan tombol terkunci */
+        .add-btn.locked-btn {
+            background: #bdc3c7 !important;
+            color: #7f8c8d !important;
+            border-color: #bdc3c7 !important;
+            cursor: not-allowed !important;
+        }
 
         /* --- FLOATING BUTTONS --- */
         .fab-cart {
@@ -353,6 +377,11 @@
             font-family: 'Poppins', sans-serif; font-size: 1rem; outline: none; transition: all 0.2s;
             background: #fafafa;
         }
+        /* Styling khusus untuk Textarea Catatan */
+        textarea.input-field {
+            resize: none;
+            line-height: 1.4;
+        }
         .input-field:focus { border-color: var(--primary); background: white; }
         
         /* Shake Animation Class */
@@ -456,7 +485,6 @@
 
     <header>
         <div class="header-top">
-            <!-- FIX: Removed onclick event from .brand div to prevent accidental scroll-to-top -->
             <div class="brand">
                 <i class="fa-solid fa-bowl-rice"></i>
                 <div class="brand-text">
@@ -772,39 +800,42 @@
         </div>
 
         <!-- WEEKEND -->
-        <div class="section-header" data-category="weekend"><h2>Menu Weekend</h2><div class="section-line"></div></div>
-        <div class="menu-grid">
-            <!-- Nasi Uduk Polos -->
+        <div class="section-header" data-category="weekend">
+            <h2>Menu Weekend</h2>
+            <div class="section-line"></div>
+            <div id="weekendStatus" class="weekend-status status-available">Tersedia</div>
+        </div>
+        <div class="menu-grid" id="weekendGrid">
+            <!-- Overlay Warning (Hidden by default) -->
+            <div id="weekendOverlay" class="weekend-overlay">
+                <i class="fa-solid fa-calendar-xmark overlay-icon"></i>
+                <div class="overlay-text">Menu ini hanya<br>tersedia hari<br>Sabtu & Minggu</div>
+            </div>
+
             <div class="menu-card" data-category="weekend" data-price="12000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasipolos/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Nasi Uduk Polos</div><div class="card-footer"><span class="price">Rp 12.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <!-- Nasi Uduk + Ayam -->
             <div class="menu-card" data-category="weekend" data-price="37000" data-has-variants="true" data-options="Paha,Dada" data-variant-name="Ayam">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasiayam/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Favorit</div><div class="card-title">Nasi Uduk + Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <!-- Nasi Uduk + Telor -->
             <div class="menu-card" data-category="weekend" data-price="25000" data-has-variants="true" data-options="Dadar,Ceplok Balado" data-variant-name="Telur">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasitelur/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Nasi Uduk + Telor</div><div class="card-desc">Dadar / Ceplok Balado</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <!-- Ayam Goreng -->
             <div class="menu-card" data-category="weekend" data-price="25000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/ayamgoreng/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">New</div><div class="card-title">Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <!-- Sate Ayam Manis Snack (No Packaging) -->
             <div class="menu-card" data-category="weekend" data-price="25000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/satemanis3/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ayam Manis (3 Pcs)</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <!-- Sate Ayam Manis Snack (No Packaging) -->
             <div class="menu-card" data-category="weekend" data-price="35000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/satemanis5/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ayam Manis (5 Pcs)</div><div class="card-footer"><span class="price">Rp 35.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <!-- Sate Ayam Manis Snack (No Packaging) -->
             <div class="menu-card" data-category="weekend" data-price="67000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/satemanis10/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ayam Manis (10 Pcs)</div><div class="card-footer"><span class="price">Rp 67.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
@@ -877,6 +908,12 @@
                 <input type="text" id="callerNameInput" class="input-field" placeholder="Contoh: Mas Budi">
             </div>
 
+            <!-- FITUR BARU: CATATAN TAMBAHAN -->
+            <div class="input-section-container">
+                <label class="input-label">Catatan Tambahan (Opsional)</label>
+                <textarea id="notesInput" class="input-field" rows="2" placeholder="Contoh: Tolong banyakin cakwenya / Jangan pakai bawang..."></textarea>
+            </div>
+
             <div class="takeaway-container">
                 <div class="takeaway-label">
                     <label class="switch">
@@ -911,7 +948,48 @@
             });
             window.addEventListener('scroll', handleScroll);
             initSpyScroll();
+            checkWeekendAvailability(); // Jalankan pengecekan hari saat load
         });
+
+        // --- REAL TIME WEEKEND FEATURE (REVISI VISUAL) ---
+        function checkWeekendAvailability() {
+            const now = new Date();
+            const day = now.getDay(); // 0 = Minggu, 6 = Sabtu
+            
+            // 0 (Minggu) atau 6 (Sabtu) = Weekend
+            const isWeekend = (day === 0 || day === 6);
+            
+            const weekendGrid = document.getElementById('weekendGrid');
+            const statusBadge = document.getElementById('weekendStatus');
+            const overlay = document.getElementById('weekendOverlay');
+            const weekendCards = weekendGrid.querySelectorAll('.menu-card');
+
+            if (isWeekend) {
+                // Jika hari Sabtu/Minggu
+                statusBadge.innerText = "Tersedia";
+                statusBadge.className = "weekend-status status-available";
+                overlay.style.display = 'none'; // Sembunyikan overlay (tetapi gambar terlihat penuh)
+                
+                weekendCards.forEach(card => {
+                    card.classList.remove('weekend-locked');
+                    const btn = card.querySelector('.add-btn');
+                    btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+                    btn.classList.remove('locked-btn');
+                });
+            } else {
+                // Jika hari Biasa (Senin - Jumat)
+                statusBadge.innerText = "Tutup";
+                statusBadge.className = "weekend-status status-closed";
+                overlay.style.display = 'none'; // Hapus overlay putih agar gambar terlihat berwarna
+                
+                weekendCards.forEach(card => {
+                    card.classList.add('weekend-locked'); // Tambah class untuk memblokir pointer events
+                    const btn = card.querySelector('.add-btn');
+                    btn.innerHTML = '<i class="fa-solid fa-lock"></i>'; // Ikon gembok
+                    btn.classList.add('locked-btn'); // Warna tombol abu-abu
+                });
+            }
+        }
 
         // --- SPY SCROLL LOGIC (Auto Highlight Category) ---
         let isFilterActive = false;
@@ -975,6 +1053,13 @@
             const btn = e.target.closest('.add-btn');
             if (btn) {
                 const card = btn.closest('.menu-card');
+                
+                // NEW: Cek jika tombol diklik adalah menu yang dikunci (Weekend)
+                if(card.classList.contains('weekend-locked')) {
+                    showToast("Menu Weekend hanya tersedia hari Sabtu & Minggu");
+                    return;
+                }
+
                 if (card) {
                     if (card.getAttribute('data-has-variants') === 'true') {
                         showVariantModal(card);
@@ -1209,6 +1294,7 @@
             const isTakeAway = document.getElementById('takeawayToggle').checked;
             const tableNumberInput = document.getElementById('tableNumberInput');
             const callerNameInput = document.getElementById('callerNameInput');
+            const notesInput = document.getElementById('notesInput'); // NEW: Ambil notes
             
             let identifier = "";
             let identifierType = "";
@@ -1274,6 +1360,11 @@
                     }
                     message += `- ${item.name} (${item.qty}x)%0A`;
                 });
+
+                // TAMBAHAN LOGIC: Jika ada catatan, masukan ke pesan WA
+                if (notesInput.value.trim() !== "") {
+                    message += `%0A%0A*Catatan:* ${notesInput.value}`;
+                }
 
                 message += `%0A*Subtotal Makanan: ${formatRupiah(subtotal)}*%0A`;
                 const packagingFee = isTakeAway ? (eligibleCount * PACKAGING_FEE_PER_ITEM) : 0;
