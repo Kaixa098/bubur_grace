@@ -361,11 +361,13 @@
         /* Row 2: Controls */
         .cart-item-row2 {
             display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+            flex-wrap: wrap; /* Fix Overflow */
         }
 
         /* Qty Buttons */
         .item-controls {
             display: flex; align-items: center; background: #f8f8f8; border-radius: 20px; padding: 2px 6px;
+            flex-shrink: 0;
         }
         .qty-btn { 
             width: 28px; height: 28px; border-radius: 50%; background: white; font-weight: bold; 
@@ -384,17 +386,24 @@
             font-size: 0.85rem;
             font-family: 'Poppins', sans-serif;
             outline: none; color: #555; background: #fafafa;
+            min-width: 0; /* Fix Flexbox Overflow */
         }
         .item-note-input:focus { border-color: var(--primary); background: white; }
 
-        /* STATUS BADGE (Pengganti Toggle) */
+        /* STATUS BADGE (PENGGANTI TOGGLE) - FIX OVERFLOW */
         .item-status-badge {
-            font-size: 0.75rem; font-weight: 600; padding: 6px 12px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: 600; padding: 6px 10px; border-radius: 20px;
             display: flex; align-items: center; gap: 5px;
             cursor: pointer;
             transition: all 0.2s;
             user-select: none;
             white-space: nowrap;
+            
+            /* CSS FIX FOR OVERFLOW */
+            max-width: 100px; 
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-shrink: 0;
         }
         .badge-dine { background: #fff5eb; color: var(--primary); border: 1px solid var(--primary); }
         .badge-dine:active { background: #f0e0e0; }
@@ -498,6 +507,7 @@
             <button class="cat-pill" data-target="mie-lebar" onclick="filterCat('mie-lebar')">Mie Lebar</button>
             <button class="cat-pill" data-target="mie-yamin" onclick="filterCat('mie-yamin')">Mie Yamin</button>
             <button class="cat-pill" data-target="bihun" onclick="filterCat('bihun')">Bihun</button>
+            <button class="cat-pill" data-target="kwetiau" onclick="filterCat('kwetiau')">Kwetiau</button>
             <button class="cat-pill" data-target="jajanan" onclick="filterCat('jajanan')">Aneka Jajanan</button>
             <button class="cat-pill" data-target="baso" onclick="filterCat('baso')">Baso & Pangsit Kuah</button>
             <button class="cat-pill" data-target="weekend" onclick="filterCat('weekend')">Menu Weekend</button>
@@ -578,40 +588,24 @@
             </div>
         </div>
 
-        <!-- MIE YAMIN (SECTION BARU) -->
+        <!-- MIE YAMIN (REVISED: GABUNG KECIL & LEBAR) -->
         <div class="section-header" data-category="mie-yamin"><h2>Mie Yamin Grace</h2><div class="section-line"></div></div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="mie-yamin" data-price="27000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminbiasak/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Mie Yamin Biasa (Kecil)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            <div class="menu-card" data-category="mie-yamin" data-price="27000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Ukuran Mie">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminbiasa/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Mie Yamin Biasa</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="mie-yamin" data-price="27000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminbiasal/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Mie Yamin Biasa (Lebar)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            <div class="menu-card" data-category="mie-yamin" data-price="32000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Ukuran Mie">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminbaso/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Mie Yamin Baso</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="mie-yamin" data-price="32000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminbasok/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Mie Yamin Baso (Kecil)</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            <div class="menu-card" data-category="mie-yamin" data-price="32000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Ukuran Mie">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminpangsit/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Mie Yamin Pangsit Rebus</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="mie-yamin" data-price="32000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminbasol/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Mie Yamin Baso (Lebar)</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="mie-yamin" data-price="32000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminpangsitk/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Mie Yamin Pangsit (Kecil)</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="mie-yamin" data-price="32000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminpangsitl/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Mie Yamin Pangsit (Lebar)</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="mie-yamin" data-price="37000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminkomplitk/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="badge">Komplit</div><div class="card-title">Mie Yamin Komplit (Kecil)</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="mie-yamin" data-price="37000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminkomplitl/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="badge">Komplit</div><div class="card-title">Mie Yamin Komplit (Lebar)</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            <div class="menu-card" data-category="mie-yamin" data-price="37000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Ukuran Mie">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminkomplit/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="badge">Komplit</div><div class="card-title">Mie Yamin Komplit</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
 
@@ -633,6 +627,27 @@
             <div class="menu-card" data-category="bihun" data-price="37000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/bihunkomplit/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Komplit</div><div class="card-title">Bihun Komplit</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+        </div>
+
+        <!-- KWETIAU (TAMBAHAN BARU) -->
+        <div class="section-header" data-category="kwetiau"><h2>Kwetiau Grace</h2><div class="section-line"></div></div>
+        <div class="menu-grid">
+            <div class="menu-card" data-category="kwetiau" data-price="27000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kwetiaubiasa/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Kwetiau Ayam Biasa</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="kwetiau" data-price="32000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kwetiaubaso/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Kwetiau Baso</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="kwetiau" data-price="32000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kwetiaupangsit/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Kwetiau Pangsit Rebus</div><div class="card-footer"><span class="price">Rp 32.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="kwetiau" data-price="37000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kwetiaukomplit/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="badge">Komplit</div><div class="card-title">Kwetiau Komplit</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
 
@@ -935,7 +950,8 @@
                         <div class="radio-circle"></div>
                         <div style="text-align:left;">
                             <div style="font-weight:600; color:#25D366;">Bungkus (Takeaway)</div>
-                            <div style="font-size:0.75rem; color:#888;">+ Rp 3.000 / item</div>
+                            <!-- Diupdate: Hanya menu berat -->
+                            <div style="font-size:0.75rem; color:#888;">+ Biaya Bungkus (Menu Berat)</div>
                         </div>
                     </label>
                 </div>
@@ -1089,6 +1105,11 @@
         let currentVariantCard = null;
         let selectedOrderType = 'dine-in'; // Default state
         const PACKAGING_FEE_PER_ITEM = 3000;
+        
+        // Definisi Kategori Makanan Berat
+        const MAIN_MEAL_CATEGORIES = [
+            'bubur', 'mie-kecil', 'mie-lebar', 'mie-yamin', 'bihun', 'kwetiau', 'baso', 'weekend'
+        ];
 
         document.body.addEventListener('click', function(e) {
             const btn = e.target.closest('.add-btn');
@@ -1201,7 +1222,7 @@
             if (existingItem) {
                 existingItem.qty++;
             } else {
-                cart.push({ name, price, qty:1, category, packaging, orderType, notes: '' });
+                cart.push({ name, price, category, qty:1, packaging, orderType, notes: '' });
             }
             updateCartUI();
             showToast();
@@ -1252,7 +1273,13 @@
                 cart.forEach((item, index) => {
                     totalQty += item.qty;
                     let unitPrice = item.price;
-                    if (item.orderType === 'takeaway' && item.packaging !== 'no') { unitPrice += PACKAGING_FEE_PER_ITEM; }
+                    
+                    // LOGIC BARU: Cek apakah makanan berat
+                    const isMainMeal = MAIN_MEAL_CATEGORIES.includes(item.category);
+                    
+                    if (item.orderType === 'takeaway' && item.packaging !== 'no' && isMainMeal) {
+                        unitPrice += PACKAGING_FEE_PER_ITEM;
+                    }
 
                     // STRUKTUR KARTU BARU (LEBIH RAPIH)
                     const itemDiv = document.createElement('div');
@@ -1281,10 +1308,10 @@
                             <!-- Input Catatan -->
                             <input type="text" class="item-note-input" placeholder="Catatan..." value="${item.notes}" onchange="updateItemNote(${index}, this.value)">
                             
-                            <!-- STATUS BADGE (PENGGANTI TOGGLE) -->
+                            <!-- STATUS BADGE (PENGGANTI TOGGLE) - FIX OVERFLOW -->
                             <div class="item-status-badge ${item.orderType === 'dine-in' ? 'badge-dine' : 'badge-away'}" onclick="toggleItemOrderType(${index})">
                                 <i class="fa-solid ${item.orderType === 'dine-in' ? 'fa-utensils' : 'fa-bag-shopping'}"></i>
-                                <span>${item.orderType === 'dine-in' ? 'Makan Di Tempat' : 'Bungkus'}</span>
+                                <span>${item.orderType === 'dine-in' ? 'Dine In' : 'Bungkus'}</span>
                             </div>
                         </div>
                     `;
@@ -1303,7 +1330,13 @@
             let total = 0;
             cart.forEach(item => {
                 let unitPrice = item.price;
-                if (item.orderType === 'takeaway' && item.packaging !== 'no') { unitPrice += PACKAGING_FEE_PER_ITEM; }
+                
+                // LOGIC BARU DI TOTAL
+                const isMainMeal = MAIN_MEAL_CATEGORIES.includes(item.category);
+                if (item.orderType === 'takeaway' && item.packaging !== 'no' && isMainMeal) {
+                    unitPrice += PACKAGING_FEE_PER_ITEM;
+                }
+                
                 total += unitPrice * item.qty;
             });
             totalEl.innerText = formatRupiah(total);
