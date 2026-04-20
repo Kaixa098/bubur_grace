@@ -687,7 +687,7 @@
             </div>
         </div>
 
-        <!-- KATEGORI: NASI UDUK AYAM (SMART LOCK) -->
+        <!-- KATEGORI: NASI UDUK AYAM (SMART LOCK & MOVEABLE) -->
         <div class="section-header" data-category="nasi-uduk-ayam">
             <h2>Nasi Uduk Ayam Goreng</h2>
             <div class="section-line"></div>
@@ -710,7 +710,7 @@
             </div>
         </div>
 
-        <!-- KATEGORI: NASI UDUK TELUR (SMART LOCK - VARIANT PRESERVED) -->
+        <!-- KATEGORI: NASI UDUK TELUR (SMART LOCK & MOVEABLE - VARIANT PRESERVED) -->
         <div class="section-header" data-category="nasi-uduk-telur">
             <h2>Nasi Uduk Telur</h2>
             <div class="section-line"></div>
@@ -1041,7 +1041,7 @@
             }, 10000);
         });
 
-        // --- SMART LOCK LOGIC (NASI UDUK) ---
+        // --- SMART LOCK LOGIC (NASI UDUK) & POSITIONING ---
         // Buka HARI SABTU (6) & MINGGU (0)
         function checkWeekendLocks() {
             const now = new Date();
@@ -1050,7 +1050,42 @@
             const isWeekend = (day === 0 || day === 6);
             
             const weekendCards = document.querySelectorAll('.weekend-only');
+            
+            // --- LOGIC PERGERAKAN SECTION ---
+            const sectionUdukAyam = document.querySelector('div[data-category="nasi-uduk-ayam"]');
+            const gridUdukAyam = sectionUdukAyam.nextElementSibling;
+            const sectionUdukTelur = document.querySelector('div[data-category="nasi-uduk-telur"]');
+            const gridUdukTelur = sectionUdukTelur.nextElementSibling;
+            const mainContainer = document.getElementById('mainContainer');
+            const basoGrid = document.getElementById('basoGrid');
 
+            if (isWeekend) {
+                // BUKA: Pindahkan ke posisi semula (setelah Baso)
+                // Cek posisi untuk menghindari flicker jika sudah benar
+                if (basoGrid && basoGrid.nextElementSibling !== sectionUdukAyam) {
+                    // Insert Uduk Ayam Header after BasoGrid
+                    basoGrid.parentNode.insertBefore(sectionUdukAyam, basoGrid.nextElementSibling);
+                    // Insert Uduk Ayam Grid after Uduk Ayam Header
+                    mainContainer.insertBefore(gridUdukAyam, sectionUdukAyam.nextElementSibling);
+                    // Insert Uduk Telur Header after Uduk Ayam Grid
+                    mainContainer.insertBefore(sectionUdukTelur, gridUdukAyam.nextElementSibling);
+                    // Insert Uduk Telur Grid after Uduk Telur Header
+                    mainContainer.insertBefore(gridUdukTelur, sectionUdukTelur.nextElementSibling);
+                }
+            } else {
+                // TUTUP: Pindahkan ke paling bawah
+                // Cek apakah sudah paling bawah (sebelum noResult)
+                const noResult = document.getElementById('noResultMsg');
+                if (noResult && noResult.previousElementSibling !== gridUdukTelur) {
+                    // Append elements ke akhir container
+                    mainContainer.appendChild(sectionUdukAyam);
+                    mainContainer.appendChild(gridUdukAyam);
+                    mainContainer.appendChild(sectionUdukTelur);
+                    mainContainer.appendChild(gridUdukTelur);
+                }
+            }
+
+            // --- LOGIC LOCK STYLE KARTU ---
             weekendCards.forEach(card => {
                 const btn = card.querySelector('.add-btn');
                 
