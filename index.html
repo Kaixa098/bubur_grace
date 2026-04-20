@@ -76,58 +76,10 @@
         #searchInput:focus { background: white; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1); }
         .clear-search { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); cursor: pointer; display: none; font-size: 1.2rem; padding: 10px; }
 
-        /* --- HERO SECTION --- */
-        .hero-section {
-            position: relative;
-            width: 100%;
-            height: 220px;
-            background-image: url('https://picsum.photos/seed/buburhero/800/400');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            overflow: hidden;
-            margin-bottom: 15px;
-        }
-        .hero-overlay {
-            position: absolute; top:0; left:0; right:0; bottom:0;
-            background: rgba(0,0,0,0.5);
-        }
-        .hero-content {
-            position: relative; z-index: 2;
-            color: white;
-            padding: 20px;
-            animation: fadeInUp 1s ease;
-        }
-        .hero-content h2 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-        .hero-content p {
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            opacity: 0.9;
-        }
-        .btn-cta-hero {
-            background: var(--primary);
-            color: white;
-            padding: 10px 25px;
-            border-radius: 25px;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(211, 84, 0, 0.4);
-            display: inline-block;
-            transition: transform 0.2s;
-        }
-        .btn-cta-hero:active { transform: scale(0.95); }
-
         /* --- CATEGORY NAV --- */
         .category-nav {
             background: var(--bg-color); padding: 10px 0;
-            position: sticky; top: 110px;
+            position: sticky; top: var(--header-height-mobile);
             z-index: 950;
             overflow-x: auto; white-space: nowrap;
             border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -158,6 +110,7 @@
 
         .no-result { text-align: center; padding: 40px 20px; color: #888; grid-column: 1 / -1; font-size: 0.9rem; display: none; }
         
+        /* Floating Icon Animation for Empty States */
         .empty-state-icon {
             font-size: 3rem; color: #e0e0e0; margin-bottom: 15px;
             display: inline-block;
@@ -192,6 +145,7 @@
             height: 140px;
             overflow: hidden;
             background-color: #f0f0f0;
+            pointer-events: none;
         }
         
         .card-img-top { 
@@ -207,14 +161,8 @@
         
         .card-body { padding: 12px; display: flex; flex-direction: column; flex-grow: 1; }
         
-        .badge { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; background: #FFE0B2; color: #E65100; font-weight: 700; width: fit-content; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 4px; }
+        .badge { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; background: #FFE0B2; color: #E65100; font-weight: 700; width: fit-content; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .badge.bestseller {
-            background: linear-gradient(45deg, #FFD700, #FFA500);
-            color: white;
-            animation: pulseBadge 2s infinite;
-        }
-
         .card-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 5px; color: var(--secondary); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; pointer-events: none; }
         
         .card-desc { font-size: 0.75rem; color: #888; margin-bottom: 10px; display: none; pointer-events: none; }
@@ -228,7 +176,6 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 1.2rem; transition: all 0.2s;
             border: 1px solid var(--primary);
-            z-index: 2;
         }
         .add-btn:active { background: var(--primary); color: white; transform: scale(0.95); }
 
@@ -463,43 +410,6 @@
         #toast.error { background-color: #e74c3c; }
         #toast.show { visibility: visible; opacity: 1; bottom: 120px; transform: translateX(-50%) translateY(-10px); }
 
-        /* --- TESTIMONIALS --- */
-        .testimonials-section {
-            margin-top: 50px;
-            margin-bottom: 30px;
-            overflow: hidden;
-        }
-        .testimonials-header { text-align: center; margin-bottom: 20px; }
-        .testimonials-header h3 { font-size: 1.5rem; color: var(--secondary); }
-        
-        .testimonial-scroll {
-            display: flex;
-            overflow-x: auto;
-            gap: 15px;
-            padding: 10px 5px 20px 5px;
-            scroll-snap-type: x mandatory;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .testimonial-scroll::-webkit-scrollbar { display: none; }
-
-        .testimonial-card {
-            min-width: 280px;
-            max-width: 320px;
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            scroll-snap-align: center;
-            border: 1px solid #eee;
-        }
-        .t-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .t-avatar { width: 40px; height: 40px; border-radius: 50%; background: #eee; overflow: hidden; }
-        .t-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .t-name { font-weight: 700; color: var(--secondary); font-size: 0.9rem; }
-        .t-stars { color: #f1c40f; font-size: 0.8rem; }
-        .t-text { font-size: 0.85rem; color: #666; font-style: italic; line-height: 1.5; }
-
         footer { background: var(--secondary); color: white; text-align: center; padding: 40px 20px 120px; margin-top: 50px; }
         .contact-box { background: rgba(255,255,255,0.1); display: inline-block; padding: 15px 30px; border-radius: 10px; margin-top: 15px; }
         .contact-item { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 5px 0; font-size: 0.95rem; }
@@ -516,8 +426,6 @@
             .category-nav { top: 110px; } 
             header { padding: 20px 5%; flex-direction: row; flex-wrap: wrap; }
             .brand-text h1 { font-size: 1.8rem; }
-            .hero-section { height: 350px; }
-            .hero-content h2 { font-size: 3rem; }
         }
 
         /* --- ANIMATIONS --- */
@@ -535,21 +443,9 @@
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
-        @keyframes pulseText {
-            0% { opacity: 1; }
-            50% { opacity: 0.8; }
-            100% { opacity: 1; }
-        }
-        @keyframes pulseBadge {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(255, 215, 0, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
-        }
     </style>
 </head>
 <body>
-
-   
 
     <header>
         <div class="header-top">
@@ -568,18 +464,6 @@
         </div>
     </header>
 
-    <!-- HERO SECTION -->
-    <div class="hero-section">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h2>Kenikmatan di Setiap Sendok</h2>
-            <p>Bubur Ayam lembut, Mie Yaman gurih, dan Sate Manis yang bikin nagih.</p>
-            <div class="btn-cta-hero" onclick="document.querySelector('.cat-pill[data-target=\'bubur\']').click(); window.scrollBy(0, 200);">
-                Pesan Sekarang
-            </div>
-        </div>
-    </div>
-
     <nav class="category-nav">
         <div class="cat-list">
             <button class="cat-pill active" data-target="all" onclick="filterCat('all')">Semua</button>
@@ -588,15 +472,19 @@
             <button class="cat-pill" data-target="mie-lebar" onclick="filterCat('mie-lebar')">Mie Lebar</button>
             <button class="cat-pill" data-target="mie-yamin" onclick="filterCat('mie-yamin')">Mie Yamin</button>
             
+            <!-- REORDERED START HERE -->
             <button class="cat-pill" data-target="kwetiau" onclick="filterCat('kwetiau')">Kwetiau</button>
             <button class="cat-pill" data-target="bihun" onclick="filterCat('bihun')">Bihun</button>
-            <button class="cat-pill" data-target="baso" onclick="filterCat('baso')">Baso & Pangsit</button>
-            <button class="cat-pill" data-target="nasi-uduk-ayam" onclick="filterCat('nasi-uduk-ayam')">Nasi Uduk</button>
-            <button class="cat-pill" data-target="sate-manis" onclick="filterCat('sate-manis')">Sate Manis</button>
-            <button class="cat-pill" data-target="santan" onclick="filterCat('santan')">Bubur Santan</button>
+            <button class="cat-pill" data-target="baso" onclick="filterCat('baso')">Baso & Pangsit Kuah</button>
+            <button class="cat-pill" data-target="nasi-uduk-ayam" onclick="filterCat('nasi-uduk-ayam')">Nasi Uduk Ayam</button>
+            <button class="cat-pill" data-target="nasi-uduk-telur" onclick="filterCat('nasi-uduk-telur')">Nasi Uduk Telur</button>
+            <button class="cat-pill" data-target="sate-manis" onclick="filterCat('sate-manis')">Sate Ayam Manis</button>
+            <button class="cat-pill" data-target="santan" onclick="filterCat('santan')">Bubur Santan Manis</button>
             <button class="cat-pill" data-target="dimsum" onclick="filterCat('dimsum')">Dimsum</button>
-            <button class="cat-pill" data-target="gorengan" onclick="filterCat('gorengan')">Gorengan</button>
-            <button class="cat-pill" data-target="jajanan" onclick="filterCat('jajanan')">Sate Jajanan</button>
+            <button class="cat-pill" data-target="gorengan" onclick="filterCat('gorengan')">Cakwe & Pangsit Goreng</button>
+            <button class="cat-pill" data-target="jajanan" onclick="filterCat('jajanan')">Aneka Sate</button>
+            <!-- REORDERED END HERE -->
+
             <button class="cat-pill" data-target="kopi" onclick="filterCat('kopi')">Kopi</button>
             <button class="cat-pill" data-target="minuman" onclick="filterCat('minuman')">Minuman</button>
         </div>
@@ -614,7 +502,7 @@
             </div>
             <div class="menu-card" data-category="bubur" data-price="28000">
                 <div class="card-img-wrapper"><img src="foto/buburtelor.JPG" class="card-img-top" alt="Bubur Telur"></div>
-                <div class="card-body"><div class="badge bestseller"><i class="fa-solid fa-crown"></i> Best Seller</div><div class="card-title">Bubur + Telur Ayam Kampung</div><div class="card-footer"><span class="price">Rp 28.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+                <div class="card-body"><div class="badge">Best Seller</div><div class="card-title">Bubur + Telur Ayam Kampung</div><div class="card-footer"><span class="price">Rp 28.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
             <div class="menu-card" data-category="bubur" data-price="15000">
                 <div class="card-img-wrapper"><img src="foto/buburpolos.JPG" class="card-img-top" alt="Bubur Polos"></div>
@@ -689,9 +577,11 @@
             </div>
             <div class="menu-card" data-category="mie-yamin" data-price="37000" data-has-variants="true" data-options="Kecil,Lebar" data-variant-name="Ukuran Mie">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/yaminkomplit/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="badge bestseller"><i class="fa-solid fa-star"></i> Favorit</div><div class="card-title">Mie Yamin Komplit</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+                <div class="card-body"><div class="badge">Komplit</div><div class="card-title">Mie Yamin Komplit</div><div class="card-desc">Pilihan: Mie Kecil / Lebar</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
+
+        <!-- REORDERED SECTION START HERE -->
 
         <!-- KWETIAU -->
         <div class="section-header" data-category="kwetiau"><h2>Kwetiau Grace</h2><div class="section-line"></div></div>
@@ -758,24 +648,55 @@
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/pangsitrebus/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Pangsit Rebus Sawi (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
+            <div class="menu-card" data-category="baso" data-price="27000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/pangsitsapi/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Pangsit Rebus Sapi (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="baso" data-price="27000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/pangsitcampur/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Pangsit Rebus Campur (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
         </div>
 
-        <!-- KATEGORI: NASI UDUK (SMART LOCK) -->
+        <!-- KATEGORI: NASI UDUK AYAM (SMART LOCK) -->
         <div class="section-header" data-category="nasi-uduk-ayam">
-            <h2>Nasi Uduk & Ayam</h2>
+            <h2>Nasi Uduk Ayam Goreng</h2>
             <div class="section-line"></div>
             <div style="font-size: 0.7rem; color: var(--primary); margin-left: auto; font-weight: 600;">
                 <i class="fa-solid fa-calendar-weekend"></i> Weekend Only
             </div>
         </div>
         <div class="menu-grid">
+            <div class="menu-card weekend-only" data-category="nasi-uduk-ayam" data-price="12000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasipolos/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Nasi Uduk Polos</div><div class="card-footer"><span class="price">Rp 12.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
             <div class="menu-card weekend-only" data-category="nasi-uduk-ayam" data-price="37000" data-has-variants="true" data-options="Paha,Dada" data-variant-name="Ayam">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasiayam/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="badge bestseller"><i class="fa-solid fa-thumbs-up"></i> Wajib Coba</div><div class="card-title">Nasi Uduk + Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+                <div class="card-body"><div class="badge">Favorit</div><div class="card-title">Nasi Uduk + Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card weekend-only" data-category="nasi-uduk-ayam" data-price="25000" data-has-variants="true" data-options="Paha,Dada" data-variant-name="Potongan">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/ayamgoreng/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="badge">New</div><div class="card-title">Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
 
-        <!-- SATE MANIS -->
+        <!-- KATEGORI: NASI UDUK TELUR (SMART LOCK - VARIANT PRESERVED) -->
+        <div class="section-header" data-category="nasi-uduk-telur">
+            <h2>Nasi Uduk Telur</h2>
+            <div class="section-line"></div>
+            <div style="font-size: 0.7rem; color: var(--primary); margin-left: auto; font-weight: 600;">
+                <i class="fa-solid fa-calendar-weekend"></i> Weekend Only
+            </div>
+        </div>
+        <div class="menu-grid">
+            <div class="menu-card weekend-only" data-category="nasi-uduk-telur" data-price="25000" data-has-variants="true" data-options="Dadar,Ceplok Balado" data-variant-name="Telur">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasitelur/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Nasi Uduk + Telor</div><div class="card-desc">Dadar / Ceplok Balado</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+        </div>
+
+        <!-- SATE AYAM MANIS -->
         <div class="section-header" data-category="sate-manis"><h2>Sate Ayam Manis</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="sate-manis" data-price="25000" data-packaging="no">
@@ -786,6 +707,10 @@
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/satemanis5/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Ayam Manis (5 Pcs)</div><div class="card-footer"><span class="price">Rp 35.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
+            <div class="menu-card" data-category="sate-manis" data-price="67000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/satemanis10/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Sate Ayam Manis (10 Pcs)</div><div class="card-footer"><span class="price">Rp 67.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
         </div>
 
         <!-- SANTAN -->
@@ -794,6 +719,14 @@
             <div class="menu-card" data-category="santan" data-price="20000" data-has-variants="true" data-options="Tidak Dingin,Dingin" data-variant-name="Suhu">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/bkacangijo/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Bubur Kacang Ijo</div><div class="card-desc">Pilihan: Tidak Dingin / Dingin</div><div class="card-footer"><span class="price">Rp 20.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="santan" data-price="20000" data-has-variants="true" data-options="Tidak Dingin,Dingin" data-variant-name="Suhu">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/bketanitem/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Bubur Ketan Item</div><div class="card-desc">Pilihan: Tidak Dingin / Dingin</div><div class="card-footer"><span class="price">Rp 20.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="santan" data-price="20000" data-has-variants="true" data-options="Tidak Dingin,Dingin" data-variant-name="Suhu">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/bmix/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="badge">Mix</div><div class="card-title">Bubur Mix</div><div class="card-desc">Ketan Item + Kacang Ijo. (Tidak Dingin/Dingin)</div><div class="card-footer"><span class="price">Rp 20.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
 
@@ -808,6 +741,14 @@
                 <div class="card-img-wrapper"><img src="foto/dimsum5pcs.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Dimsum Ayam Isi 5</div><div class="card-footer"><span class="price">Rp 35.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
+            <div class="menu-card" data-category="dimsum" data-price="67000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/dimsum10/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="badge">Jumbo</div><div class="card-title">Dimsum Ayam Isi 10</div><div class="card-footer"><span class="price">Rp 67.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="dimsum" data-price="95000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/dimsumfrozen/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="badge">Frozen</div><div class="card-title">Dimsum Ayam Frozen Isi 15</div><div class="card-footer"><span class="price">Rp 95.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
         </div>
 
         <!-- CAKWE & PANGSIT GORENG -->
@@ -817,9 +758,25 @@
                 <div class="card-img-wrapper"><img src="foto/cakwe.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Cakwe Goreng</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
+            <div class="menu-card" data-category="gorengan" data-price="8000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/cakweiris/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Extra Cakwe Iris</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="gorengan" data-price="27000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/pangsitgoreng/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Pangsit Goreng Isi Ayam (5 Pcs)</div><div class="card-footer"><span class="price">Rp 27.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="gorengan" data-price="10000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kulitpangsit/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Kulit Pangsit (3 Pcs)</div><div class="card-footer"><span class="price">Rp 10.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="gorengan" data-price="10000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kulitpangsitbasah/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Kulit Pangsit Basah (10 Pcs)</div><div class="card-footer"><span class="price">Rp 10.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
         </div>
 
-        <!-- ANEKA SATE -->
+        <!-- ANEKA SATE (RENAMED FROM ANEKA JAJANAN) -->
         <div class="section-header" data-category="jajanan"><h2>Aneka Sate</h2><div class="section-line"></div></div>
         <div class="menu-grid">
             <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
@@ -827,8 +784,24 @@
                 <div class="card-body"><div class="card-title">Sate Ati</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
             <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="foto/ampla.JPG" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Sate Ampela</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/usus.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sate Usus</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="foto/puyuh.JPG" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Sate Telur Puyuh</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="foto/jantung.jpeg" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Sate Jantung</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="jajanan" data-price="6000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="foto/jendil.jpeg" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Sate Jendil</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
 
@@ -839,9 +812,25 @@
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kopio/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Kopi O</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 15.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
+            <div class="menu-card" data-category="kopi" data-price="17000" data-has-variants="true" data-options="Panas,Dingin" data-variant-name="Suhu">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kopisugar/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Kopi O + Gula</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 17.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="kopi" data-price="17000" data-has-variants="true" data-options="Panas,Dingin" data-variant-name="Suhu">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kopimilk/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Kopi O + Susu</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 17.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
             <div class="menu-card" data-category="kopi" data-price="25000" data-has-variants="true" data-options="Panas,Dingin" data-variant-name="Suhu">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kopiegg2/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="badge bestseller"><i class="fa-solid fa-mug-hot"></i> Viral</div><div class="card-title">Kopi O + 2 Egg</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+                <div class="card-body"><div class="badge">Special</div><div class="card-title">Kopi O + 2 Egg</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="kopi" data-price="35000" data-has-variants="true" data-options="Panas,Dingin" data-variant-name="Suhu">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/kopiegg4/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Kopi O + 4 Egg</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 35.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="kopi" data-price="8000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/telurrebus/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="badge">Pelengkap</div><div class="card-title">Telur Rebus</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
 
@@ -852,9 +841,49 @@
                 <div class="card-img-wrapper"><img src="foto/kacangijo.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Sari Kacang Ijo</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 17.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
+            <div class="menu-card" data-category="minuman" data-price="17000" data-has-variants="true" data-options="Panas,Dingin" data-variant-name="Suhu">
+                <div class="card-img-wrapper"><img src="foto/kedelai.JPG" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Susu Kacang Kedelai</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 17.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="minuman" data-price="17000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/thaitea/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Thai Tea</div><div class="card-footer"><span class="price">Rp 17.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="minuman" data-price="17000" data-has-variants="true" data-options="Panas,Dingin" data-variant-name="Suhu">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/koffiesusu/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Koffie Susu GRace</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 17.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="minuman" data-price="17000" data-has-variants="true" data-options="Panas,Dingin" data-variant-name="Suhu">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/koffielatte/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Koffie Latte GRace</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 17.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="minuman" data-price="17000" data-has-variants="true" data-options="Panas,Dingin" data-variant-name="Suhu">
+                <div class="card-img-wrapper"><img src="foto/jerukmurni.JPG" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Jeruk Murni</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 17.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="minuman" data-price="6000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/tea/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Teh Tawar</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="minuman" data-price="8000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/sweettea/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Teh Manis</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="minuman" data-price="8000" data-has-variants="true" data-options="Tawar,Manis" data-variant-name="Rasa">
+                <div class="card-img-wrapper"><img src="foto/estehmapa.JPG" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Es Teh</div><div class="card-desc">Pilihan: Tawar / Manis</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
             <div class="menu-card" data-category="minuman" data-price="6000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/aqua/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Aqua Botol</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="minuman" data-price="6000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/stee/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">S-tee</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="minuman" data-price="2000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/esbatu/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Extra Es Batu</div><div class="card-footer"><span class="price">Rp 2.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
 
@@ -862,47 +891,6 @@
             <i class="fa-solid fa-utensils empty-state-icon"></i>
             <div style="margin-top:10px;">Yah, menu yang dicari tidak ketemu.</div>
         </div>
-
-        <!-- TESTIMONIALS SECTION -->
-        <div class="testimonials-section">
-            <div class="testimonials-header">
-                <h3>Kata Pelanggan Kami</h3>
-                <p style="font-size:0.9rem; color:#888;">Ribuan pelanggan puas dengan rasa kami</p>
-            </div>
-            <div class="testimonial-scroll">
-                <div class="testimonial-card">
-                    <div class="t-header">
-                        <div class="t-avatar"><img src="https://picsum.photos/seed/user1/50/50" alt="User"></div>
-                        <div>
-                            <div class="t-name">Rina S.</div>
-                            <div class="t-stars">★★★★★</div>
-                        </div>
-                    </div>
-                    <div class="t-text">"Buburnya beneran lembut, ayam kampungnya gurih banget. Langganan tiap minggu siang!"</div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="t-header">
-                        <div class="t-avatar"><img src="https://picsum.photos/seed/user2/50/50" alt="User"></div>
-                        <div>
-                            <div class="t-name">Budi P.</div>
-                            <div class="t-stars">★★★★★</div>
-                        </div>
-                    </div>
-                    <div class="t-text">"Mie Yamin komplitnya juara! Basonya besar dagingnya banyak. Mantap."</div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="t-header">
-                        <div class="t-avatar"><img src="https://picsum.photos/seed/user3/50/50" alt="User"></div>
-                        <div>
-                            <div class="t-name">Sarah M.</div>
-                            <div class="t-stars">★★★★★</div>
-                        </div>
-                    </div>
-                    <div class="t-text">"Pesen lewat WA cepet banget responnya. Rasanya ga pernah ngecewain."</div>
-                </div>
-            </div>
-        </div>
-
         <div style="text-align: center; margin-top: 40px; font-style: italic; color: #888; font-size: 0.8rem; padding-bottom: 20px;"><p>&copy; 2026 Bubur Grace. Enak dan Sehat.</p></div>
     </main>
 
@@ -910,14 +898,6 @@
         <div class="footer-brand">
             <h2 style="margin-bottom: 5px;">Bubur Grace</h2>
             <p style="font-size: 0.9rem; opacity: 0.8;">Menghadirkan Rasa Istimewa</p>
-            
-            <!-- OPERATING HOURS (UPDATED) -->
-            <div style="margin: 15px 0; font-size: 0.9rem;">
-                <i class="fa-regular fa-clock"></i> <strong>Jam Buka:</strong><br>
-                Selasa - Minggu: 06:00 - 12:00<br>
-                <span style="font-size:0.85rem; color:#aaa;">*Tutup setiap hari Senin</span>
-            </div>
-
             <div class="contact-box">
                 <div class="contact-item"><i class="fa-brands fa-whatsapp"></i> 081 777 6175</div>
                 <div class="contact-item"><i class="fa-solid fa-store"></i> Layanan Pesan Antar</div>
@@ -937,6 +917,7 @@
         <div class="variant-modal">
             <div class="variant-title" id="variantTitle">Pilih Menu</div>
             <div class="variant-options" id="variantOptionsContainer"></div>
+            <!-- Bagian Pilihan Jenis Pesanan (Dine In / Takeaway) -->
             <div style="margin-bottom: 20px;">
                 <label style="display:block; font-weight:600; margin-bottom:10px; color:var(--secondary);">Pesan Sebagai:</label>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
@@ -976,8 +957,11 @@
                     </button>
                 </div>
             </div>
-            <div class="cart-items" id="cartItemsContainer"></div>
+            <div class="cart-items" id="cartItemsContainer">
+                <!-- Items injected via JS -->
+            </div>
             
+            <!-- Dynamic Inputs -->
             <div class="checkout-section">
                 <div class="input-section-container" id="dineInSection">
                     <label class="input-label">Nomor Meja Anda <span style="color:var(--primary)">*</span></label>
@@ -1021,8 +1005,10 @@
             const isWeekend = (day === 0 || day === 6);
             
             const weekendCards = document.querySelectorAll('.weekend-only');
+
             weekendCards.forEach(card => {
                 const btn = card.querySelector('.add-btn');
+                
                 if (isWeekend) {
                     card.classList.remove('weekend-locked');
                     btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
@@ -1072,10 +1058,13 @@
         let currentVariantCard = null;
         let selectedOrderType = 'dine-in'; 
         const PACKAGING_FEE_PER_ITEM = 3000;
+        
+        // Definisi Kategori Makanan Berat (HANYA INI YANG DITARIH +3K)
         const MAIN_MEAL_CATEGORIES = [
             'bubur', 'mie-kecil', 'mie-lebar', 'mie-yamin', 'bihun', 'kwetiau', 
             'nasi-uduk-ayam', 'nasi-uduk-telur'
         ];
+        // CATATAN: 'jajanan', 'baso', 'dimsum', 'gorengan', 'sate-manis' DIHAPUS DARI LIST INI.
 
         document.body.addEventListener('click', function(e) {
             const btn = e.target.closest('.add-btn');
@@ -1193,7 +1182,6 @@
             updateCartUI();
             showToast();
             triggerCartPulse();
-            // CONFETTI REMOVED
         }
 
         function removeFromCart(index) { cart.splice(index,1); updateCartUI(); }
@@ -1241,6 +1229,7 @@
                     totalQty += item.qty;
                     let unitPrice = item.price;
                     
+                    // LOGIC BARU: HANYA MAKANAN BERAT YANG DITARIH +3K
                     const isMainMeal = MAIN_MEAL_CATEGORIES.includes(item.category);
                     
                     if (item.orderType === 'takeaway' && item.packaging !== 'no' && isMainMeal) {
@@ -1251,6 +1240,7 @@
                     itemDiv.className = 'cart-item';
                     
                     itemDiv.innerHTML = `
+                        <!-- ROW 1: Title -->
                         <div class="cart-item-row1">
                             <div class="item-info">
                                 <div class="item-title">${item.name}</div>
@@ -1260,13 +1250,19 @@
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
+
+                        <!-- ROW 2: Controls -->
                         <div class="cart-item-row2">
                             <div class="item-controls">
                                 <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
                                 <span class="qty-num">${item.qty}</span>
                                 <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
                             </div>
+                            
+                            <!-- Input Catatan -->
                             <input type="text" class="item-note-input" placeholder="Catatan..." value="${item.notes}" onchange="updateItemNote(${index}, this.value)">
+                            
+                            <!-- STATUS BADGE -->
                             <div class="item-status-badge ${item.orderType === 'dine-in' ? 'badge-dine' : 'badge-away'}" onclick="toggleItemOrderType(${index})">
                                 <i class="fa-solid ${item.orderType === 'dine-in' ? 'fa-utensils' : 'fa-bag-shopping'}"></i>
                                 <span>${item.orderType === 'dine-in' ? 'Dine In' : 'Bungkus'}</span>
@@ -1288,10 +1284,13 @@
             let total = 0;
             cart.forEach(item => {
                 let unitPrice = item.price;
+                
+                // LOGIC DI TOTAL (DISAMAKAN)
                 const isMainMeal = MAIN_MEAL_CATEGORIES.includes(item.category);
                 if (item.orderType === 'takeaway' && item.packaging !== 'no' && isMainMeal) {
                     unitPrice += PACKAGING_FEE_PER_ITEM;
                 }
+                
                 total += unitPrice * item.qty;
             });
             totalEl.innerText = formatRupiah(total);
