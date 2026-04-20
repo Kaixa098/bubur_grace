@@ -68,7 +68,16 @@
         .header-top { display: flex; justify-content: space-between; align-items: center; }
 
         .brand { display: flex; align-items: center; gap: 10px; }
-        .brand i { font-size: 1.5rem; color: var(--primary); }
+        
+        /* CSS untuk Logo Baru */
+        .brand-logo {
+            width: 45px;
+            height: 45px;
+            object-fit: contain; /* Agar gambar tidak gepeng */
+            flex-shrink: 0; /* Mencegah gambar mengecil terlalu banyak */
+            border-radius: 50%; /* Opsional: membuat gambar tetap bulat sempurna */
+        }
+
         .brand-text h1 { font-size: 1.2rem; line-height: 1.1; color: var(--primary); margin: 0; }
         .brand-text span { font-size: 0.7rem; font-weight: 300; letter-spacing: 1px; color: var(--secondary); text-transform: uppercase; }
 
@@ -451,6 +460,7 @@
             .category-nav { top: 110px; } 
             header { padding: 20px 5%; flex-direction: row; flex-wrap: wrap; }
             .brand-text h1 { font-size: 1.8rem; }
+            .brand-logo { width: 60px; height: 60px; } /* Larger logo on desktop */
         }
 
         /* --- ANIMATIONS --- */
@@ -473,7 +483,9 @@
     <header>
         <div class="header-top">
             <div class="brand">
-                <i class="fa-solid fa-bowl-rice"></i>
+                <!-- LOGO BARU DARI USER -->
+                <img src="https://z-cdn-media.chatglm.cn/files/50ca2c37-9a98-4c90-923b-ae99959846b9.png?auth_key=1876671393-5447ef07c70045b48cce9108e1c0bf25-0-4f77a9446e7fe2d91efdbbfa00385980" alt="Logo Bubur Grace" class="brand-logo">
+                
                 <div class="brand-text">
                     <h1>Bubur GRace</h1>
                     <span>RASA ISTIMEWA</span>
