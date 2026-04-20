@@ -328,8 +328,8 @@
         .cart-header h3 { font-size: 1.2rem; }
         
         .cart-actions { display: flex; align-items: center; gap: 15px; }
-        .btn-clear-cart { background: none; border: none; color: #ccc; font-size: 1.2rem; cursor: pointer; transition: color 0.2s, transform 0.2s; padding: 5px; }
-        .btn-clear-cart:hover { color: var(--danger); }
+        .btn-clear-cart { background: none; border: none; color: var(--danger); font-size: 1.2rem; cursor: pointer; transition: color 0.2s, transform 0.2s; padding: 5px; }
+        .btn-clear-cart:hover { color: #c0392b; } /* Darker Red Hover */
         .btn-clear-cart:active { transform: scale(0.9); }
         .btn-close-cart { background: none; border: none; color: #888; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s; padding: 0 5px; }
         .btn-close-cart:active { transform: scale(0.9); }
@@ -377,8 +377,9 @@
             user-select: none; white-space: nowrap; max-width: 100px; overflow: hidden;
             text-overflow: ellipsis; flex-shrink: 0;
         }
-        .badge-dine { background: #f0f4f8; color: var(--secondary); border: 1px solid #dce4ec; }
-        .badge-dine:active { background: #e0e6eb; }
+        /* REVISED DINE IN BADGE TO ORANGE */
+        .badge-dine { background: #FFE0B2; color: #D35400; border: 1px solid #D35400; }
+        .badge-dine:active { background: #FFCC80; }
 
         .badge-away { background: #e8f5e9; color: #25D366; border: 1px solid #c8e6c9; }
         .badge-away:active { background: #d1e7dd; }
@@ -1042,11 +1043,9 @@
         });
 
         // --- SMART LOCK LOGIC (NASI UDUK) & POSITIONING ---
-        // Buka HARI SABTU (6) & MINGGU (0)
         function checkWeekendLocks() {
             const now = new Date();
             const day = now.getDay(); 
-            // 0 = Minggu, 6 = Sabtu. Jika hari 0 atau 6, maka Unlock. Selain itu Locked.
             const isWeekend = (day === 0 || day === 6);
             
             const weekendCards = document.querySelectorAll('.weekend-only');
@@ -1060,24 +1059,15 @@
             const basoGrid = document.getElementById('basoGrid');
 
             if (isWeekend) {
-                // BUKA: Pindahkan ke posisi semula (setelah Baso)
-                // Cek posisi untuk menghindari flicker jika sudah benar
                 if (basoGrid && basoGrid.nextElementSibling !== sectionUdukAyam) {
-                    // Insert Uduk Ayam Header after BasoGrid
                     basoGrid.parentNode.insertBefore(sectionUdukAyam, basoGrid.nextElementSibling);
-                    // Insert Uduk Ayam Grid after Uduk Ayam Header
                     mainContainer.insertBefore(gridUdukAyam, sectionUdukAyam.nextElementSibling);
-                    // Insert Uduk Telur Header after Uduk Ayam Grid
                     mainContainer.insertBefore(sectionUdukTelur, gridUdukAyam.nextElementSibling);
-                    // Insert Uduk Telur Grid after Uduk Telur Header
                     mainContainer.insertBefore(gridUdukTelur, sectionUdukTelur.nextElementSibling);
                 }
             } else {
-                // TUTUP: Pindahkan ke paling bawah
-                // Cek apakah sudah paling bawah (sebelum noResult)
                 const noResult = document.getElementById('noResultMsg');
                 if (noResult && noResult.previousElementSibling !== gridUdukTelur) {
-                    // Append elements ke akhir container
                     mainContainer.appendChild(sectionUdukAyam);
                     mainContainer.appendChild(gridUdukAyam);
                     mainContainer.appendChild(sectionUdukTelur);
@@ -1090,12 +1080,10 @@
                 const btn = card.querySelector('.add-btn');
                 
                 if (isWeekend) {
-                    // Jika Sabtu/Minggu -> Buka
                     card.classList.remove('weekend-locked');
                     btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
                     btn.classList.remove('locked-btn');
                 } else {
-                    // Jika Senin-Jumat -> Tutup (Locked)
                     card.classList.add('weekend-locked');
                     btn.innerHTML = '<i class="fa-solid fa-lock"></i>';
                     btn.classList.add('locked-btn');
@@ -1104,14 +1092,12 @@
         }
 
         // --- OPERATIONAL HOURS SYSTEM (REAL TIME) ---
-        // Buka: Selasa (2) - Minggu (0 & 6), Jam 06:00 - 12:00
-        // Tutup: Senin (1), Di luar jam 06:00 - 12:00
         function checkStoreOperationalStatus() {
             const now = new Date();
-            const day = now.getDay(); // 0 = Minggu, 1 = Senin, ...
+            const day = now.getDay(); 
             const hour = now.getHours();
             const minute = now.getMinutes();
-            const currentTime = hour * 100 + minute; // e.g., 06:30 = 630, 12:00 = 1200
+            const currentTime = hour * 100 + minute; 
             
             const openTime = 600;  // 06:00
             const closeTime = 1200; // 12:00
@@ -1120,9 +1106,6 @@
             const statusText = document.getElementById('storeStatusText');
 
             let isOpen = false;
-
-            // Logic: Hari Selasa (2) s.d Sabtu (6) & Minggu (0) -> Buka
-            // Senin (1) -> Tutup
             const isWorkingDay = (day !== 1);
 
             if (isWorkingDay && currentTime >= openTime && currentTime < closeTime) {
@@ -1367,8 +1350,8 @@
                                 <div class="item-title">${item.name}</div>
                                 <div class="item-price-row">${formatRupiah(unitPrice)} / pcs</div>
                             </div>
-                            <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#ccc; font-size:1.2rem; padding: 5px;">
-                                <i class="fa-solid fa-xmark"></i>
+                            <button onclick="removeFromCart(${index})" style="background:none; border:none; color:var(--danger); font-size:1.2rem; padding: 5px;">
+                                <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
 
@@ -1452,7 +1435,6 @@
         }
 
         function checkout() {
-            // Cek jam operasional sebelum checkout (Real-time)
             if (!checkStoreOperationalStatus()) {
                 showToast("Mohon maaf, toko sedang TUTUP.");
                 return;
