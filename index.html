@@ -62,7 +62,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            border-bottom: 1px solid rgba(0,0,0,0.03);
+            border-bottom:1px solid rgba(0,0,0,0.03);
         }
 
         .header-top { display: flex; justify-content: space-between; align-items: center; }
@@ -162,7 +162,14 @@
         }
         .section-line { height: 1px; background: #eee; flex-grow: 1; opacity: 0.5; }
         
-        .menu-grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); position: relative; }
+        /* --- FIX GRID LAYOUT --- */
+        .menu-grid { 
+            display: grid; 
+            gap: 15px; 
+            /* Updated minmax to 150px to ensure 2 columns fit on smaller mobile screens */
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+            position: relative; 
+        }
 
         .no-result { text-align: center; padding: 40px 20px; color: #888; grid-column: 1 / -1; font-size: 0.9rem; display: none; }
         
@@ -206,7 +213,7 @@
         
         .card-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; color: var(--secondary); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; pointer-events: none; }
         
-        .card-desc { font-size: 0.7rem; color: #999; margin-bottom: 10px; display: none; pointer-events: none; }
+        .card-desc { font-size: 0.7rem; color: #999; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; pointer-events: none; }
         
         .card-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #eee; padding-top: 10px; }
         .price { font-weight: 700; color: var(--primary); font-size: 0.95rem; pointer-events: none; }
@@ -329,7 +336,7 @@
         
         .cart-actions { display: flex; align-items: center; gap: 15px; }
         .btn-clear-cart { background: none; border: none; color: var(--danger); font-size: 1.2rem; cursor: pointer; transition: color 0.2s, transform 0.2s; padding: 5px; }
-        .btn-clear-cart:hover { color: #c0392b; } /* Darker Red Hover */
+        .btn-clear-cart:hover { color: #c0392b; }
         .btn-clear-cart:active { transform: scale(0.9); }
         .btn-close-cart { background: none; border: none; color: #888; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s; padding: 0 5px; }
         .btn-close-cart:active { transform: scale(0.9); }
@@ -500,6 +507,7 @@
     <nav class="category-nav">
         <div class="cat-list">
             <button class="cat-pill active" data-target="all" onclick="filterCat('all')">Semua</button>
+            <button class="cat-pill" data-target="paket-bubur" onclick="filterCat('paket-bubur')">Paket Bubur</button>
             <button class="cat-pill" data-target="bubur" onclick="filterCat('bubur')">Bubur</button>
             <button class="cat-pill" data-target="mie-kecil" onclick="filterCat('mie-kecil')">Mie Kecil</button>
             <button class="cat-pill" data-target="mie-lebar" onclick="filterCat('mie-lebar')">Mie Lebar</button>
@@ -522,6 +530,90 @@
 
     <main class="container" id="mainContainer">
         
+        <!-- NEW SECTION: PAKET BUBUR -->
+        <div class="section-header" data-category="paket-bubur">
+            <h2>Paket Bubur Hemat</h2>
+            <div class="section-line"></div>
+            <div style="font-size: 0.7rem; color: var(--primary); margin-left: auto; font-weight: 600;">
+                <i class="fa-solid fa-tags"></i> Best Value
+            </div>
+        </div>
+        <div class="menu-grid">
+            <!-- Paket A -->
+            <div class="menu-card" data-category="paket-bubur" data-price="36000" data-has-variants="true" data-options="Sari Kacang Ijo,Susu Kacang Kedelai,Thai Tea,Jeruk" data-variant-name="Minuman">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/paketa/300/200" class="card-img-top"></div>
+                <div class="card-body">
+                    <div class="badge">Best Seller</div>
+                    <div class="card-title">Paket A (Bubur Biasa + Minuman)</div>
+                    <div class="card-desc">Bubur Biasa + Minuman Pilihan</div>
+                    <div class="card-footer">
+                        <span class="price">Rp 36.000</span>
+                        <button class="add-btn"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+            <!-- Paket B -->
+            <div class="menu-card" data-category="paket-bubur" data-price="53000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/paketb/300/200" class="card-img-top"></div>
+                <div class="card-body">
+                    <div class="card-title">Paket B (Bubur Telur + Pangsit)</div>
+                    <div class="card-desc">Bubur + Telur Ayam + Pangsit Isi Ayam</div>
+                    <div class="card-footer">
+                        <span class="price">Rp 53.000</span>
+                        <button class="add-btn"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+            <!-- Paket C -->
+            <div class="menu-card" data-category="paket-bubur" data-price="60000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/paketc/300/200" class="card-img-top"></div>
+                <div class="card-body">
+                    <div class="card-title">Paket C (Mie Kecil Komplit + Pangsit)</div>
+                    <div class="card-desc">Mie Kecil, Baso, Pangsit Rebus, Pangsit Goreng, Ayam</div>
+                    <div class="card-footer">
+                        <span class="price">Rp 60.000</span>
+                        <button class="add-btn"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+            <!-- Paket D -->
+            <div class="menu-card" data-category="paket-bubur" data-price="60000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/paketd/300/200" class="card-img-top"></div>
+                <div class="card-body">
+                    <div class="card-title">Paket D (Mie Lebar Komplit + Pangsit)</div>
+                    <div class="card-desc">Mie Lebar, Baso, Pangsit Rebus, Pangsit Goreng, Ayam</div>
+                    <div class="card-footer">
+                        <span class="price">Rp 60.000</span>
+                        <button class="add-btn"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+            <!-- Paket E -->
+            <div class="menu-card" data-category="paket-bubur" data-price="60000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/pakete/300/200" class="card-img-top"></div>
+                <div class="card-body">
+                    <div class="card-title">Paket E (Kwetiau Komplit + Pangsit)</div>
+                    <div class="card-desc">Kwetiau Ayam, Baso, Pangsit Rebus, Pangsit Goreng</div>
+                    <div class="card-footer">
+                        <span class="price">Rp 60.000</span>
+                        <button class="add-btn"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+            <!-- Paket F -->
+            <div class="menu-card" data-category="paket-bubur" data-price="60000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/paketf/300/200" class="card-img-top"></div>
+                <div class="card-body">
+                    <div class="card-title">Paket F (Bihun Komplit + Pangsit)</div>
+                    <div class="card-desc">Bihun Ayam, Baso, Pangsit Rebus, Pangsit Goreng</div>
+                    <div class="card-footer">
+                        <span class="price">Rp 60.000</span>
+                        <button class="add-btn"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- SECTIONS ATAS (TETAP) -->
         <!-- BUBUR -->
         <div class="section-header" data-category="bubur"><h2>Bubur Ayam GRace</h2><div class="section-line"></div></div>
@@ -1059,6 +1151,7 @@
             const basoGrid = document.getElementById('basoGrid');
 
             if (isWeekend) {
+                // BUKA: Pindahkan ke posisi semula (setelah Baso)
                 if (basoGrid && basoGrid.nextElementSibling !== sectionUdukAyam) {
                     basoGrid.parentNode.insertBefore(sectionUdukAyam, basoGrid.nextElementSibling);
                     mainContainer.insertBefore(gridUdukAyam, sectionUdukAyam.nextElementSibling);
@@ -1066,6 +1159,7 @@
                     mainContainer.insertBefore(gridUdukTelur, sectionUdukTelur.nextElementSibling);
                 }
             } else {
+                // TUTUP: Pindahkan ke paling bawah
                 const noResult = document.getElementById('noResultMsg');
                 if (noResult && noResult.previousElementSibling !== gridUdukTelur) {
                     mainContainer.appendChild(sectionUdukAyam);
@@ -1080,10 +1174,12 @@
                 const btn = card.querySelector('.add-btn');
                 
                 if (isWeekend) {
+                    // Jika Sabtu/Minggu -> Buka
                     card.classList.remove('weekend-locked');
                     btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
                     btn.classList.remove('locked-btn');
                 } else {
+                    // Jika Senin-Jumat -> Tutup (Locked)
                     card.classList.add('weekend-locked');
                     btn.innerHTML = '<i class="fa-solid fa-lock"></i>';
                     btn.classList.add('locked-btn');
@@ -1166,7 +1262,9 @@
         let selectedOrderType = 'dine-in'; 
         const PACKAGING_FEE_PER_ITEM = 3000;
         
+        // Tambahkan 'paket-bubur' ke kategori makanan berat agar kena biaya bungkus
         const MAIN_MEAL_CATEGORIES = [
+            'paket-bubur', // Added here
             'bubur', 'mie-kecil', 'mie-lebar', 'mie-yamin', 'bihun', 'kwetiau', 
             'nasi-uduk-ayam', 'nasi-uduk-telur'
         ];
@@ -1334,6 +1432,7 @@
                     totalQty += item.qty;
                     let unitPrice = item.price;
                     
+                    // Cek biaya bungkus
                     const isMainMeal = MAIN_MEAL_CATEGORIES.includes(item.category);
                     
                     if (item.orderType === 'takeaway' && item.packaging !== 'no' && isMainMeal) {
@@ -1366,10 +1465,10 @@
                             <!-- Input Catatan -->
                             <input type="text" class="item-note-input" placeholder="Catatan..." value="${item.notes}" onchange="updateItemNote(${index}, this.value)">
                             
-                            <!-- STATUS BADGE -->
+                            <!-- STATUS BADGE (UPDATED TEXT TO 'Takeaway') -->
                             <div class="item-status-badge ${item.orderType === 'dine-in' ? 'badge-dine' : 'badge-away'}" onclick="toggleItemOrderType(${index})">
                                 <i class="fa-solid ${item.orderType === 'dine-in' ? 'fa-utensils' : 'fa-bag-shopping'}"></i>
-                                <span>${item.orderType === 'dine-in' ? 'Dine In' : 'Bungkus'}</span>
+                                <span>${item.orderType === 'dine-in' ? 'Dine In' : 'Takeaway'}</span>
                             </div>
                         </div>
                     `;
@@ -1496,7 +1595,7 @@
                 }
 
                 if(hasTakeaway) {
-                    message += `%0A*TAKE AWAY:*%0A`;
+                    message += `%0A*TAKEAWAY:*%0A`;
                     cart.filter(i => i.orderType === 'takeaway').forEach(i => {
                         message += `- (${i.qty}x) ${i.name}%0A`;
                         if(i.notes) message += `*${i.notes}*%0A`;
