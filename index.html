@@ -27,8 +27,9 @@
             --success: #25D366;
             --danger: #E74C3C;
             --header-height-mobile: 110px;
-            --shadow-soft: 0 4px 20px rgba(0,0,0,0.06);
-            --shadow-hover: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.05);
+            --shadow-hover: 0 10px 25px rgba(0,0,0,0.08);
+            --radius-card: 12px;
         }
 
         /* --- RESET --- */
@@ -66,27 +67,20 @@
         }
 
         .header-top { display: flex; justify-content: space-between; align-items: center; }
-
         .brand { display: flex; align-items: center; gap: 10px; }
         
-        /* CSS untuk Logo Baru */
         .brand-logo {
-            width: 45px;
-            height: 45px;
-            object-fit: contain; /* Agar gambar tidak gepeng */
-            flex-shrink: 0; /* Mencegah gambar mengecil terlalu banyak */
-            border-radius: 50%; /* Opsional: membuat gambar tetap bulat sempurna */
+            width: 45px; height: 45px; object-fit: contain; flex-shrink: 0;
+            border-radius: 50%;
         }
 
         .brand-text h1 { font-size: 1.2rem; line-height: 1.1; color: var(--primary); margin: 0; }
         .brand-text span { font-size: 0.7rem; font-weight: 300; letter-spacing: 1px; color: var(--secondary); text-transform: uppercase; }
 
-        /* Status Badge Header */
         .store-status-badge {
             font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;
             display: flex; align-items: center; gap: 6px;
-            background: #f0f0f0; color: #888;
-            transition: all 0.3s ease;
+            background: #f0f0f0; color: #888; transition: all 0.3s ease;
         }
         .store-status-badge.open { background: #e8f5e9; color: var(--success); border: 1px solid rgba(37, 211, 102, 0.2); }
         .store-status-badge.closed { background: #ffebee; color: var(--danger); border: 1px solid rgba(231, 76, 60, 0.2); }
@@ -122,7 +116,7 @@
         .category-nav::-webkit-scrollbar { display: none; }
         .cat-list { display: flex; justify-content: flex-start; padding: 0 15px; gap: 8px; }
         .cat-pill {
-            padding: 0 18px; height: 40px;
+            padding: 0 18px; height: 38px;
             background: white; border: 1px solid #eee;
             border-radius: 20px; font-size: 0.8rem; font-weight: 500;
             color: var(--text-main); cursor: pointer; transition: all 0.3s ease;
@@ -159,7 +153,7 @@
             font-size: 0.85rem; font-weight: 500;
         }
 
-        /* --- CONTAINER --- */
+        /* --- CONTAINER & GRID --- */
         .container { max-width: 1100px; margin: 0 auto; padding: 0 15px; position: relative; }
         
         .section-header { margin: 40px 0 15px; display: flex; align-items: center; gap: 10px; transition: opacity 0.3s; }
@@ -171,72 +165,142 @@
         }
         .section-line { height: 1px; background: #eee; flex-grow: 1; opacity: 0.5; }
         
-        /* --- FIX GRID LAYOUT --- */
+        /* --- IMPROVED GRID SYSTEM --- */
         .menu-grid { 
             display: grid; 
             gap: 15px; 
-            /* Updated minmax to 150px to ensure 2 columns fit on smaller mobile screens */
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+            /* 
+               Mobile: 2 kolom (minmax 160px) agar tidak terlalu lebar & muat 2 item
+               Tablet: 3 kolom
+               Desktop: 4 kolom
+            */
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
             position: relative; 
         }
 
         .no-result { text-align: center; padding: 40px 20px; color: #888; grid-column: 1 / -1; font-size: 0.9rem; display: none; }
-        
         .empty-state-icon { font-size: 3rem; color: #e0e0e0; margin-bottom: 15px; display: inline-block; animation: float 3s ease-in-out infinite; }
 
-        /* --- MENU CARD --- */
+        /* --- CLEAN MENU CARD DESIGN --- */
         .menu-card {
-            background: var(--card-bg); border-radius: 12px;
-            box-shadow: var(--shadow-soft); overflow: hidden;
-            display: flex; flex-direction: column;
+            background: var(--card-bg); 
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-soft); 
+            overflow: hidden;
+            display: flex; 
+            flex-direction: column;
             transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s;
-            border: 1px solid rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.03);
             position: relative;
             opacity: 0;
             animation: fadeInUp 0.6s ease forwards;
+            height: 100%; /* Full height for grid consistency */
         }
         
-        .menu-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
+        .menu-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
 
         /* WEEKEND LOCKED STYLE */
         .menu-card.weekend-locked {
             pointer-events: none; 
-            opacity: 0.6;
-            filter: grayscale(0.9);
+            opacity: 0.7;
+            filter: grayscale(1);
             border: 1px dashed #ccc;
-        }
-        .menu-card.weekend-locked .card-img-top {
-            filter: grayscale(100%);
         }
         
         .card-img-wrapper {
-            width: 100%; height: 140px; overflow: hidden; background-color: #f0f0f0; pointer-events: none;
+            width: 100%; 
+            height: 140px; /* Fixed height for consistency */
+            overflow: hidden; 
+            background-color: #f0f0f0; 
+            position: relative;
         }
         
-        .card-img-top { height: 100%; width: 100%; object-fit: cover; transition: transform 0.6s ease; }
-        .menu-card:not(.weekend-locked):hover .card-img-top { transform: scale(1.1); }
+        .card-img-top { 
+            height: 100%; 
+            width: 100%; 
+            object-fit: cover; /* Ensures image covers area without distortion */
+            transition: transform 0.5s ease; 
+        }
+        .menu-card:not(.weekend-locked):hover .card-img-top { transform: scale(1.05); }
         
-        .card-body { padding: 12px; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-body { 
+            padding: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            flex-grow: 1; /* Pushes footer down */
+        }
         
-        .badge { font-size: 0.6rem; padding: 3px 8px; border-radius: 4px; background: #FFE0B2; color: #E65100; font-weight: 700; width: fit-content; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge { 
+            font-size: 0.6rem; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            background: #FFE0B2; 
+            color: #E65100; 
+            font-weight: 700; 
+            width: fit-content; 
+            margin-bottom: 6px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            display: inline-block;
+        }
         
-        .card-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; color: var(--secondary); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; pointer-events: none; }
+        .card-title { 
+            font-size: 0.9rem; 
+            font-weight: 600; 
+            margin-bottom: 4px; 
+            color: var(--secondary); 
+            line-height: 1.3; 
+            /* Clamp text to 2 lines */
+            display: -webkit-box; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+            flex-grow: 1; /* Helps align footer */
+        }
         
-        .card-desc { font-size: 0.7rem; color: #999; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; pointer-events: none; }
+        .card-desc { 
+            font-size: 0.7rem; 
+            color: #999; 
+            margin-bottom: 10px; 
+            display: -webkit-box; 
+            -webkit-line-clamp: 1; /* Limit desc to 1 line for tidiness */
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+        }
         
-        .card-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #eee; padding-top: 10px; }
-        .price { font-weight: 700; color: var(--primary); font-size: 0.95rem; pointer-events: none; }
+        .card-footer { 
+            margin-top: auto; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-top: 1px solid #f0f0f0; 
+            padding-top: 10px; 
+        }
+        .price { 
+            font-weight: 700; 
+            color: var(--primary); 
+            font-size: 0.95rem; 
+            flex-grow: 1;
+        }
 
         .add-btn {
-            background: #fff5eb; color: var(--primary);
-            width: 40px; height: 40px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; transition: all 0.2s;
-            border: 1px solid rgba(211,84,0,0.2);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background: var(--primary-light); 
+            color: var(--primary);
+            width: 36px; height: 36px; 
+            border-radius: 50%;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 0.9rem; 
+            transition: all 0.2s;
+            border: none; /* Cleaner look */
+            cursor: pointer;
+            margin-left: 8px;
+            flex-shrink: 0;
         }
-        .add-btn:active { background: var(--primary); color: white; transform: scale(0.9); }
-        .add-btn.locked-btn { background: #bdc3c7 !important; color: #7f8c8d !important; border-color: #bdc3c7 !important; cursor: not-allowed !important; }
+        .add-btn:hover { background: var(--primary); color: white; }
+        .add-btn:active { transform: scale(0.9); }
+        .add-btn.locked-btn { background: #bdc3c7 !important; color: #7f8c8d !important; cursor: not-allowed !important; }
 
         /* --- FLOATING BUTTONS --- */
         .fab-cart {
@@ -358,16 +422,13 @@
             animation: fadeIn 0.3s ease;
         }
 
-        /* Row 1: Judul & Tombol Hapus */
         .cart-item-row1 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .item-info { flex: 1; padding-right: 10px; }
         .item-title { font-size: 0.95rem; color: var(--secondary); font-weight: 600; margin-bottom: 2px; line-height: 1.2; }
         .item-price-row { font-size: 0.8rem; color: #999; font-weight: 500; }
         
-        /* Row 2: Controls */
         .cart-item-row2 { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
 
-        /* Qty Buttons */
         .item-controls {
             display: flex; align-items: center; background: #f8f8f8; border-radius: 20px; padding: 2px 6px; flex-shrink: 0;
         }
@@ -379,24 +440,20 @@
         .qty-btn:active { background: #eee; }
         .qty-num { font-size: 0.9rem; font-weight: 600; min-width: 22px; text-align: center; }
 
-        /* Note Input */
         .item-note-input {
             flex: 1; border: 1px solid #eee; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem;
             font-family: 'Poppins', sans-serif; outline: none; color: #555; background: #fafafa; min-width: 0;
         }
         .item-note-input:focus { border-color: var(--primary); background: white; }
 
-        /* STATUS BADGE */
         .item-status-badge {
             font-size: 0.7rem; font-weight: 600; padding: 6px 10px; border-radius: 20px;
             display: flex; align-items: center; gap: 5px; cursor: pointer; transition: all 0.2s;
             user-select: none; white-space: nowrap; max-width: 100px; overflow: hidden;
             text-overflow: ellipsis; flex-shrink: 0;
         }
-        /* REVISED DINE IN BADGE TO ORANGE */
         .badge-dine { background: #FFE0B2; color: #D35400; border: 1px solid #D35400; }
         .badge-dine:active { background: #FFCC80; }
-
         .badge-away { background: #e8f5e9; color: #25D366; border: 1px solid #c8e6c9; }
         .badge-away:active { background: #d1e7dd; }
 
@@ -444,23 +501,24 @@
         .footer-brand h2 { color: white; margin-bottom: 5px; }
         .contact-box { background: rgba(255,255,255,0.1); display: inline-block; padding: 20px 30px; border-radius: 15px; margin-top: 20px; backdrop-filter: blur(5px); }
         .contact-item { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 8px 0; font-size: 0.95rem; }
-        
         .hours-box { margin-top: 20px; font-size: 0.85rem; opacity: 0.8; }
 
         /* --- RESPONSIVE --- */
         @media (min-width: 768px) {
             .modal-overlay { align-items: center; }
             .cart-modal, .variant-modal { border-radius: 20px; }
-            .menu-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
+            .menu-grid { 
+                gap: 25px; 
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            }
             .card-img-wrapper { height: 180px; }
             .card-body { padding: 20px; }
-            .card-title { font-size: 1.1rem; }
-            .card-desc { display: -webkit-box; font-size: 0.85rem; color: #777; margin-bottom: 15px; }
-            .add-btn { width: 48px; height: 48px; font-size: 1.2rem; }
+            .card-title { font-size: 1rem; }
+            .add-btn { width: 44px; height: 44px; font-size: 1.1rem; }
             .category-nav { top: 110px; } 
             header { padding: 20px 5%; flex-direction: row; flex-wrap: wrap; }
             .brand-text h1 { font-size: 1.8rem; }
-            .brand-logo { width: 60px; height: 60px; } /* Larger logo on desktop */
+            .brand-logo { width: 60px; height: 60px; }
         }
 
         /* --- ANIMATIONS --- */
@@ -650,6 +708,10 @@
                 <div class="card-img-wrapper"><img src="foto/extraayamrebus.jpeg" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Topping</div><div class="card-title">Extra Ayam Rebus</div><div class="card-footer"><span class="price">Rp 12.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
+            <div class="menu-card" data-category="bubur" data-price="8000" data-packaging="no">
+                <div class="card-img-wrapper"><img src="foto/cakweiris.jpeg" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Extra Cakwe Iris</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
         </div>
 
         <!-- MIE KECIL -->
@@ -793,6 +855,10 @@
             </div>
         </div>
         <div class="menu-grid">
+            <div class="menu-card weekend-only" data-category="nasi-uduk-ayam" data-price="12000">
+                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasipolos/300/200" class="card-img-top"></div>
+                <div class="card-body"><div class="card-title">Nasi Uduk Polos</div><div class="card-footer"><span class="price">Rp 12.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
             <div class="menu-card weekend-only" data-category="nasi-uduk-ayam" data-price="37000" data-has-variants="true" data-options="Paha,Dada" data-variant-name="Ayam">
                 <div class="card-img-wrapper"><img src="foto/nasdukpaha.PNG" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Favorit</div><div class="card-title">Nasi Uduk + Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 37.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
@@ -800,10 +866,6 @@
             <div class="menu-card weekend-only" data-category="nasi-uduk-ayam" data-price="25000" data-has-variants="true" data-options="Paha,Dada" data-variant-name="Potongan">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/ayamgoreng/300/200" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">New</div><div class="card-title">Ayam Goreng</div><div class="card-desc">Pilihan Paha / Dada</div><div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-             <div class="menu-card weekend-only" data-category="nasi-uduk-ayam" data-price="12000">
-                <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasipolos/300/200" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Nasi Uduk Polos</div><div class="card-footer"><span class="price">Rp 12.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
         </div>
 
@@ -883,10 +945,6 @@
             <div class="menu-card" data-category="gorengan" data-price="8000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/cakwe.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Cakwe Goreng</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
-            <div class="menu-card" data-category="gorengan" data-price="8000" data-packaging="no">
-                <div class="card-img-wrapper"><img src="foto/cakweiris.jpeg" class="card-img-top"></div>
-                <div class="card-body"><div class="card-title">Extra Cakwe Iris</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
             <div class="menu-card" data-category="gorengan" data-price="27000">
                 <div class="card-img-wrapper"><img src="foto/pangsit5pcs.JPG" class="card-img-top"></div>
