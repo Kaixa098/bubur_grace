@@ -169,11 +169,6 @@
         .menu-grid { 
             display: grid; 
             gap: 15px; 
-            /* 
-               Mobile: 2 kolom (minmax 160px) agar tidak terlalu lebar & muat 2 item
-               Tablet: 3 kolom
-               Desktop: 4 kolom
-            */
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
             position: relative; 
         }
@@ -1212,6 +1207,7 @@
         function checkWeekendLocks() {
             const now = new Date();
             const day = now.getDay(); 
+            // 0 = Minggu, 6 = Sabtu. 1 = Senin.
             const isWeekend = (day === 0 || day === 6);
             
             const weekendCards = document.querySelectorAll('.weekend-only');
@@ -1226,6 +1222,7 @@
 
             if (isWeekend) {
                 // BUKA: Pindahkan ke posisi semula (setelah Baso)
+                // Cek apakah sudah diposisi yang benar untuk mencegah reflow visual
                 if (basoGrid && basoGrid.nextElementSibling !== sectionUdukAyam) {
                     basoGrid.parentNode.insertBefore(sectionUdukAyam, basoGrid.nextElementSibling);
                     mainContainer.insertBefore(gridUdukAyam, sectionUdukAyam.nextElementSibling);
@@ -1265,6 +1262,10 @@
         function checkStoreOperationalStatus() {
             const now = new Date();
             const day = now.getDay(); 
+            // Senin = 1 (Libur), Selasa-Minggu = 2-6,0 (Buka)
+            // Perbaikan Logika Hari: 
+            const isDayOff = (day === 1);
+
             const hour = now.getHours();
             const minute = now.getMinutes();
             const currentTime = hour * 100 + minute; 
@@ -1274,26 +1275,33 @@
 
             const statusBadge = document.getElementById('storeStatusBadge');
             const statusText = document.getElementById('storeStatusText');
+            const checkoutBtn = document.getElementById('btnCheckout');
 
             let isOpen = false;
-            const isWorkingDay = (day !== 1);
 
-            if (isWorkingDay && currentTime >= openTime && currentTime < closeTime) {
-                isOpen = true;
+            // Cek Hari Libur Dulu
+            if (!isDayOff) {
+                // Jika bukan senin, cek jam
+                if (currentTime >= openTime && currentTime < closeTime) {
+                    isOpen = true;
+                }
             }
 
             if (isOpen) {
                 statusBadge.className = 'store-status-badge open';
                 statusText.innerText = 'BUKA';
+                // Pastikan tombol checkout aktif jika toko buka
+                if(cart.length > 0) checkoutBtn.disabled = false;
             } else {
                 statusBadge.className = 'store-status-badge closed';
-                if (day === 1) {
+                if (isDayOff) {
                     statusText.innerText = 'SENIN LIBUR';
                 } else if (currentTime < openTime) {
                     statusText.innerText = 'BELUM BUKA';
                 } else {
                     statusText.innerText = 'SUDAH TUTUP';
                 }
+                // Disable tombol checkout visualnya jika toko tutup (opsional, UX lebih baik)
             }
             return isOpen;
         }
@@ -1336,9 +1344,9 @@
         let selectedOrderType = 'dine-in'; 
         const PACKAGING_FEE_PER_ITEM = 3000;
         
-        // Tambahkan 'paket-bubur' ke kategori makanan berat agar kena biaya bungkus
+        // Daftar Kategori Makanan Berat (Yang kena biaya bungkus jika takeaway)
         const MAIN_MEAL_CATEGORIES = [
-            'paket-bubur', // Added here
+            'paket-bubur', 
             'bubur', 'mie-kecil', 'mie-lebar', 'mie-yamin', 'bihun', 'kwetiau', 
             'nasi-uduk-ayam', 'nasi-uduk-telur'
         ];
@@ -1498,6 +1506,7 @@
                     </div>`;
                 badge.style.display = 'none';
                 checkoutBtn.classList.remove('has-items');
+                checkoutBtn.disabled = true; // Disable checkout jika kosong
             } else {
                 badge.style.display = 'flex';
                 checkoutBtn.classList.add('has-items');
@@ -1506,9 +1515,11 @@
                     totalQty += item.qty;
                     let unitPrice = item.price;
                     
-                    // Cek biaya bungkus
+                    // LOGI BIAYA BUNGKUS
+                    // 1. Cek apakah kategori termasuk makanan berat
                     const isMainMeal = MAIN_MEAL_CATEGORIES.includes(item.category);
                     
+                    // 2. Cek apakah user pilih Takeaway DAN bukan packaging 'no' DAN adalah main meal
                     if (item.orderType === 'takeaway' && item.packaging !== 'no' && isMainMeal) {
                         unitPrice += PACKAGING_FEE_PER_ITEM;
                     }
@@ -1549,6 +1560,11 @@
                     container.appendChild(itemDiv);
                 });
                 badge.innerText = totalQty;
+                
+                // Cek status toko saat update cart (untuk disable/enable tombol checkout)
+                if(!checkStoreOperationalStatus()) {
+                    checkoutBtn.disabled = true;
+                }
             }
             updateTotal();
             updateCheckoutInputsVisibility();
@@ -1608,6 +1624,7 @@
         }
 
         function checkout() {
+            // Validasi Toko Buka/Tutup
             if (!checkStoreOperationalStatus()) {
                 showToast("Mohon maaf, toko sedang TUTUP.");
                 return;
