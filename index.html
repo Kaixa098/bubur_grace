@@ -77,7 +77,6 @@
         .brand-text h1 { font-size: 1.2rem; line-height: 1.1; color: var(--primary); margin: 0; }
         .brand-text span { font-size: 0.7rem; font-weight: 300; letter-spacing: 1px; color: var(--secondary); text-transform: uppercase; }
         
-        /* Secret Admin Button Tooltip */
         .brand::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             border-radius: 50%; opacity: 0; transition: opacity 0.3s;
@@ -200,16 +199,14 @@
         
         .menu-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
 
-        /* ADMIN: STOCK EMPTY STYLE */
+        /* STOCK EMPTY STYLE */
         .menu-card.stock-empty {
             pointer-events: none; 
             opacity: 0.7;
             filter: grayscale(1);
             border: 1px dashed #ccc;
         }
-        .menu-card.stock-empty .add-btn {
-            display: none;
-        }
+        .menu-card.stock-empty .add-btn { display: none; }
         .menu-card.stock-empty::after {
             content: 'HABIS';
             position: absolute; top: 50%; left: 50%;
@@ -376,53 +373,7 @@
         }
         .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
 
-        .cart-modal {
-            background: white; width: 100%; max-width: 500px;
-            border-radius: 20px 20px 0 0;
-            padding: 20px; max-height: 90vh;
-            display: flex; flex-direction: column;
-            animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-        
-        .variant-modal {
-            background: white; width: 100%; max-width: 400px;
-            border-radius: 20px 20px 0 0;
-            padding: 25px 20px;
-            animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-            max-height: 85vh; overflow-y: auto;
-        }
-        .variant-title { font-size: 1.2rem; font-weight: bold; color: var(--secondary); margin-bottom: 15px; text-align: center; }
-        .variant-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        
-        .variant-option-label {
-            display: flex; align-items: center; padding: 12px 15px;
-            border: 2px solid #eee; border-radius: 10px;
-            cursor: pointer; transition: all 0.2s;
-        }
-        .variant-option-label:hover { background-color: #f9f9f9; }
-        .variant-option-label.selected { border-color: var(--primary); background-color: #fff5eb; }
-        
-        .variant-option-label input { display: none; }
-        .radio-circle {
-            width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 50%;
-            margin-right: 15px; display: flex; align-items: center; justify-content: center;
-        }
-        .variant-option-label.selected .radio-circle { border-color: var(--primary); }
-        .radio-circle::after {
-            content: ''; width: 10px; height: 10px; background: var(--primary); border-radius: 50%;
-            display: none;
-        }
-        .variant-option-label.selected .radio-circle::after { display: block; }
-
-        .btn-confirm-variant {
-            width: 100%; padding: 14px; background: var(--primary); color: white;
-            border-radius: 12px; font-size: 1rem; font-weight: 600;
-            text-align: center; border: none; cursor: pointer;
-            box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);
-        }
-        .btn-confirm-variant:active { background: var(--primary-dark); transform: scale(0.98); }
-
-        /* --- ADMIN MODAL STYLES --- */
+        /* Admin Modal Styles */
         .admin-modal {
             background: white; width: 100%; max-width: 500px;
             border-radius: 20px 20px 0 0;
@@ -435,34 +386,34 @@
             margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;
         }
         .admin-header h3 { color: var(--secondary); margin: 0; display: flex; align-items: center; gap: 10px; }
-        .admin-header i { color: var(--primary); }
         .btn-close-admin { background: none; border: none; font-size: 1.5rem; color: #888; cursor: pointer; }
 
         .admin-section { margin-bottom: 25px; }
         .admin-label { display: block; font-weight: 600; margin-bottom: 10px; color: var(--text-main); font-size: 0.9rem; }
-        
-        .admin-toggle-container {
-            background: #f8f9fa; padding: 15px; border-radius: 12px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        
-        .switch {
-            position: relative; display: inline-block; width: 50px; height: 26px;
-        }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc; transition: .4s; border-radius: 34px;
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 20px; width: 20px;
-            left: 3px; bottom: 3px; background-color: white;
-            transition: .4s; border-radius: 50%;
-        }
-        input:checked + .slider { background-color: var(--success); }
-        input:checked + .slider:before { transform: translateX(24px); }
 
-        .stock-list { max-height: 40vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        /* Admin Status Controls (Radio Group) */
+        .admin-status-options { display: flex; gap: 10px; }
+        .status-radio {
+            flex: 1;
+            cursor: pointer;
+            position: relative;
+        }
+        .status-radio input { position: absolute; opacity: 0; cursor: pointer; }
+        .status-radio-label {
+            display: block; text-align: center; padding: 10px 5px;
+            border: 1px solid #ddd; border-radius: 8px;
+            font-size: 0.8rem; font-weight: 600; color: #666;
+            transition: all 0.2s;
+        }
+        .status-radio input:checked + .status-radio-label {
+            background: var(--primary); color: white; border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(211, 84, 0, 0.3);
+        }
+        .status-radio input[value="auto"]:checked + .status-radio-label { background: var(--secondary); border-color: var(--secondary); }
+        .status-radio input[value="close"]:checked + .status-radio-label { background: var(--danger); border-color: var(--danger); }
+
+        /* Admin Stock List */
+        .stock-list { max-height: 40vh; overflow-y: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; }
         .stock-item {
             display: flex; justify-content: space-between; align-items: center;
             padding: 12px; border-bottom: 1px solid #f0f0f0;
@@ -483,22 +434,80 @@
         .btn-admin-action.mark-empty { background: #ffebee; color: var(--danger); border: 1px solid var(--danger); }
         .btn-admin-action.mark-available { background: #e8f5e9; color: var(--success); border: 1px solid var(--success); }
 
-        /* --- CART ITEMS --- */
-        .cart-items { overflow-y: auto; flex-grow: 1; margin-bottom: 15px; padding-right: 5px; -webkit-overflow-scrolling: touch; }
-        
-        .cart-item {
-            background: #fff; border: 1px solid #f0f0f0; border-radius: 12px;
-            padding: 12px; margin-bottom: 12px;
-            animation: fadeIn 0.3s ease;
+        /* Password Prompt Modal */
+        .password-modal {
+            background: white; width: 100%; max-width: 320px;
+            border-radius: 20px; padding: 30px;
+            animation: fadeIn 0.2s;
+            text-align: center;
+        }
+        .password-input {
+            width: 100%; padding: 12px; margin: 15px 0;
+            border: 2px solid #eee; border-radius: 10px; font-size: 1rem; text-align: center;
+            font-family: 'Poppins', sans-serif; letter-spacing: 2px;
+        }
+        .password-input:focus { border-color: var(--primary); outline: none; }
+        .btn-pass-confirm {
+            width: 100%; padding: 12px; background: var(--secondary); color: white;
+            border: none; border-radius: 10px; font-weight: 600; cursor: pointer;
+        }
+        .btn-pass-cancel {
+            width: 100%; padding: 10px; background: none; border: none;
+            color: #888; cursor: pointer; font-size: 0.9rem; margin-top: 5px;
         }
 
+        /* Cart & Variant Modal Styles (Same as before) */
+        .cart-modal {
+            background: white; width: 100%; max-width: 500px;
+            border-radius: 20px 20px 0 0;
+            padding: 20px; max-height: 90vh;
+            display: flex; flex-direction: column;
+            animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        
+        .variant-modal {
+            background: white; width: 100%; max-width: 400px;
+            border-radius: 20px 20px 0 0;
+            padding: 25px 20px;
+            animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            max-height: 85vh; overflow-y: auto;
+        }
+        .variant-title { font-size: 1.2rem; font-weight: bold; color: var(--secondary); margin-bottom: 15px; text-align: center; }
+        .variant-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .variant-option-label {
+            display: flex; align-items: center; padding: 12px 15px;
+            border: 2px solid #eee; border-radius: 10px; cursor: pointer; transition: all 0.2s;
+        }
+        .variant-option-label:hover { background-color: #f9f9f9; }
+        .variant-option-label.selected { border-color: var(--primary); background-color: #fff5eb; }
+        .variant-option-label input { display: none; }
+        .radio-circle {
+            width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 50%;
+            margin-right: 15px; display: flex; align-items: center; justify-content: center;
+        }
+        .variant-option-label.selected .radio-circle { border-color: var(--primary); }
+        .radio-circle::after {
+            content: ''; width: 10px; height: 10px; background: var(--primary); border-radius: 50%; display: none;
+        }
+        .variant-option-label.selected .radio-circle::after { display: block; }
+        .btn-confirm-variant {
+            width: 100%; padding: 14px; background: var(--primary); color: white;
+            border-radius: 12px; font-size: 1rem; font-weight: 600;
+            text-align: center; border: none; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);
+        }
+        .btn-confirm-variant:active { background: var(--primary-dark); transform: scale(0.98); }
+
+        .cart-items { overflow-y: auto; flex-grow: 1; margin-bottom: 15px; padding-right: 5px; -webkit-overflow-scrolling: touch; }
+        .cart-item {
+            background: #fff; border: 1px solid #f0f0f0; border-radius: 12px;
+            padding: 12px; margin-bottom: 12px; animation: fadeIn 0.3s ease;
+        }
         .cart-item-row1 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .item-info { flex: 1; padding-right: 10px; }
         .item-title { font-size: 0.95rem; color: var(--secondary); font-weight: 600; margin-bottom: 2px; line-height: 1.2; }
         .item-price-row { font-size: 0.8rem; color: #999; font-weight: 500; }
-        
         .cart-item-row2 { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-
         .item-controls {
             display: flex; align-items: center; background: #f8f8f8; border-radius: 20px; padding: 2px 6px; flex-shrink: 0;
         }
@@ -509,13 +518,11 @@
         }
         .qty-btn:active { background: #eee; }
         .qty-num { font-size: 0.9rem; font-weight: 600; min-width: 22px; text-align: center; }
-
         .item-note-input {
             flex: 1; border: 1px solid #eee; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem;
             font-family: 'Poppins', sans-serif; outline: none; color: #555; background: #fafafa; min-width: 0;
         }
         .item-note-input:focus { border-color: var(--primary); background: white; }
-
         .item-status-badge {
             font-size: 0.7rem; font-weight: 600; padding: 6px 10px; border-radius: 20px;
             display: flex; align-items: center; gap: 5px; cursor: pointer; transition: all 0.2s;
@@ -527,9 +534,7 @@
         .badge-away { background: #e8f5e9; color: #25D366; border: 1px solid #c8e6c9; }
         .badge-away:active { background: #d1e7dd; }
 
-        /* --- CHECKOUT SECTION --- */
         .checkout-section { margin-top: 10px; border-top: 2px dashed #eee; padding-top: 15px; }
-        
         .input-section-container { margin-bottom: 12px; }
         .input-label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--secondary); font-size: 0.85rem; }
         .input-field {
@@ -537,12 +542,9 @@
             font-family: 'Poppins', sans-serif; font-size: 0.95rem; outline: none; transition: all 0.2s; background: #fafafa;
         }
         .input-field:focus { border-color: var(--primary); background: white; }
-        
         .input-error { border-color: var(--danger) !important; background-color: #fff5f5 !important; animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-
         .total-row { display: flex; justify-content: space-between; align-items: center; font-size: 1.2rem; font-weight: bold; margin: 15px 0; color: var(--secondary); }
         .final-total { font-size: 1.4rem; color: var(--primary); }
-
         .btn-checkout {
             width: 100%; padding: 16px; background: var(--success); color: white; border-radius: 12px;
             font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -561,7 +563,6 @@
         #toast.error { background-color: var(--danger); }
         #toast.show { visibility: visible; opacity: 1; bottom: 120px; transform: translateX(-50%) translateY(-10px); }
 
-        /* --- FOOTER --- */
         footer { background: var(--secondary); color: white; text-align: center; padding: 50px 20px 120px; margin-top: 60px; position: relative; overflow: hidden; }
         footer::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -573,10 +574,9 @@
         .contact-item { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 8px 0; font-size: 0.95rem; }
         .hours-box { margin-top: 20px; font-size: 0.85rem; opacity: 0.8; }
 
-        /* --- RESPONSIVE --- */
         @media (min-width: 768px) {
             .modal-overlay { align-items: center; }
-            .cart-modal, .variant-modal, .admin-modal { border-radius: 20px; }
+            .cart-modal, .variant-modal, .admin-modal, .password-modal { border-radius: 20px; }
             .menu-grid { gap: 25px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
             .card-img-wrapper { height: 180px; }
             .card-body { padding: 20px; }
@@ -607,7 +607,7 @@
 
     <header>
         <div class="header-top">
-            <!-- ADMIN SECRET TRIGGER: LONG PRESS ON LOGO -->
+            <!-- ADMIN SECRET TRIGGER -->
             <div class="brand" id="brandLogo" oncontextmenu="return false;" title="Tahan 3 detik untuk Admin">
                 <img src="https://z-cdn-media.chatglm.cn/files/50ca2c37-9a98-4c90-923b-ae99959846b9.png?auth_key=1876671393-5447ef07c70045b48cce9108e1c0bf25-0-4f77a9446e7fe2d91efdbbfa00385980" alt="Logo Bubur Grace" class="brand-logo">
                 
@@ -616,7 +616,6 @@
                     <span>RASA ISTIMEWA</span>
                 </div>
             </div>
-            <!-- Status Badge Operational -->
             <div id="storeStatusBadge" class="store-status-badge open">
                 <span class="status-dot"></span>
                 <span id="storeStatusText">BUKA</span>
@@ -666,8 +665,7 @@
     </nav>
 
     <main class="container" id="mainContainer">
-        
-        <!-- NEW SECTION: PAKET BUBUR -->
+        <!-- PAKET BUBUR -->
         <div class="section-header" data-category="paket-bubur">
             <h2>Menu Paket</h2>
             <div class="section-line"></div>
@@ -945,7 +943,6 @@
             </div>
         </div>
         <div class="menu-grid">
-            <!-- Item 1: Nasi Uduk + Telur Dadar -->
             <div class="menu-card weekend-only" data-category="nasi-uduk-telur" data-price="25000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasitelurdadar/300/200" class="card-img-top"></div>
                 <div class="card-body">
@@ -953,7 +950,6 @@
                     <div class="card-footer"><span class="price">Rp 25.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <!-- Item 2: Nasi Uduk + Telur Ceplok Balado -->
             <div class="menu-card weekend-only" data-category="nasi-uduk-telur" data-price="25000">
                 <div class="card-img-wrapper"><img src="https://picsum.photos/seed/nasitelurceplok/300/200" class="card-img-top"></div>
                 <div class="card-body">
@@ -1180,6 +1176,63 @@
     <button id="scrollTopBtn" onclick="scrollToTop()" title="Kembali ke atas"><i class="fa-solid fa-arrow-up"></i></button>
     <a href="https://wa.me/62817776175" class="fab-wa" target="_blank" aria-label="Chat WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
 
+    <!-- PASSWORD MODAL -->
+    <div class="modal-overlay" id="passwordModal" onclick="togglePasswordModal(false)">
+        <div class="password-modal" onclick="event.stopPropagation()">
+            <h3 style="margin-bottom:15px; color:var(--secondary);">Admin Login</h3>
+            <p style="font-size:0.85rem; color:#888; margin-bottom:10px;">Masukkan password akses.</p>
+            <input type="password" id="adminPasswordInput" class="password-input" placeholder="Password">
+            <button class="btn-pass-confirm" onclick="checkAdminPassword()">Masuk Panel</button>
+            <button class="btn-pass-cancel" onclick="togglePasswordModal(false)">Batal</button>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL MODAL -->
+    <div class="modal-overlay" id="adminModal" onclick="closeAdminModal(event)">
+        <div class="admin-modal">
+            <div class="admin-header">
+                <h3><i class="fa-solid fa-user-gear"></i> Admin Panel</h3>
+                <button onclick="toggleAdmin()" class="btn-close-admin"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <!-- ADMIN: STORE STATUS (3 Options) -->
+            <div class="admin-section">
+                <label class="admin-label">Mode Status Toko</label>
+                <div class="admin-status-options">
+                    <label class="status-radio">
+                        <input type="radio" name="storeMode" value="auto" onchange="updateStoreMode('auto')" checked>
+                        <span class="status-radio-label">Otomatis<br><small>(Ikut Jadwal)</small></span>
+                    </label>
+                    <label class="status-radio">
+                        <input type="radio" name="storeMode" value="open" onchange="updateStoreMode('open')">
+                        <span class="status-radio-label">Paksa<br>BUKA</span>
+                    </label>
+                    <label class="status-radio">
+                        <input type="radio" name="storeMode" value="close" onchange="updateStoreMode('close')">
+                        <span class="status-radio-label">Paksa<br>TUTUP</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ADMIN: STOCK CONTROL -->
+            <div class="admin-section">
+                <label class="admin-label">Kelola Stok Menu</label>
+                <!-- Search Bar -->
+                <div class="search-wrapper" style="margin-bottom:10px;">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="search" id="adminSearchInput" placeholder="Cari nama menu..." autocomplete="off">
+                </div>
+                <div class="stock-list" id="adminStockList">
+                    <!-- Items generated by JS -->
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn-checkout" style="background:#888;" onclick="toggleAdmin()">Tutup Panel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Variant Selection Modal -->
     <div class="modal-overlay" id="variantModal" onclick="closeVariantModal(event)">
         <div class="variant-modal">
@@ -1208,43 +1261,6 @@
                 </div>
             </div>
             <button class="btn-confirm-variant" onclick="confirmVariantSelection()">Konfirmasi</button>
-        </div>
-    </div>
-
-    <!-- ADMIN PANEL MODAL (NEW) -->
-    <div class="modal-overlay" id="adminModal" onclick="closeAdminModal(event)">
-        <div class="admin-modal">
-            <div class="admin-header">
-                <h3><i class="fa-solid fa-user-gear"></i> Admin Panel</h3>
-                <button onclick="toggleAdmin()" class="btn-close-admin"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <!-- ADMIN: STORE STATUS -->
-            <div class="admin-section">
-                <label class="admin-label">Status Toko (Manual Override)</label>
-                <div class="admin-toggle-container">
-                    <span id="adminStoreStatusText">Sedang Menunggu...</span>
-                    <label class="switch">
-                        <input type="checkbox" id="adminStoreToggle" onchange="toggleManualStoreStatus()">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <small style="color:#888; display:block; margin-top:5px;">
-                    Matikan otomatis jika toko tutup karena urusan lain.
-                </small>
-            </div>
-
-            <!-- ADMIN: STOCK CONTROL -->
-            <div class="admin-section">
-                <label class="admin-label">Stok Menu</label>
-                <div class="stock-list" id="adminStockList">
-                    <!-- Items generated by JS -->
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="btn-checkout" style="background:#888;" onclick="toggleAdmin()">Tutup Panel</button>
-            </div>
         </div>
     </div>
 
@@ -1301,32 +1317,30 @@
             window.addEventListener('scroll', handleScroll);
             initSpyScroll();
             
-            // Initialize Locks
             checkWeekendLocks();
-            
-            // --- INIT ADMIN DATA ---
             initAdminData();
-            
             checkStoreOperationalStatus();
             
-            // Auto update every 10 seconds to ensure real-time responsiveness
             setInterval(() => {
                 checkStoreOperationalStatus();
                 checkWeekendLocks();
             }, 10000);
         });
 
-        // --- ADMIN SYSTEM (LOCAL STORAGE) ---
-        let manualStoreOpen = null; // null = auto, true = forced open, false = forced closed
-        let stockData = {}; // Object to store stock status: { "Bubur Ayam Biasa": true, ... }
+        // --- ADMIN SYSTEM (UPDATED) ---
+        let storeStatusMode = 'auto'; // 'auto', 'open', 'close'
+        let stockData = {};
 
         function initAdminData() {
-            // Load Store Status
-            const savedStatus = localStorage.getItem('grace_manualStoreOpen');
-            if (savedStatus !== null) {
-                manualStoreOpen = (savedStatus === 'true');
-            } else {
-                manualStoreOpen = null; // Default auto
+            // Load Store Mode
+            const savedMode = localStorage.getItem('grace_storeMode');
+            if (savedMode) {
+                storeStatusMode = savedMode;
+            }
+            // Update Radio Buttons
+            const radios = document.getElementsByName('storeMode');
+            for(let radio of radios) {
+                if(radio.value === storeStatusMode) radio.checked = true;
             }
 
             // Load Stock Data
@@ -1334,7 +1348,6 @@
             if (savedStock) {
                 stockData = JSON.parse(savedStock);
             } else {
-                // Initialize all items as available (true) if not exists
                 document.querySelectorAll('.menu-card').forEach(card => {
                     const name = card.querySelector('.card-title').innerText;
                     stockData[name] = true;
@@ -1346,49 +1359,22 @@
             applyStockStyles();
         }
 
+        function updateStoreMode(mode) {
+            storeStatusMode = mode;
+            localStorage.setItem('grace_storeMode', mode);
+            checkStoreOperationalStatus(); // Immediate update
+        }
+
         function saveStockData() {
             localStorage.setItem('grace_stockData', JSON.stringify(stockData));
             applyStockStyles();
         }
 
-        function toggleManualStoreStatus() {
-            const toggle = document.getElementById('adminStoreToggle');
-            manualStoreOpen = toggle.checked;
-            localStorage.setItem('grace_manualStoreOpen', manualStoreOpen);
-            updateAdminStoreText();
-            checkStoreOperationalStatus(); // Immediate update
-        }
-
-        function updateAdminStoreText() {
-            const text = document.getElementById('adminStoreStatusText');
-            const toggle = document.getElementById('adminStoreToggle');
-            if (manualStoreOpen === true) {
-                text.innerText = "Force Open (Buka Paksa)";
-                text.style.color = "var(--success)";
-                toggle.checked = true;
-            } else if (manualStoreOpen === false) {
-                text.innerText = "Force Close (Tutup Paksa)";
-                text.style.color = "var(--danger)";
-                toggle.checked = false;
-            } else {
-                text.innerText = "Otomatis (Sesuai Jam)";
-                text.style.color = "var(--text-main)";
-                toggle.checked = false; // Just display, logic handles null
-            }
-        }
-
         function renderAdminUI() {
-            // Update Store Toggle State
-            updateAdminStoreText();
-
-            // Render Stock List
             const listContainer = document.getElementById('adminStockList');
             listContainer.innerHTML = '';
             
-            // Group by category or just list all? List all is easier for searching
             const cards = Array.from(document.querySelectorAll('.menu-card'));
-            
-            // Sort alphabetically
             cards.sort((a, b) => {
                 const nameA = a.querySelector('.card-title').innerText;
                 const nameB = b.querySelector('.card-title').innerText;
@@ -1397,10 +1383,11 @@
 
             cards.forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
-                const isAvailable = stockData[name] !== false; // default true if undefined
+                const isAvailable = stockData[name] !== false;
                 
                 const item = document.createElement('div');
                 item.className = 'stock-item';
+                item.setAttribute('data-name', name.toLowerCase()); // For search
                 item.innerHTML = `
                     <div style="display:flex; flex-direction:column; flex:1;">
                         <span class="stock-item-name">${name}</span>
@@ -1418,18 +1405,31 @@
             });
         }
 
+        // ADMIN SEARCH FUNCTION
+        const adminSearch = document.getElementById('adminSearchInput');
+        adminSearch.addEventListener('keyup', (e) => {
+            const term = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.stock-item');
+            items.forEach(item => {
+                const name = item.getAttribute('data-name');
+                if (name.includes(term)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
         function toggleStockItem(name) {
             stockData[name] = !stockData[name];
             saveStockData();
-            renderAdminUI(); // Re-render list to update button text and badge
+            renderAdminUI(); 
         }
 
         function applyStockStyles() {
-            // Apply visual class to menu cards
             document.querySelectorAll('.menu-card').forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
                 const isAvailable = stockData[name] !== false;
-                
                 if (isAvailable) {
                     card.classList.remove('stock-empty');
                 } else {
@@ -1438,31 +1438,46 @@
             });
         }
 
-        // --- SECRET ADMIN ACCESS ---
+        // --- PASSWORD & ADMIN ACCESS ---
         let pressTimer;
         const brandLogo = document.getElementById('brandLogo');
         
-        brandLogo.addEventListener('mousedown', () => {
-            pressTimer = setTimeout(openAdminModal, 3000);
-        });
-        brandLogo.addEventListener('touchstart', () => {
-            pressTimer = setTimeout(openAdminModal, 3000);
-        });
-        
+        brandLogo.addEventListener('mousedown', () => { pressTimer = setTimeout(openPasswordPrompt, 3000); });
+        brandLogo.addEventListener('touchstart', () => { pressTimer = setTimeout(openPasswordPrompt, 3000); });
         ['mouseup', 'mouseleave', 'touchend'].forEach(evt => {
-            brandLogo.addEventListener(evt, () => {
-                clearTimeout(pressTimer);
-            });
+            brandLogo.addEventListener(evt, () => { clearTimeout(pressTimer); });
         });
 
-        function toggleAdmin() {
-            const modal = document.getElementById('adminModal');
-            modal.classList.contains('active') ? modal.classList.remove('active') : modal.classList.add('active');
+        function openPasswordPrompt() {
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('passwordModal').classList.add('active');
         }
 
-        function openAdminModal() {
-            document.getElementById('adminModal').classList.add('active');
-            renderAdminUI();
+        function togglePasswordModal(show) {
+            if(show) document.getElementById('passwordModal').classList.add('active');
+            else document.getElementById('passwordModal').classList.remove('active');
+        }
+
+        function checkAdminPassword() {
+            const input = document.getElementById('adminPasswordInput').value;
+            if(input === "buburgrace123") {
+                togglePasswordModal(false);
+                toggleAdmin(true);
+            } else {
+                showToast("Password Salah!", "error");
+                document.getElementById('adminPasswordInput').value = '';
+                document.getElementById('adminPasswordInput').focus();
+            }
+        }
+
+        function toggleAdmin(forceOpen = false) {
+            const modal = document.getElementById('adminModal');
+            if (forceOpen) {
+                modal.classList.add('active');
+                renderAdminUI();
+            } else {
+                modal.classList.contains('active') ? modal.classList.remove('active') : modal.classList.add('active');
+            }
         }
 
         function closeAdminModal(e) {
@@ -1477,7 +1492,6 @@
             const isWeekend = (day === 0 || day === 6);
             
             const weekendCards = document.querySelectorAll('.weekend-only');
-            
             const sectionUdukAyam = document.querySelector('div[data-category="nasi-uduk-ayam"]');
             const gridUdukAyam = sectionUdukAyam.nextElementSibling;
             const sectionUdukTelur = document.querySelector('div[data-category="nasi-uduk-telur"]');
@@ -1504,7 +1518,6 @@
 
             weekendCards.forEach(card => {
                 const btn = card.querySelector('.add-btn');
-                
                 if (isWeekend) {
                     card.classList.remove('weekend-locked');
                     btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
@@ -1517,54 +1530,49 @@
             });
         }
 
-        // --- OPERATIONAL HOURS SYSTEM (REAL TIME) ---
+        // --- OPERATIONAL HOURS SYSTEM (REVISED LOGIC) ---
         function checkStoreOperationalStatus() {
-            const now = new Date();
-            const day = now.getDay(); 
-            const isDayOff = (day === 1);
-
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-            const currentTime = hour * 100 + minute; 
-            
-            const openTime = 600;  // 06:00
-            const closeTime = 1200; // 12:00
-
             const statusBadge = document.getElementById('storeStatusBadge');
             const statusText = document.getElementById('storeStatusText');
             const checkoutBtn = document.getElementById('btnCheckout');
 
             let isOpen = false;
 
-            // LOGIC UPDATE: RESPECT MANUAL OVERRIDE
-            if (manualStoreOpen === true) {
-                isOpen = true; // Force Open
-            } else if (manualStoreOpen === false) {
-                isOpen = false; // Force Closed
+            // 1. Check Manual Overrides
+            if (storeStatusMode === 'open') {
+                isOpen = true;
+                statusText.innerText = "BUKA"; // Simple text
+            } else if (storeStatusMode === 'close') {
+                isOpen = false;
+                statusText.innerText = "TUTUP"; // Simple text
             } else {
-                // Auto Logic (Original)
-                if (!isDayOff) {
-                    if (currentTime >= openTime && currentTime < closeTime) {
-                        isOpen = true;
-                    }
+                // 2. Auto Mode Logic (Schedule)
+                const now = new Date();
+                const day = now.getDay(); 
+                const isDayOff = (day === 1);
+                const hour = now.getHours();
+                const minute = now.getMinutes();
+                const currentTime = hour * 100 + minute; 
+                const openTime = 600;  // 06:00
+                const closeTime = 1200; // 12:00
+
+                if (!isDayOff && currentTime >= openTime && currentTime < closeTime) {
+                    isOpen = true;
+                    statusText.innerText = "BUKA";
+                } else {
+                    isOpen = false;
+                    if (isDayOff) statusText.innerText = "SENIN LIBUR";
+                    else if (currentTime < openTime) statusText.innerText = "BELUM BUKA";
+                    else statusText.innerText = "TUTUP";
                 }
             }
 
+            // Update UI based on state
             if (isOpen) {
                 statusBadge.className = 'store-status-badge open';
-                statusText.innerText = 'BUKA';
                 if(cart.length > 0) checkoutBtn.disabled = false;
             } else {
                 statusBadge.className = 'store-status-badge closed';
-                if (manualStoreOpen === false) {
-                    statusText.innerText = 'TUTUP (ADMIN)';
-                } else if (isDayOff) {
-                    statusText.innerText = 'SENIN LIBUR';
-                } else if (currentTime < openTime) {
-                    statusText.innerText = 'BELUM BUKA';
-                } else {
-                    statusText.innerText = 'SUDAH TUTUP';
-                }
             }
             return isOpen;
         }
@@ -1606,18 +1614,12 @@
         let currentVariantCard = null;
         let selectedOrderType = 'dine-in'; 
         const PACKAGING_FEE_PER_ITEM = 3000;
-        
-        const MAIN_MEAL_CATEGORIES = [
-            'paket-bubur', 
-            'bubur', 'mie-kecil', 'mie-lebar', 'mie-yamin', 'bihun', 'kwetiau', 
-            'nasi-uduk-ayam', 'nasi-uduk-telur'
-        ];
+        const MAIN_MEAL_CATEGORIES = ['paket-bubur', 'bubur', 'mie-kecil', 'mie-lebar', 'mie-yamin', 'bihun', 'kwetiau', 'nasi-uduk-ayam', 'nasi-uduk-telur'];
 
         document.body.addEventListener('click', function(e) {
             const btn = e.target.closest('.add-btn');
             if (btn) {
                 const card = btn.closest('.menu-card');
-                // Check Stock via class or data object
                 if(card.classList.contains('stock-empty')) {
                     showToast("Maaf, menu ini sedang HABIS.");
                     return;
@@ -1626,9 +1628,7 @@
                     showToast("Menu ini hanya tersedia hari Sabtu & Minggu");
                     return;
                 }
-                if (card) {
-                    showVariantModal(card);
-                }
+                if (card) showVariantModal(card);
             }
         });
 
@@ -1636,7 +1636,6 @@
             currentVariantCard = card;
             const baseName = card.querySelector('.card-title').innerText;
             const hasVariants = card.getAttribute('data-has-variants') === 'true';
-            
             selectedOrderType = 'dine-in';
             document.getElementById('btnDineIn').classList.add('selected');
             document.getElementById('btnDineIn').querySelector('input').checked = true;
@@ -1645,7 +1644,6 @@
 
             const modalTitle = document.getElementById('variantTitle');
             const container = document.getElementById('variantOptionsContainer');
-            
             modalTitle.innerText = baseName;
             container.innerHTML = ''; 
 
@@ -1653,7 +1651,6 @@
                 const variantName = card.getAttribute('data-variant-name');
                 const optionsStr = card.getAttribute('data-options');
                 const options = optionsStr.split(',');
-                
                 const variantLabel = document.createElement('div');
                 variantLabel.style.marginBottom = "10px";
                 variantLabel.style.fontWeight = "600";
@@ -1671,11 +1668,7 @@
                         this.classList.add('selected');
                         this.querySelector('input').checked = true;
                     };
-                    label.innerHTML = `
-                        <input type="radio" name="variantOpt" value="${opt}" ${isChecked}>
-                        <div class="radio-circle"></div>
-                        <span>${opt}</span>
-                    `;
+                    label.innerHTML = `<input type="radio" name="variantOpt" value="${opt}" ${isChecked}><div class="radio-circle"></div><span>${opt}</span>`;
                     container.appendChild(label);
                 });
             } else {
@@ -1692,9 +1685,7 @@
             document.getElementById('variantModal').classList.add('active');
         }
 
-        function closeVariantModal(e) {
-            if (e.target.id === 'variantModal') document.getElementById('variantModal').classList.remove('active');
-        }
+        function closeVariantModal(e) { if (e.target.id === 'variantModal') document.getElementById('variantModal').classList.remove('active'); }
 
         function selectOrderType(type) {
             selectedOrderType = type;
@@ -1708,17 +1699,14 @@
             if (!currentVariantCard) return;
             let finalName = currentVariantCard.querySelector('.card-title').innerText;
             const hasVariants = currentVariantCard.getAttribute('data-has-variants') === 'true';
-            
             if (hasVariants) {
                 const selectedOpt = document.querySelector('input[name="variantOpt"]:checked').value;
                 const variantName = currentVariantCard.getAttribute('data-variant-name');
                 finalName = `${finalName} (${selectedOpt})`; 
             }
-
             const price = parseInt(currentVariantCard.dataset.price); 
             const category = currentVariantCard.getAttribute('data-category');
             const packaging = currentVariantCard.getAttribute('data-packaging') || 'yes';
-            
             addToCart(finalName, price, category, packaging, selectedOrderType);
             document.getElementById('variantModal').classList.remove('active');
             currentVariantCard = null;
@@ -1726,11 +1714,8 @@
 
         function addToCart(name, price, category, packaging = 'yes', orderType = 'dine-in') {
             const existingItem = cart.find(item => item.name === name && item.orderType === orderType); 
-            if (existingItem) {
-                existingItem.qty++;
-            } else {
-                cart.push({ name, price, category, qty:1, packaging, orderType, notes: '' });
-            }
+            if (existingItem) existingItem.qty++;
+            else cart.push({ name, price, category, qty:1, packaging, orderType, notes: '' });
             updateCartUI();
             showToast();
             triggerCartPulse();
@@ -1742,14 +1727,12 @@
             if (cart[index].qty <= 0) { removeFromCart(index); }
             else { updateCartUI(); }
         }
-        
         function toggleItemOrderType(index) {
             const item = cart[index];
             const newType = item.orderType === 'dine-in' ? 'takeaway' : 'dine-in';
             item.orderType = newType;
             updateCartUI();
         }
-
         function clearCart() {
             if (cart.length === 0) return;
             cart = []; 
@@ -1757,7 +1740,6 @@
             showToast("Keranjang kosong.");
         }
 
-        // --- REVISED CART UI RENDERER ---
         function updateCartUI() {
             const container = document.getElementById('cartItemsContainer');
             const badge = document.getElementById('cartBadge');
@@ -1766,107 +1748,73 @@
             let totalQty = 0;
 
             if (cart.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align:center; color:#999; margin-top:40px;">
-                        <i class="fa-solid fa-basket-shopping empty-state-icon" style="color:#eee;"></i>
-                        <p style="margin-top:10px;">Keranjang masih kosong.</p>
-                    </div>`;
+                container.innerHTML = `<div style="text-align:center; color:#999; margin-top:40px;"><i class="fa-solid fa-basket-shopping empty-state-icon" style="color:#eee;"></i><p style="margin-top:10px;">Keranjang masih kosong.</p></div>`;
                 badge.style.display = 'none';
                 checkoutBtn.classList.remove('has-items');
                 checkoutBtn.disabled = true;
             } else {
                 badge.style.display = 'flex';
                 checkoutBtn.classList.add('has-items');
-                
                 cart.forEach((item, index) => {
                     totalQty += item.qty;
                     let unitPrice = item.price;
-                    
                     const isMainMeal = MAIN_MEAL_CATEGORIES.includes(item.category);
-                    if (item.orderType === 'takeaway' && item.packaging !== 'no' && isMainMeal) {
-                        unitPrice += PACKAGING_FEE_PER_ITEM;
-                    }
-
+                    if (item.orderType === 'takeaway' && item.packaging !== 'no' && isMainMeal) unitPrice += PACKAGING_FEE_PER_ITEM;
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'cart-item';
-                    
                     itemDiv.innerHTML = `
                         <div class="cart-item-row1">
-                            <div class="item-info">
-                                <div class="item-title">${item.name}</div>
-                                <div class="item-price-row">${formatRupiah(unitPrice)} / pcs</div>
-                            </div>
-                            <button onclick="removeFromCart(${index})" style="background:none; border:none; color:var(--danger); font-size:1.2rem; padding: 5px;">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
+                            <div class="item-info"><div class="item-title">${item.name}</div><div class="item-price-row">${formatRupiah(unitPrice)} / pcs</div></div>
+                            <button onclick="removeFromCart(${index})" style="background:none; border:none; color:var(--danger); font-size:1.2rem; padding: 5px;"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                         <div class="cart-item-row2">
-                            <div class="item-controls">
-                                <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
-                                <span class="qty-num">${item.qty}</span>
-                                <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
-                            </div>
+                            <div class="item-controls"><button class="qty-btn" onclick="updateQty(${index}, -1)">-</button><span class="qty-num">${item.qty}</span><button class="qty-btn" onclick="updateQty(${index}, 1)">+</button></div>
                             <input type="text" class="item-note-input" placeholder="Catatan..." value="${item.notes}" onchange="updateItemNote(${index}, this.value)">
-                            <div class="item-status-badge ${item.orderType === 'dine-in' ? 'badge-dine' : 'badge-away'}" onclick="toggleItemOrderType(${index})">
-                                <i class="fa-solid ${item.orderType === 'dine-in' ? 'fa-utensils' : 'fa-bag-shopping'}"></i>
-                                <span>${item.orderType === 'dine-in' ? 'Dine In' : 'Takeaway'}</span>
-                            </div>
-                        </div>
-                    `;
+                            <div class="item-status-badge ${item.orderType === 'dine-in' ? 'badge-dine' : 'badge-away'}" onclick="toggleItemOrderType(${index})"><i class="fa-solid ${item.orderType === 'dine-in' ? 'fa-utensils' : 'fa-bag-shopping'}"></i><span>${item.orderType === 'dine-in' ? 'Dine In' : 'Takeaway'}</span></div>
+                        </div>`;
                     container.appendChild(itemDiv);
                 });
                 badge.innerText = totalQty;
-                if(!checkStoreOperationalStatus()) {
-                    checkoutBtn.disabled = true;
-                }
+                if(!checkStoreOperationalStatus()) checkoutBtn.disabled = true;
             }
             updateTotal();
             updateCheckoutInputsVisibility();
         }
-
         function updateItemNote(index, val) { cart[index].notes = val; }
-
         function updateTotal() {
             const totalEl = document.getElementById('cartTotal');
             let total = 0;
             cart.forEach(item => {
                 let unitPrice = item.price;
                 const isMainMeal = MAIN_MEAL_CATEGORIES.includes(item.category);
-                if (item.orderType === 'takeaway' && item.packaging !== 'no' && isMainMeal) {
-                    unitPrice += PACKAGING_FEE_PER_ITEM;
-                }
+                if (item.orderType === 'takeaway' && item.packaging !== 'no' && isMainMeal) unitPrice += PACKAGING_FEE_PER_ITEM;
                 total += unitPrice * item.qty;
             });
             totalEl.innerText = formatRupiah(total);
         }
-
         function updateCheckoutInputsVisibility() {
             const hasDineIn = cart.some(i => i.orderType === 'dine-in');
             const hasTakeaway = cart.some(i => i.orderType === 'takeaway');
             document.getElementById('dineInSection').style.display = hasDineIn ? 'block' : 'none';
             document.getElementById('takeawaySection').style.display = hasTakeaway ? 'block' : 'none';
         }
-
         function formatRupiah(number) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
         }
-
         function toggleCart() {
             const modal = document.getElementById('cartModal');
             modal.classList.contains('active') ? modal.classList.remove('active') : modal.classList.add('active');
         }
-
-        function closeCart(e) {
-            if (e.target.id === 'cartModal') toggleCart();
-        }
-
-        function showToast(message = "Item ditambahkan!") {
+        function closeCart(e) { if (e.target.id === 'cartModal') toggleCart(); }
+        function showToast(message = "Item ditambahkan!", type = "normal") {
             const toast = document.getElementById("toast");
             toast.innerText = message;
+            if (type === 'error') toast.classList.add('error');
+            else toast.classList.remove('error');
+            
             toast.className = "show";
-            setTimeout(() => { toast.className = toast.className.replace("show", ""); setTimeout(() => toast.innerText = "Item ditambahkan!", 300); }, 3000);
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); setTimeout(() => { toast.innerText = "Item ditambahkan!"; toast.classList.remove('error'); }, 300); }, 3000);
         }
-
         function triggerCartPulse() {
             const badge = document.getElementById('cartBadge');
             badge.classList.remove('pulse');
@@ -1874,15 +1822,9 @@
             badge.classList.add('pulse');
             setTimeout(() => badge.classList.remove('pulse'), 300);
         }
-
         function checkout() {
-            if (!checkStoreOperationalStatus()) {
-                showToast("Mohon maaf, toko sedang TUTUP.");
-                return;
-            }
-
-            if (cart.length === 0) { showToast("Keranjang masih kosong!"); return; }
-
+            if (!checkStoreOperationalStatus()) { showToast("Mohon maaf, toko sedang TUTUP.", "error"); return; }
+            if (cart.length === 0) { showToast("Keranjang masih kosong!", "error"); return; }
             const btn = document.getElementById('btnCheckout');
             const originalText = document.getElementById('checkoutText').innerText;
             const originalIcon = btn.querySelector('i').className;
@@ -1896,56 +1838,24 @@
             const nameInput = document.getElementById('callerNameInput');
 
             let errorMsg = "";
-            if(hasDineIn && !tableInput.value.trim()) {
-                errorMsg = "Mohon isi Nomor Meja";
-                tableInput.classList.add('input-error');
-            } else { tableInput.classList.remove('input-error'); }
-
-            if(hasTakeaway && !nameInput.value.trim()) {
-                errorMsg = errorMsg ? errorMsg + " & Nama Panggilan" : "Mohon isi Nama Panggilan";
-                nameInput.classList.add('input-error');
-            } else { nameInput.classList.remove('input-error'); }
+            if(hasDineIn && !tableInput.value.trim()) { errorMsg = "Mohon isi Nomor Meja"; tableInput.classList.add('input-error'); } else { tableInput.classList.remove('input-error'); }
+            if(hasTakeaway && !nameInput.value.trim()) { errorMsg = errorMsg ? errorMsg + " & Nama Panggilan" : "Mohon isi Nama Panggilan"; nameInput.classList.add('input-error'); } else { nameInput.classList.remove('input-error'); }
 
             if(errorMsg) {
-                showToast(errorMsg + "!");
-                setTimeout(() => { 
-                    btn.disabled = false;
-                    document.getElementById('checkoutText').innerText = originalText;
-                    btn.querySelector('i').className = originalIcon;
-                }, 1000);
+                showToast(errorMsg + "!", "error");
+                setTimeout(() => { btn.disabled = false; document.getElementById('checkoutText').innerText = originalText; btn.querySelector('i').className = originalIcon; }, 1000);
                 return;
             }
 
             setTimeout(() => {
                 let message = "";
-                if(hasDineIn && !hasTakeaway) {
-                    message += `*NO MEJA - ${tableInput.value}*%0A`;
-                } else if (!hasDineIn && hasTakeaway) {
-                    message += `*NAMA: ${nameInput.value}*%0A`;
-                } else {
-                    message += `*NO MEJA: ${tableInput.value}*%0A`;
-                    message += `*NAMA: ${nameInput.value}*%0A`;
-                }
+                if(hasDineIn && !hasTakeaway) message += `*NO MEJA - ${tableInput.value}*%0A`;
+                else if (!hasDineIn && hasTakeaway) message += `*NAMA: ${nameInput.value}*%0A`;
+                else { message += `*NO MEJA: ${tableInput.value}*%0A*NAMA: ${nameInput.value}*%0A`; }
                 message += "%0A";
-
-                if(hasDineIn) {
-                    message += `*DINE IN:*%0A`;
-                    cart.filter(i => i.orderType === 'dine-in').forEach(i => {
-                        message += `- (${i.qty}x) ${i.name}%0A`;
-                        if(i.notes) message += `*${i.notes}*%0A`;
-                    });
-                }
-
-                if(hasTakeaway) {
-                    message += `%0A*TAKEAWAY:*%0A`;
-                    cart.filter(i => i.orderType === 'takeaway').forEach(i => {
-                        message += `- (${i.qty}x) ${i.name}%0A`;
-                        if(i.notes) message += `*${i.notes}*%0A`;
-                    });
-                }
-                
+                if(hasDineIn) { message += `*DINE IN:*%0A`; cart.filter(i => i.orderType === 'dine-in').forEach(i => { message += `- (${i.qty}x) ${i.name}%0A`; if(i.notes) message += `*${i.notes}*%0A`; }); }
+                if(hasTakeaway) { message += `%0A*TAKEAWAY:*%0A`; cart.filter(i => i.orderType === 'takeaway').forEach(i => { message += `- (${i.qty}x) ${i.name}%0A`; if(i.notes) message += `*${i.notes}*%0A`; }); }
                 window.open(`https://wa.me/62817776175?text=${message}`, '_blank');
-                
                 btn.disabled = false;
                 document.getElementById('checkoutText').innerText = originalText;
                 btn.querySelector('i').className = originalIcon;
@@ -1971,36 +1881,20 @@
                     let hasResultInGrid = false;
                     cardsInGrid.forEach(card => {
                         const title = card.querySelector('.card-title').innerText.toLowerCase();
-                        if(title.includes(term)) {
-                            card.style.display = 'flex';
-                            hasResultInGrid = true;
-                            hasGlobalResult = true;
-                        } else {
-                            card.style.display = 'none';
-                        }
+                        if(title.includes(term)) { card.style.display = 'flex'; hasResultInGrid = true; hasGlobalResult = true; }
+                        else card.style.display = 'none';
                     });
-                    if (hasResultInGrid) {
-                        header.style.display = 'flex';
-                        header.classList.remove('hidden');
-                    } else {
-                        header.style.display = 'none';
-                        header.classList.add('hidden');
-                    }
+                    header.style.display = hasResultInGrid ? 'flex' : 'none';
                 });
                 noResultMsg.style.display = hasGlobalResult ? 'none' : 'block';
-            } else {
-                resetSearch();
-            }
+            } else resetSearch();
         });
 
         function resetSearch() {
             searchInput.value = '';
             clearSearchBtn.style.display = 'none';
             cards.forEach(card => card.style.display = 'flex');
-            sectionHeaders.forEach(header => {
-                header.style.display = 'flex';
-                header.classList.remove('hidden');
-            });
+            sectionHeaders.forEach(header => { header.style.display = 'flex'; header.classList.remove('hidden'); });
             noResultMsg.style.display = 'none';
         }
 
@@ -2010,27 +1904,18 @@
             isFilterActive = true;
             catPills.forEach(pill => pill.classList.remove('active'));
             event.target.classList.add('active');
-            
             let firstVisibleCard = null;
             cards.forEach(card => {
                 const cardCat = card.getAttribute('data-category');
-                if(category === 'all' || cardCat === category) {
-                    card.style.display = 'flex';
-                    if (!firstVisibleCard) firstVisibleCard = card;
-                } else {
-                    card.style.display = 'none';
-                }
+                if(category === 'all' || cardCat === category) { card.style.display = 'flex'; if (!firstVisibleCard) firstVisibleCard = card; }
+                else card.style.display = 'none';
             });
-
             menuGrids.forEach((grid, index) => {
                 const header = sectionHeaders[index];
                 let hasVisible = false;
-                Array.from(grid.children).forEach(child => {
-                    if (child.style.display !== 'none') hasVisible = true;
-                });
+                Array.from(grid.children).forEach(child => { if (child.style.display !== 'none') hasVisible = true; });
                 header.style.display = hasVisible ? 'flex' : 'none';
             });
-
             if (category !== 'all' && firstVisibleCard) {
                 const grid = firstVisibleCard.closest('.menu-grid');
                 const sectionHeader = grid.previousElementSibling;
