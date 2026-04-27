@@ -373,9 +373,10 @@
         }
         .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
 
-        /* Admin Modal Styles */
+        /* --- REFINED ADMIN MODAL STYLES --- */
         .admin-modal {
-            background: white; width: 100%; max-width: 500px;
+            background: #f4f6f8; /* Light gray background for contrast */
+            width: 100%; max-width: 500px;
             border-radius: 20px 20px 0 0;
             padding: 25px; max-height: 90vh;
             display: flex; flex-direction: column;
@@ -383,63 +384,108 @@
         }
         .admin-header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;
+            margin-bottom: 20px;
         }
         .admin-header h3 { color: var(--secondary); margin: 0; display: flex; align-items: center; gap: 10px; }
-        .btn-close-admin { background: none; border: none; font-size: 1.5rem; color: #888; cursor: pointer; }
+        .btn-close-admin { background: white; border: 1px solid #ddd; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: #666; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
         .admin-section { margin-bottom: 25px; }
-        .admin-label { display: block; font-weight: 600; margin-bottom: 10px; color: var(--text-main); font-size: 0.9rem; }
+        .admin-label { display: block; font-weight: 600; margin-bottom: 10px; color: var(--secondary); font-size: 0.9rem; }
 
-        /* Admin Status Controls (Radio Group) */
-        .admin-status-options { display: flex; gap: 10px; }
-        .status-radio {
-            flex: 1;
-            cursor: pointer;
-            position: relative;
-        }
+        /* Status Controls - Clean 3 Options */
+        .admin-status-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .status-radio { cursor: pointer; }
         .status-radio input { position: absolute; opacity: 0; cursor: pointer; }
         .status-radio-label {
-            display: block; text-align: center; padding: 10px 5px;
-            border: 1px solid #ddd; border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 12px 5px;
+            border: 1px solid #ddd; border-radius: 12px;
             font-size: 0.8rem; font-weight: 600; color: #666;
-            transition: all 0.2s;
+            transition: all 0.2s; background: white;
+            height: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
         .status-radio input:checked + .status-radio-label {
-            background: var(--primary); color: white; border-color: var(--primary);
-            box-shadow: 0 2px 8px rgba(211, 84, 0, 0.3);
+            color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transform: translateY(-2px);
         }
+        /* Dynamic colors for checked state */
         .status-radio input[value="auto"]:checked + .status-radio-label { background: var(--secondary); border-color: var(--secondary); }
+        .status-radio input[value="open"]:checked + .status-radio-label { background: var(--success); border-color: var(--success); }
         .status-radio input[value="close"]:checked + .status-radio-label { background: var(--danger); border-color: var(--danger); }
 
-        /* Admin Stock List */
-        .stock-list { max-height: 40vh; overflow-y: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; }
-        .stock-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px; border-bottom: 1px solid #f0f0f0;
+        /* Stock Search Bar */
+        .admin-search-wrapper {
+            position: relative; margin-bottom: 15px;
         }
-        .stock-item-name { font-size: 0.9rem; font-weight: 500; flex: 1; padding-right: 10px; }
+        .admin-search-wrapper i {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #aaa;
+        }
+        .admin-search-wrapper input {
+            width: 100%; padding: 12px 15px 12px 45px;
+            border: 1px solid #e0e0e0; border-radius: 12px;
+            font-family: 'Poppins', sans-serif; font-size: 0.9rem;
+            background: white; outline: none; transition: all 0.2s;
+        }
+        .admin-search-wrapper input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1); }
+
+        /* --- STOCK GRID LAYOUT (The "Rapikan" fix) --- */
+        .stock-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 Columns */
+            gap: 10px;
+            max-height: 45vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 5px; /* padding for shadow */
+        }
+
+        .stock-item {
+            background: white;
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid #eaeaea;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        
+        .stock-item-name {
+            font-size: 0.85rem; font-weight: 500; color: #333;
+            margin-bottom: 10px; display: -webkit-box;
+            -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; line-height: 1.3;
+        }
+
+        .stock-item-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
         .stock-item-badge {
-            font-size: 0.7rem; padding: 4px 8px; border-radius: 4px;
-            font-weight: 700; text-transform: uppercase;
+            font-size: 0.65rem; padding: 4px 8px; border-radius: 20px;
+            font-weight: 700; text-transform: uppercase; white-space: nowrap;
         }
         .badge-available { background: #e8f5e9; color: var(--success); }
         .badge-empty { background: #ffebee; color: var(--danger); }
 
-        .btn-admin-action {
-            background: var(--primary); color: white; border: none;
-            padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer;
-            transition: background 0.2s;
+        .btn-stock-toggle {
+            flex: 1; font-size: 0.75rem; padding: 6px 0;
+            border-radius: 6px; font-weight: 600; cursor: pointer;
+            border: none; color: white; transition: filter 0.2s;
         }
-        .btn-admin-action.mark-empty { background: #ffebee; color: var(--danger); border: 1px solid var(--danger); }
-        .btn-admin-action.mark-available { background: #e8f5e9; color: var(--success); border: 1px solid var(--success); }
+        .btn-stock-toggle:active { transform: scale(0.96); }
+        .btn-stock-toggle.mark-empty { background: #ffebee; color: var(--danger); border: 1px solid var(--danger); }
+        .btn-stock-toggle.mark-available { background: #e8f5e9; color: var(--success); border: 1px solid var(--success); }
 
-        /* Password Prompt Modal */
+        /* Password Prompt */
         .password-modal {
             background: white; width: 100%; max-width: 320px;
             border-radius: 20px; padding: 30px;
-            animation: fadeIn 0.2s;
-            text-align: center;
+            animation: fadeIn 0.2s; text-align: center;
         }
         .password-input {
             width: 100%; padding: 12px; margin: 15px 0;
@@ -456,7 +502,7 @@
             color: #888; cursor: pointer; font-size: 0.9rem; margin-top: 5px;
         }
 
-        /* Cart & Variant Modal Styles (Same as before) */
+        /* Cart & Variant Modal Styles */
         .cart-modal {
             background: white; width: 100%; max-width: 500px;
             border-radius: 20px 20px 0 0;
@@ -586,6 +632,8 @@
             header { padding: 20px 5%; flex-direction: row; flex-wrap: wrap; }
             .brand-text h1 { font-size: 1.8rem; }
             .brand-logo { width: 60px; height: 60px; }
+            /* Admin Grid on Desktop: 3 Columns */
+            .stock-list { grid-template-columns: repeat(3, 1fr); }
         }
 
         /* --- ANIMATIONS --- */
@@ -1218,7 +1266,7 @@
             <div class="admin-section">
                 <label class="admin-label">Kelola Stok Menu</label>
                 <!-- Search Bar -->
-                <div class="search-wrapper" style="margin-bottom:10px;">
+                <div class="admin-search-wrapper">
                     <i class="fa-solid fa-search"></i>
                     <input type="search" id="adminSearchInput" placeholder="Cari nama menu..." autocomplete="off">
                 </div>
@@ -1389,17 +1437,17 @@
                 item.className = 'stock-item';
                 item.setAttribute('data-name', name.toLowerCase()); // For search
                 item.innerHTML = `
-                    <div style="display:flex; flex-direction:column; flex:1;">
-                        <span class="stock-item-name">${name}</span>
+                    <div class="stock-item-name">${name}</div>
+                    <div class="stock-item-footer">
                         <span class="stock-item-badge ${isAvailable ? 'badge-available' : 'badge-empty'}">
                             ${isAvailable ? 'Tersedia' : 'Habis'}
                         </span>
+                        <button 
+                            class="btn-stock-toggle ${isAvailable ? 'mark-empty' : 'mark-available'}"
+                            onclick="toggleStockItem('${name.replace(/'/g, "\\'")}')">
+                            ${isAvailable ? 'Set Habis' : 'Set Tersedia'}
+                        </button>
                     </div>
-                    <button 
-                        class="btn-admin-action ${isAvailable ? 'mark-empty' : 'mark-available'}"
-                        onclick="toggleStockItem('${name.replace(/'/g, "\\'")}')">
-                        ${isAvailable ? 'Set Habis' : 'Set Tersedia'}
-                    </button>
                 `;
                 listContainer.appendChild(item);
             });
