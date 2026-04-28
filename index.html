@@ -13,6 +13,10 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- FIREBASE SDK (WAJIB UNTUK REALTIME) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <style>
         /* --- VARIABLES --- */
         :root {
@@ -373,7 +377,7 @@
         }
         .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
 
-        /* --- NEW ADMIN PANEL STYLES (RAPID & MODERN) --- */
+        /* --- ADMIN PANEL STYLES (RAPID & MODERN) --- */
         .admin-modal {
             background: white; width: 100%; max-width: 480px;
             border-radius: 20px 20px 0 0;
@@ -554,7 +558,7 @@
         }
         .btn-confirm-variant:active { background: var(--primary-dark); transform: scale(0.98); }
 
-        .cart-items { overflow-y: auto; flex-grow: 1; margin-bottom: 15px; padding-right: 5px; -webkit-overflow-scrolling: touch; }
+        .cart-items { overflow-y: auto; flex-grow: 1; margin-bottom: 15px; padding-right:5px; -webkit-overflow-scrolling: touch; }
         .cart-item {
             background: #fff; border: 1px solid #f0f0f0; border-radius: 12px;
             padding: 12px; margin-bottom: 12px; animation: fadeIn 0.3s ease;
@@ -1381,63 +1385,82 @@
             initSpyScroll();
             
             checkWeekendLocks();
-            initAdminData();
-            checkStoreOperationalStatus();
+            initFirebase(); // Inisialisasi Firebase
+        });
+
+        // --- FIREBASE CONFIG & INIT ---
+        let db;
+        const firebaseConfig = {
+            // --- PENTING: ISI DENGAN KUNCI DARI FIREBASE ---
+            apiKey: "AIzaSyCj__JH5w__RdSEqtR59Cr7ctEOyl6lzUg",
+            authDomain: "buburgrace.firebaseapp.com",
+            databaseURL: "https://buburgrace-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "buburgrace",
+            // ----------------------------------------------------
+        };
+
+        function initFirebase() {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
+                listenToFirebase();
+            } catch (error) {
+                console.error("Firebase Error: Kunci belum diisi atau salah.", error);
+                showToast("Error Koneksi Database", "error");
+            }
+        }
+
+        function listenToFirebase() {
+            // 1. DENGARK PERUBAHAN STATUS TOKO
+            db.ref('bubur_grace/status').on('value', (snapshot) => {
+                const val = snapshot.val();
+                if (val) {
+                    storeStatusMode = val;
+                    updateAdminStatusUI();
+                    checkStoreOperationalStatus();
+                }
+            });
+
+            // 2. DENGARK PERUBAHAN STOK
+            db.ref('bubur_grace/stock').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    stockData = data;
+                    applyStockStyles();
+                    renderAdminUI();
+                }
+            });
+
+            // 3. INISIALISASI AWAL (Jika belum ada data di database)
+            db.ref('bubur_grace/stock').once('value').then((snapshot) => {
+                if(!snapshot.exists()){
+                    // Isi data awal dari HTML jika database kosong
+                    const initialStock = {};
+                    document.querySelectorAll('.menu-card').forEach(card => {
+                        const name = card.querySelector('.card-title').innerText;
+                        initialStock[name] = true;
+                    });
+                    db.ref('bubur_grace/stock').set(initialStock);
+                }
+            });
             
-            // Auto update every 5 seconds
-            setInterval(() => {
-                checkStoreOperationalStatus();
-                checkWeekendLocks();
-            }, 5000);
-        });
+            db.ref('bubur_grace/status').once('value').then((snapshot) => {
+                if(!snapshot.exists()){
+                    db.ref('bubur_grace/status').set('auto'); // Default auto
+                }
+            });
+        }
 
-        // --- SYNC LISTENER (REALTIME FOR TABS) ---
-        // Ini membuat update Admin terlihat di Tab Pelanggan secara instan (jika dibuka di 1 device)
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'grace_storeMode') {
-                storeStatusMode = e.newValue;
-                updateAdminStatusUI(); // Refresh Admin UI
-                checkStoreOperationalStatus(); // Refresh Customer View
-            }
-            if (e.key === 'grace_stockData') {
-                stockData = JSON.parse(e.newValue);
-                applyStockStyles(); // Refresh Customer View
-                renderAdminUI(); // Refresh Admin List if open
-            }
-        });
-
-        // --- ADMIN SYSTEM (RAPID VERSION) ---
+        // --- ADMIN SYSTEM (CLOUD VERSION) ---
         let storeStatusMode = 'auto'; 
         let stockData = {};
 
-        function initAdminData() {
-            // Load Mode
-            const savedMode = localStorage.getItem('grace_storeMode');
-            if (savedMode) storeStatusMode = savedMode;
-            updateAdminStatusUI();
-
-            // Load Stock
-            const savedStock = localStorage.getItem('grace_stockData');
-            if (savedStock) stockData = JSON.parse(savedStock);
-            else {
-                document.querySelectorAll('.menu-card').forEach(card => {
-                    const name = card.querySelector('.card-title').innerText;
-                    stockData[name] = true;
-                });
-                saveStockData();
-            }
-            renderAdminUI();
-            applyStockStyles();
-        }
-
         function updateAdminStatusUI() {
-            // Hapus class active dari semua
             ['auto','open','close'].forEach(m => {
                 const el = document.getElementById(`opt-${m}`);
                 if(el) el.classList.remove('active', 'status-open', 'status-close');
             });
 
-            // Tambah class ke yang aktif
             const activeEl = document.getElementById(`opt-${storeStatusMode}`);
             if(activeEl) {
                 activeEl.classList.add('active');
@@ -1448,14 +1471,10 @@
 
         function updateStoreMode(mode) {
             storeStatusMode = mode;
-            localStorage.setItem('grace_storeMode', mode);
+            // KIRIM KE CLOUD
+            if(db) db.ref('bubur_grace/status').set(mode);
             updateAdminStatusUI();
             checkStoreOperationalStatus();
-        }
-
-        function saveStockData() {
-            localStorage.setItem('grace_stockData', JSON.stringify(stockData));
-            applyStockStyles();
         }
 
         function renderAdminUI() {
@@ -1491,21 +1510,10 @@
             });
         }
 
-        // ADMIN SEARCH
-        const adminSearch = document.getElementById('adminSearchInput');
-        adminSearch.addEventListener('keyup', (e) => {
-            const term = e.target.value.toLowerCase();
-            const items = document.querySelectorAll('.stock-item-card');
-            items.forEach(item => {
-                const name = item.getAttribute('data-name');
-                if (name.includes(term)) item.style.display = 'flex';
-                else item.style.display = 'none';
-            });
-        });
-
         function toggleStockItem(name) {
             stockData[name] = !stockData[name];
-            saveStockData();
+            // KIRIM KE CLOUD
+            if(db) db.ref('bubur_grace/stock').set(stockData);
             renderAdminUI();
         }
 
@@ -1565,6 +1573,18 @@
             if (e.target.id === 'adminModal') toggleAdmin();
         }
 
+        // --- ADMIN SEARCH ---
+        const adminSearch = document.getElementById('adminSearchInput');
+        adminSearch.addEventListener('keyup', (e) => {
+            const term = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.stock-item-card');
+            items.forEach(item => {
+                const name = item.getAttribute('data-name');
+                if (name.includes(term)) item.style.display = 'flex';
+                else item.style.display = 'none';
+            });
+        });
+
         // --- SMART LOCK LOGIC (NASI UDUK) & POSITIONING ---
         function checkWeekendLocks() {
             const now = new Date();
@@ -1618,7 +1638,7 @@
 
             let isOpen = false;
 
-            // 1. Check Manual Overrides
+            // 1. Check Firebase Status (Cloud)
             if (storeStatusMode === 'open') {
                 isOpen = true;
                 statusText.innerText = "BUKA";
@@ -1633,8 +1653,8 @@
                 const hour = now.getHours();
                 const minute = now.getMinutes();
                 const currentTime = hour * 100 + minute; 
-                const openTime = 600;
-                const closeTime = 1200;
+                const openTime = 600;  // 06:00
+                const closeTime = 1200; // 12:00
 
                 if (!isDayOff && currentTime >= openTime && currentTime < closeTime) {
                     isOpen = true;
