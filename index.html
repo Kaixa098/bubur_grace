@@ -202,7 +202,7 @@
         /* STOCK EMPTY STYLE */
         .menu-card.stock-empty {
             pointer-events: none; 
-            opacity: 0.7;
+            opacity: 0.6;
             filter: grayscale(1);
             border: 1px dashed #ccc;
         }
@@ -219,7 +219,7 @@
         /* WEEKEND LOCKED STYLE */
         .menu-card.weekend-locked {
             pointer-events: none; 
-            opacity: 0.7;
+            opacity: 0.6;
             filter: grayscale(1);
             border: 1px dashed #ccc;
         }
@@ -373,119 +373,130 @@
         }
         .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
 
-        /* --- REFINED ADMIN MODAL STYLES --- */
+        /* --- NEW ADMIN PANEL STYLES (RAPID & MODERN) --- */
         .admin-modal {
-            background: #f4f6f8; /* Light gray background for contrast */
-            width: 100%; max-width: 500px;
+            background: white; width: 100%; max-width: 480px;
             border-radius: 20px 20px 0 0;
-            padding: 25px; max-height: 90vh;
             display: flex; flex-direction: column;
             animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            max-height: 90vh;
+            overflow: hidden;
         }
+
         .admin-header {
+            padding: 20px 20px 10px;
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fff;
         }
-        .admin-header h3 { color: var(--secondary); margin: 0; display: flex; align-items: center; gap: 10px; }
-        .btn-close-admin { background: white; border: 1px solid #ddd; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: #666; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .admin-header h3 { color: var(--secondary); margin: 0; display: flex; align-items: center; gap: 10px; font-size: 1.2rem; }
+        .btn-close-admin { background: none; border: none; font-size: 1.2rem; color: #aaa; cursor: pointer; padding: 5px; }
+        .btn-close-admin:hover { color: var(--danger); }
 
-        .admin-section { margin-bottom: 25px; }
-        .admin-label { display: block; font-weight: 600; margin-bottom: 10px; color: var(--secondary); font-size: 0.9rem; }
-
-        /* Status Controls - Clean 3 Options */
-        .admin-status-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-        .status-radio { cursor: pointer; }
-        .status-radio input { position: absolute; opacity: 0; cursor: pointer; }
-        .status-radio-label {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; padding: 12px 5px;
-            border: 1px solid #ddd; border-radius: 12px;
-            font-size: 0.8rem; font-weight: 600; color: #666;
-            transition: all 0.2s; background: white;
-            height: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-        }
-        .status-radio input:checked + .status-radio-label {
-            color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transform: translateY(-2px);
-        }
-        /* Dynamic colors for checked state */
-        .status-radio input[value="auto"]:checked + .status-radio-label { background: var(--secondary); border-color: var(--secondary); }
-        .status-radio input[value="open"]:checked + .status-radio-label { background: var(--success); border-color: var(--success); }
-        .status-radio input[value="close"]:checked + .status-radio-label { background: var(--danger); border-color: var(--danger); }
-
-        /* Stock Search Bar */
-        .admin-search-wrapper {
-            position: relative; margin-bottom: 15px;
-        }
-        .admin-search-wrapper i {
-            position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #aaa;
-        }
-        .admin-search-wrapper input {
-            width: 100%; padding: 12px 15px 12px 45px;
-            border: 1px solid #e0e0e0; border-radius: 12px;
-            font-family: 'Poppins', sans-serif; font-size: 0.9rem;
-            background: white; outline: none; transition: all 0.2s;
-        }
-        .admin-search-wrapper input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1); }
-
-        /* --- STOCK GRID LAYOUT (The "Rapikan" fix) --- */
-        .stock-list {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 Columns */
-            gap: 10px;
-            max-height: 45vh;
+        .admin-content {
             overflow-y: auto;
+            padding: 20px;
             -webkit-overflow-scrolling: touch;
-            padding: 5px; /* padding for shadow */
+            flex-grow: 1;
         }
 
-        .stock-item {
-            background: white;
-            border-radius: 10px;
-            padding: 12px;
-            border: 1px solid #eaeaea;
+        /* Admin Status Section */
+        .admin-section-status { margin-bottom: 25px; }
+        .section-title {
+            font-size: 0.9rem; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .section-title i { color: var(--primary); font-size: 0.8rem; }
+
+        /* Toggle Switch for Status */
+        .status-segment {
+            background: #f0f2f5;
+            border-radius: 12px;
+            padding: 4px;
+            display: flex;
+            gap: 4px;
+        }
+        .status-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            align-items: center;
+            gap: 4px;
         }
-        
-        .stock-item-name {
-            font-size: 0.85rem; font-weight: 500; color: #333;
-            margin-bottom: 10px; display: -webkit-box;
-            -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-            overflow: hidden; line-height: 1.3;
+        .status-option i { font-size: 1.1rem; }
+        .status-option.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
+        .status-option.active.status-close { color: var(--danger); }
+        .status-option.active.status-open { color: var(--success); }
 
-        .stock-item-footer {
-            margin-top: auto;
+        /* Admin Stock Section */
+        .admin-search-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .admin-search-wrapper i {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            color: #ccc; font-size: 0.9rem;
+        }
+        #adminSearchInput {
+            width: 100%; padding: 12px 12px 12px 40px;
+            border: 1px solid #eee; border-radius: 10px;
+            font-size: 0.9rem; background: #fff;
+            transition: 0.2s;
+        }
+        #adminSearchInput:focus { border-color: var(--primary); outline: none; }
+
+        .stock-list { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
+        
+        .stock-item-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 8px;
         }
-
-        .stock-item-badge {
-            font-size: 0.65rem; padding: 4px 8px; border-radius: 20px;
-            font-weight: 700; text-transform: uppercase; white-space: nowrap;
+        .stock-info { flex: 1; padding-right: 15px; }
+        .stock-name { font-weight: 600; font-size: 0.95rem; color: var(--secondary); margin-bottom: 2px; line-height: 1.3; }
+        .stock-cat { font-size: 0.75rem; color: #999; }
+        
+        /* IOS Toggle Switch */
+        .stock-toggle {
+            position: relative; display: inline-block; width: 44px; height: 24px;
+            flex-shrink: 0;
         }
-        .badge-available { background: #e8f5e9; color: var(--success); }
-        .badge-empty { background: #ffebee; color: var(--danger); }
-
-        .btn-stock-toggle {
-            flex: 1; font-size: 0.75rem; padding: 6px 0;
-            border-radius: 6px; font-weight: 600; cursor: pointer;
-            border: none; color: white; transition: filter 0.2s;
+        .stock-toggle input { opacity: 0; width: 0; height: 0; }
+        .slider-toggle {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 24px;
         }
-        .btn-stock-toggle:active { transform: scale(0.96); }
-        .btn-stock-toggle.mark-empty { background: #ffebee; color: var(--danger); border: 1px solid var(--danger); }
-        .btn-stock-toggle.mark-available { background: #e8f5e9; color: var(--success); border: 1px solid var(--success); }
+        .slider-toggle:before {
+            position: absolute; content: ""; height: 18px; width: 18px;
+            left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input:checked + .slider-toggle { background-color: var(--success); }
+        input:checked + .slider-toggle:before { transform: translateX(20px); }
 
-        /* Password Prompt */
+        /* Password Modal */
         .password-modal {
             background: white; width: 100%; max-width: 320px;
             border-radius: 20px; padding: 30px;
-            animation: fadeIn 0.2s; text-align: center;
+            animation: fadeIn 0.2s;
+            text-align: center;
+            z-index: 3100; position: absolute; bottom: 0; margin-bottom: 20px;
         }
         .password-input {
             width: 100%; padding: 12px; margin: 15px 0;
@@ -510,7 +521,6 @@
             display: flex; flex-direction: column;
             animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
-        
         .variant-modal {
             background: white; width: 100%; max-width: 400px;
             border-radius: 20px 20px 0 0;
@@ -622,7 +632,7 @@
 
         @media (min-width: 768px) {
             .modal-overlay { align-items: center; }
-            .cart-modal, .variant-modal, .admin-modal, .password-modal { border-radius: 20px; }
+            .cart-modal, .variant-modal, .admin-modal, .password-modal { border-radius: 20px; max-width: 500px; }
             .menu-grid { gap: 25px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
             .card-img-wrapper { height: 180px; }
             .card-body { padding: 20px; }
@@ -632,8 +642,6 @@
             header { padding: 20px 5%; flex-direction: row; flex-wrap: wrap; }
             .brand-text h1 { font-size: 1.8rem; }
             .brand-logo { width: 60px; height: 60px; }
-            /* Admin Grid on Desktop: 3 Columns */
-            .stock-list { grid-template-columns: repeat(3, 1fr); }
         }
 
         /* --- ANIMATIONS --- */
@@ -722,7 +730,6 @@
             </div>
         </div>
         <div class="menu-grid">
-            <!-- Paket A -->
             <div class="menu-card" data-category="paket-bubur" data-price="36000" data-has-variants="true" data-options="Sari Kacang Ijo,Susu Kacang Kedelai,Thai Tea,Jeruk Murni" data-variant-name="Minuman">
                 <div class="card-img-wrapper"><img src="foto/1.jpeg" class="card-img-top"></div>
                 <div class="card-body">
@@ -735,7 +742,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Paket B -->
             <div class="menu-card" data-category="paket-bubur" data-price="53000">
                 <div class="card-img-wrapper"><img src="foto/2.jpeg" class="card-img-top"></div>
                 <div class="card-body">
@@ -747,7 +753,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Paket C -->
             <div class="menu-card" data-category="paket-bubur" data-price="60000">
                 <div class="card-img-wrapper"><img src="foto/3.jpeg" class="card-img-top"></div>
                 <div class="card-body">
@@ -759,7 +764,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Paket D -->
             <div class="menu-card" data-category="paket-bubur" data-price="60000">
                 <div class="card-img-wrapper"><img src="foto/4.jpeg" class="card-img-top"></div>
                 <div class="card-body">
@@ -771,7 +775,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Paket E -->
             <div class="menu-card" data-category="paket-bubur" data-price="60000">
                 <div class="card-img-wrapper"><img src="foto/5.jpeg" class="card-img-top"></div>
                 <div class="card-body">
@@ -783,7 +786,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Paket F -->
             <div class="menu-card" data-category="paket-bubur" data-price="60000">
                 <div class="card-img-wrapper"><img src="foto/6.jpeg" class="card-img-top"></div>
                 <div class="card-body">
@@ -1235,47 +1237,60 @@
         </div>
     </div>
 
-    <!-- ADMIN PANEL MODAL -->
+    <!-- NEW ADMIN PANEL MODAL (RAPID DESIGN) -->
     <div class="modal-overlay" id="adminModal" onclick="closeAdminModal(event)">
         <div class="admin-modal">
             <div class="admin-header">
-                <h3><i class="fa-solid fa-user-gear"></i> Admin Panel</h3>
+                <h3><i class="fa-solid fa-sliders"></i> Admin Panel</h3>
                 <button onclick="toggleAdmin()" class="btn-close-admin"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <!-- ADMIN: STORE STATUS (3 Options) -->
-            <div class="admin-section">
-                <label class="admin-label">Mode Status Toko</label>
-                <div class="admin-status-options">
-                    <label class="status-radio">
-                        <input type="radio" name="storeMode" value="auto" onchange="updateStoreMode('auto')" checked>
-                        <span class="status-radio-label">Otomatis<br><small>(Ikut Jadwal)</small></span>
-                    </label>
-                    <label class="status-radio">
-                        <input type="radio" name="storeMode" value="open" onchange="updateStoreMode('open')">
-                        <span class="status-radio-label">Paksa<br>BUKA</span>
-                    </label>
-                    <label class="status-radio">
-                        <input type="radio" name="storeMode" value="close" onchange="updateStoreMode('close')">
-                        <span class="status-radio-label">Paksa<br>TUTUP</span>
-                    </label>
+            <div class="admin-content">
+                <!-- STATUS SECTION -->
+                <div class="admin-section-status">
+                    <div class="section-title">
+                        <i class="fa-regular fa-clock"></i> Status Toko
+                    </div>
+                    <div class="status-segment">
+                        <div class="status-option" id="opt-auto" onclick="updateStoreMode('auto')">
+                            <i class="fa-solid fa-robot"></i>
+                            <span>Otomatis</span>
+                        </div>
+                        <div class="status-option" id="opt-open" onclick="updateStoreMode('open')">
+                            <i class="fa-solid fa-store"></i>
+                            <span>Buka</span>
+                        </div>
+                        <div class="status-option" id="opt-close" onclick="updateStoreMode('close')">
+                            <i class="fa-solid fa-store-slash"></i>
+                            <span>Tutup</span>
+                        </div>
+                    </div>
+                    <small style="color:#aaa; font-size:0.7rem; display:block; margin-top:8px; line-height:1.4;">
+                        *Otomatis: Ikuti jadwal buka/tutup.<br>
+                        *Buka/Tutup: Paksa status manual.
+                    </small>
+                </div>
+
+                <hr style="border:0; border-top:1px solid #eee; margin: 20px 0;">
+
+                <!-- STOCK SECTION -->
+                <div class="admin-section-stock">
+                    <div class="section-title">
+                        <i class="fa-solid fa-boxes-stacked"></i> Kelola Stok
+                    </div>
+                    <!-- Search -->
+                    <div class="admin-search-wrapper">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="search" id="adminSearchInput" placeholder="Cari menu..." autocomplete="off">
+                    </div>
+                    
+                    <div class="stock-list" id="adminStockList">
+                        <!-- Items generated by JS -->
+                    </div>
                 </div>
             </div>
 
-            <!-- ADMIN: STOCK CONTROL -->
-            <div class="admin-section">
-                <label class="admin-label">Kelola Stok Menu</label>
-                <!-- Search Bar -->
-                <div class="admin-search-wrapper">
-                    <i class="fa-solid fa-search"></i>
-                    <input type="search" id="adminSearchInput" placeholder="Cari nama menu..." autocomplete="off">
-                </div>
-                <div class="stock-list" id="adminStockList">
-                    <!-- Items generated by JS -->
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 20px;">
+            <div style="padding: 15px 20px 20px; background:#f9f9f9; border-top:1px solid #eee;">
                 <button class="btn-checkout" style="background:#888;" onclick="toggleAdmin()">Tutup Panel</button>
             </div>
         </div>
@@ -1369,48 +1384,73 @@
             initAdminData();
             checkStoreOperationalStatus();
             
+            // Auto update every 5 seconds
             setInterval(() => {
                 checkStoreOperationalStatus();
                 checkWeekendLocks();
-            }, 10000);
+            }, 5000);
         });
 
-        // --- ADMIN SYSTEM (UPDATED) ---
-        let storeStatusMode = 'auto'; // 'auto', 'open', 'close'
+        // --- SYNC LISTENER (REALTIME FOR TABS) ---
+        // Ini membuat update Admin terlihat di Tab Pelanggan secara instan (jika dibuka di 1 device)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'grace_storeMode') {
+                storeStatusMode = e.newValue;
+                updateAdminStatusUI(); // Refresh Admin UI
+                checkStoreOperationalStatus(); // Refresh Customer View
+            }
+            if (e.key === 'grace_stockData') {
+                stockData = JSON.parse(e.newValue);
+                applyStockStyles(); // Refresh Customer View
+                renderAdminUI(); // Refresh Admin List if open
+            }
+        });
+
+        // --- ADMIN SYSTEM (RAPID VERSION) ---
+        let storeStatusMode = 'auto'; 
         let stockData = {};
 
         function initAdminData() {
-            // Load Store Mode
+            // Load Mode
             const savedMode = localStorage.getItem('grace_storeMode');
-            if (savedMode) {
-                storeStatusMode = savedMode;
-            }
-            // Update Radio Buttons
-            const radios = document.getElementsByName('storeMode');
-            for(let radio of radios) {
-                if(radio.value === storeStatusMode) radio.checked = true;
-            }
+            if (savedMode) storeStatusMode = savedMode;
+            updateAdminStatusUI();
 
-            // Load Stock Data
+            // Load Stock
             const savedStock = localStorage.getItem('grace_stockData');
-            if (savedStock) {
-                stockData = JSON.parse(savedStock);
-            } else {
+            if (savedStock) stockData = JSON.parse(savedStock);
+            else {
                 document.querySelectorAll('.menu-card').forEach(card => {
                     const name = card.querySelector('.card-title').innerText;
                     stockData[name] = true;
                 });
                 saveStockData();
             }
-
             renderAdminUI();
             applyStockStyles();
+        }
+
+        function updateAdminStatusUI() {
+            // Hapus class active dari semua
+            ['auto','open','close'].forEach(m => {
+                const el = document.getElementById(`opt-${m}`);
+                if(el) el.classList.remove('active', 'status-open', 'status-close');
+            });
+
+            // Tambah class ke yang aktif
+            const activeEl = document.getElementById(`opt-${storeStatusMode}`);
+            if(activeEl) {
+                activeEl.classList.add('active');
+                if(storeStatusMode === 'open') activeEl.classList.add('status-open');
+                if(storeStatusMode === 'close') activeEl.classList.add('status-close');
+            }
         }
 
         function updateStoreMode(mode) {
             storeStatusMode = mode;
             localStorage.setItem('grace_storeMode', mode);
-            checkStoreOperationalStatus(); // Immediate update
+            updateAdminStatusUI();
+            checkStoreOperationalStatus();
         }
 
         function saveStockData() {
@@ -1431,62 +1471,54 @@
 
             cards.forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
+                const cat = card.getAttribute('data-category').replace('-', ' ').toUpperCase();
                 const isAvailable = stockData[name] !== false;
                 
                 const item = document.createElement('div');
-                item.className = 'stock-item';
-                item.setAttribute('data-name', name.toLowerCase()); // For search
+                item.className = 'stock-item-card';
+                item.setAttribute('data-name', name.toLowerCase());
                 item.innerHTML = `
-                    <div class="stock-item-name">${name}</div>
-                    <div class="stock-item-footer">
-                        <span class="stock-item-badge ${isAvailable ? 'badge-available' : 'badge-empty'}">
-                            ${isAvailable ? 'Tersedia' : 'Habis'}
-                        </span>
-                        <button 
-                            class="btn-stock-toggle ${isAvailable ? 'mark-empty' : 'mark-available'}"
-                            onclick="toggleStockItem('${name.replace(/'/g, "\\'")}')">
-                            ${isAvailable ? 'Set Habis' : 'Set Tersedia'}
-                        </button>
+                    <div class="stock-info">
+                        <div class="stock-name">${name}</div>
+                        <div class="stock-cat">${cat}</div>
                     </div>
+                    <label class="stock-toggle">
+                        <input type="checkbox" ${isAvailable ? 'checked' : ''} onchange="toggleStockItem('${name.replace(/'/g, "\\'")}')">
+                        <span class="slider-toggle"></span>
+                    </label>
                 `;
                 listContainer.appendChild(item);
             });
         }
 
-        // ADMIN SEARCH FUNCTION
+        // ADMIN SEARCH
         const adminSearch = document.getElementById('adminSearchInput');
         adminSearch.addEventListener('keyup', (e) => {
             const term = e.target.value.toLowerCase();
-            const items = document.querySelectorAll('.stock-item');
+            const items = document.querySelectorAll('.stock-item-card');
             items.forEach(item => {
                 const name = item.getAttribute('data-name');
-                if (name.includes(term)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
+                if (name.includes(term)) item.style.display = 'flex';
+                else item.style.display = 'none';
             });
         });
 
         function toggleStockItem(name) {
             stockData[name] = !stockData[name];
             saveStockData();
-            renderAdminUI(); 
+            renderAdminUI();
         }
 
         function applyStockStyles() {
             document.querySelectorAll('.menu-card').forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
                 const isAvailable = stockData[name] !== false;
-                if (isAvailable) {
-                    card.classList.remove('stock-empty');
-                } else {
-                    card.classList.add('stock-empty');
-                }
+                if (isAvailable) card.classList.remove('stock-empty');
+                else card.classList.add('stock-empty');
             });
         }
 
-        // --- PASSWORD & ADMIN ACCESS ---
+        // --- PASSWORD & ACCESS ---
         let pressTimer;
         const brandLogo = document.getElementById('brandLogo');
         
@@ -1502,8 +1534,9 @@
         }
 
         function togglePasswordModal(show) {
-            if(show) document.getElementById('passwordModal').classList.add('active');
-            else document.getElementById('passwordModal').classList.remove('active');
+            const modal = document.getElementById('passwordModal');
+            if(show) modal.classList.add('active');
+            else modal.classList.remove('active');
         }
 
         function checkAdminPassword() {
@@ -1531,7 +1564,6 @@
         function closeAdminModal(e) {
             if (e.target.id === 'adminModal') toggleAdmin();
         }
-
 
         // --- SMART LOCK LOGIC (NASI UDUK) & POSITIONING ---
         function checkWeekendLocks() {
@@ -1578,7 +1610,7 @@
             });
         }
 
-        // --- OPERATIONAL HOURS SYSTEM (REVISED LOGIC) ---
+        // --- OPERATIONAL HOURS SYSTEM ---
         function checkStoreOperationalStatus() {
             const statusBadge = document.getElementById('storeStatusBadge');
             const statusText = document.getElementById('storeStatusText');
@@ -1589,20 +1621,20 @@
             // 1. Check Manual Overrides
             if (storeStatusMode === 'open') {
                 isOpen = true;
-                statusText.innerText = "BUKA"; // Simple text
+                statusText.innerText = "BUKA";
             } else if (storeStatusMode === 'close') {
                 isOpen = false;
-                statusText.innerText = "TUTUP"; // Simple text
+                statusText.innerText = "TUTUP";
             } else {
-                // 2. Auto Mode Logic (Schedule)
+                // 2. Auto Mode Logic
                 const now = new Date();
                 const day = now.getDay(); 
                 const isDayOff = (day === 1);
                 const hour = now.getHours();
                 const minute = now.getMinutes();
                 const currentTime = hour * 100 + minute; 
-                const openTime = 600;  // 06:00
-                const closeTime = 1200; // 12:00
+                const openTime = 600;
+                const closeTime = 1200;
 
                 if (!isDayOff && currentTime >= openTime && currentTime < closeTime) {
                     isOpen = true;
@@ -1615,7 +1647,6 @@
                 }
             }
 
-            // Update UI based on state
             if (isOpen) {
                 statusBadge.className = 'store-status-badge open';
                 if(cart.length > 0) checkoutBtn.disabled = false;
