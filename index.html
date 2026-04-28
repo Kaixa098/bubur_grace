@@ -13,7 +13,7 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- FIREBASE SDK (WAJIB UNTUK REALTIME) -->
+    <!-- FIREBASE SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
@@ -193,7 +193,7 @@
             overflow: hidden;
             display: flex; 
             flex-direction: column;
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 0.1), box-shadow 0.3s;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s;
             border: 1px solid rgba(0,0,0,0.03);
             position: relative;
             opacity: 0;
@@ -220,7 +220,7 @@
             border-radius: 10px; pointer-events: none; z-index: 5;
         }
 
-        /* WEEKEND LOCKED STYLE */
+        /* WEEKEND LOCKED STYLE (Logic handled in JS, but base style here) */
         .menu-card.weekend-locked {
             pointer-events: none; 
             opacity: 0.6;
@@ -377,7 +377,7 @@
         }
         .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
 
-        /* --- ADMIN PANEL STYLES (REVISED) --- */
+        /* --- ADMIN PANEL STYLES (REVISED & CLEAN) --- */
         .admin-modal {
             background: white; width: 100%; max-width: 480px;
             border-radius: 20px 20px 0 0;
@@ -392,6 +392,7 @@
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid #f0f0f0;
             background: #fff;
+            flex-shrink: 0;
         }
         .admin-header h3 { color: var(--secondary); margin: 0; display: flex; align-items: center; gap: 10px; font-size: 1.2rem; }
         .btn-close-admin { background: none; border: none; font-size: 1.2rem; color: #aaa; cursor: pointer; padding: 5px; }
@@ -399,15 +400,43 @@
 
         .admin-content {
             overflow-y: auto;
-            padding: 20px;
+            padding: 0;
             -webkit-overflow-scrolling: touch;
             flex-grow: 1;
         }
 
+        /* Admin Tabs */
+        .admin-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            background: #f9f9f9;
+            flex-shrink: 0;
+        }
+        .admin-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .admin-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: white;
+        }
+
+        /* Tab Content Containers */
+        .tab-pane { display: none; padding: 20px; }
+        .tab-pane.active { display: block; animation: fadeIn 0.2s; }
+
         /* Admin Status Section */
-        .admin-section-status { margin-bottom: 25px; }
+        .admin-section-status { margin-bottom: 25px; background: #fff; border-radius: 12px; }
         .section-title {
-            font-size: 0.9rem; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 1px;
+            font-size: 0.85rem; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 1px;
             margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
         }
         .section-title i { color: var(--primary); font-size: 0.8rem; }
@@ -425,7 +454,7 @@
             text-align: center;
             padding: 10px 0;
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: #888;
             cursor: pointer;
@@ -435,7 +464,7 @@
             align-items: center;
             gap: 4px;
         }
-        .status-option i { font-size: 1.1rem; }
+        .status-option i { font-size: 1rem; }
         .status-option.active {
             background: white;
             color: var(--primary);
@@ -444,7 +473,7 @@
         .status-option.active.status-close { color: var(--danger); }
         .status-option.active.status-open { color: var(--success); }
 
-        /* Admin Stock Section */
+        /* Admin Stock List Styles */
         .admin-search-wrapper {
             position: relative;
             margin-bottom: 15px;
@@ -453,36 +482,37 @@
             position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
             color: #ccc; font-size: 0.9rem;
         }
-        #adminSearchInput {
+        #adminSearchInput, #adminWeekendSearchInput {
             width: 100%; padding: 12px 12px 12px 40px;
             border: 1px solid #eee; border-radius: 10px;
             font-size: 0.9rem; background: #fff;
             transition: 0.2s;
         }
-        #adminSearchInput:focus { border-color: var(--primary); outline: none; }
+        #adminSearchInput:focus, #adminWeekendSearchInput:focus { border-color: var(--primary); outline: none; }
 
         .stock-list { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
         
-        /* Master Weekend Card Style */
-        .weekend-master-card {
-            border: 2px solid var(--primary);
-            background-color: #fff5eb;
-            margin-bottom: 20px;
-        }
-
         .stock-item-card {
             background: #fff;
             border: 1px solid #eee;
             border-radius: 10px;
-            padding: 15px;
+            padding: 12px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: background 0.2s;
         }
+        .stock-item-card:hover { background: #fafafa; }
         .stock-info { flex: 1; padding-right: 15px; }
-        .stock-name { font-weight: 600; font-size: 0.95rem; color: var(--secondary); margin-bottom: 2px; line-height: 1.3; }
-        .stock-cat { font-size: 0.75rem; color: #999; }
+        .stock-name { font-weight: 600; font-size: 0.9rem; color: var(--secondary); margin-bottom: 2px; line-height: 1.3; }
+        .stock-cat { font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
         
+        /* Weekend Specific Styling */
+        .weekend-section-header {
+            display: flex; align-items: center; gap: 8px; color: var(--primary);
+            background: var(--primary-light); padding: 10px; border-radius: 8px; margin-bottom: 15px;
+        }
+
         /* IOS Toggle Switch */
         .stock-toggle {
             position: relative; display: inline-block; width: 44px; height: 24px;
@@ -532,6 +562,42 @@
             display: flex; flex-direction: column;
             animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
+        
+        /* Cart Header with Better Clear Button Positioning */
+        .cart-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px;
+        }
+        .cart-header h3 { font-size: 1.2rem; margin: 0; color: var(--secondary); }
+        .btn-close-cart {
+            background: #f0f0f0; border: none; width: 32px; height: 32px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #666; transition: 0.2s;
+        }
+        .btn-close-cart:hover { background: #e0e0e0; color: var(--danger); }
+
+        /* NEW BIG CLEAR BUTTON */
+        .btn-clear-cart-big {
+            width: 100%;
+            background: #FFF5F5;
+            color: var(--danger);
+            border: 1px dashed #FFCDD2;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 15px;
+            margin-top: 5px;
+        }
+        .btn-clear-cart-big:hover { background: #FFEBEE; border-color: #EF9A9A; }
+        .btn-clear-cart-big:active { transform: scale(0.98); }
+
         .variant-modal {
             background: white; width: 100%; max-width: 400px;
             border-radius: 20px 20px 0 0;
@@ -565,34 +631,7 @@
         }
         .btn-confirm-variant:active { background: var(--primary-dark); transform: scale(0.98); }
 
-        .cart-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px;
-        }
-        .cart-header h3 { font-size: 1.2rem; color: var(--secondary); }
-        
-        .cart-items { overflow-y: auto; flex-grow: 1; margin-bottom: 15px; padding-right:5px; -webkit-overflow-scrolling: touch; }
-        
-        /* Tombol Clear Cart Baru */
-        .btn-clear-cart-new {
-            width: 100%;
-            margin-top: 10px;
-            padding: 12px;
-            border: 1px solid var(--danger);
-            background-color: #fff5f5;
-            color: var(--danger);
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-        .btn-clear-cart-new:active { background-color: var(--danger); color: white; }
-
+        .cart-items { overflow-y: auto; flex-grow: 1; margin-bottom: 15px; padding-right:5px; -webkit-overflow-scrolling: touch; min-height: 100px; }
         .cart-item {
             background: #fff; border: 1px solid #f0f0f0; border-radius: 12px;
             padding: 12px; margin-bottom: 12px; animation: fadeIn 0.3s ease;
@@ -1275,7 +1314,7 @@
         </div>
     </div>
 
-    <!-- NEW ADMIN PANEL MODAL (REVISED) -->
+    <!-- NEW ADMIN PANEL MODAL (TAB SYSTEM) -->
     <div class="modal-overlay" id="adminModal" onclick="closeAdminModal(event)">
         <div class="admin-modal">
             <div class="admin-header">
@@ -1283,49 +1322,80 @@
                 <button onclick="toggleAdmin()" class="btn-close-admin"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
+            <!-- TABS -->
+            <div class="admin-tabs">
+                <div class="admin-tab active" onclick="switchAdminTab('status')">Status Toko</div>
+                <div class="admin-tab" onclick="switchAdminTab('stock')">Stok Harian</div>
+                <div class="admin-tab" onclick="switchAdminTab('weekend')">Stok Weekend</div>
+            </div>
+
             <div class="admin-content">
-                <!-- STATUS SECTION -->
-                <div class="admin-section-status">
-                    <div class="section-title">
-                        <i class="fa-regular fa-clock"></i> Status Toko
+                <!-- TAB: STATUS -->
+                <div id="tab-status" class="tab-pane active">
+                    <div class="admin-section-status">
+                        <div class="section-title">
+                            <i class="fa-regular fa-clock"></i> Status Toko
+                        </div>
+                        <div class="status-segment">
+                            <div class="status-option" id="opt-auto" onclick="updateStoreMode('auto')">
+                                <i class="fa-solid fa-robot"></i>
+                                <span>Otomatis</span>
+                            </div>
+                            <div class="status-option" id="opt-open" onclick="updateStoreMode('open')">
+                                <i class="fa-solid fa-store"></i>
+                                <span>Buka</span>
+                            </div>
+                            <div class="status-option" id="opt-close" onclick="updateStoreMode('close')">
+                                <i class="fa-solid fa-store-slash"></i>
+                                <span>Tutup</span>
+                            </div>
+                        </div>
+                        <small style="color:#aaa; font-size:0.7rem; display:block; margin-top:8px; line-height:1.4;">
+                            *Otomatis: Ikuti jadwal buka/tutup.<br>
+                            *Buka/Tutup: Paksa status manual.
+                        </small>
                     </div>
-                    <div class="status-segment">
-                        <div class="status-option" id="opt-auto" onclick="updateStoreMode('auto')">
-                            <i class="fa-solid fa-robot"></i>
-                            <span>Otomatis</span>
-                        </div>
-                        <div class="status-option" id="opt-open" onclick="updateStoreMode('open')">
-                            <i class="fa-solid fa-store"></i>
-                            <span>Buka</span>
-                        </div>
-                        <div class="status-option" id="opt-close" onclick="updateStoreMode('close')">
-                            <i class="fa-solid fa-store-slash"></i>
-                            <span>Tutup</span>
-                        </div>
-                    </div>
-                    <small style="color:#aaa; font-size:0.7rem; display:block; margin-top:8px; line-height:1.4;">
-                        *Otomatis: Ikuti jadwal buka/tutup.<br>
-                        *Buka/Tutup: Paksa status manual.
-                    </small>
                 </div>
 
-                <hr style="border:0; border-top:1px solid #eee; margin: 20px 0;">
-
-                <!-- STOCK SECTION -->
-                <div class="admin-section-stock">
-                    <div class="section-title">
-                        <i class="fa-solid fa-boxes-stacked"></i> Kelola Stok
-                    </div>
-                    <!-- Search -->
-                    <div class="admin-search-wrapper">
-                        <i class="fa-solid fa-search"></i>
-                        <input type="search" id="adminSearchInput" placeholder="Cari menu..." autocomplete="off">
-                    </div>
-                    
-                    <div class="stock-list" id="adminStockList">
-                        <!-- Items generated by JS -->
+                <!-- TAB: STOCK HARIAN -->
+                <div id="tab-stock" class="tab-pane">
+                    <div class="admin-section-stock">
+                        <div class="section-title">
+                            <i class="fa-solid fa-boxes-stacked"></i> Kelola Stok Harian
+                        </div>
+                        <!-- Search -->
+                        <div class="admin-search-wrapper">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="search" id="adminSearchInput" placeholder="Cari menu..." autocomplete="off">
+                        </div>
+                        
+                        <div class="stock-list" id="adminStockList">
+                            <!-- Items generated by JS -->
+                        </div>
                     </div>
                 </div>
+
+                <!-- TAB: WEEKEND STOCK -->
+                <div id="tab-weekend" class="tab-pane">
+                    <div class="admin-section-stock">
+                        <div class="weekend-section-header">
+                            <i class="fa-solid fa-sun"></i>
+                            <span>Stok Khusus Nasi Uduk (Weekend)</span>
+                        </div>
+                        <p style="font-size:0.75rem; color:#666; margin-bottom:10px;">Menu ini hanya tampil Sabtu/Minggu kecuali Anda mematikan stoknya di sini.</p>
+                        
+                        <!-- Search Weekend -->
+                        <div class="admin-search-wrapper">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="search" id="adminWeekendSearchInput" placeholder="Cari menu weekend..." autocomplete="off">
+                        </div>
+
+                        <div class="stock-list" id="adminWeekendStockList">
+                            <!-- Weekend items generated by JS -->
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div style="padding: 15px 20px 20px; background:#f9f9f9; border-top:1px solid #eee;">
@@ -1370,19 +1440,21 @@
         <div class="cart-modal">
             <div class="cart-header">
                 <h3>Keranjang Pesanan</h3>
-                <button onclick="toggleCart()" class="btn-close-admin">
+                <button onclick="toggleCart()" class="btn-close-cart">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             
+            <!-- NEW BIG CLEAR BUTTON -->
+            <div id="bigClearBtnContainer" style="display:none;">
+                <button class="btn-clear-cart-big" onclick="clearCart()">
+                    <i class="fa-solid fa-trash-can"></i> Hapus Semua Item
+                </button>
+            </div>
+
             <div class="cart-items" id="cartItemsContainer">
                 <!-- Items injected via JS -->
             </div>
-
-            <!-- New Clear All Button -->
-            <button class="btn-clear-cart-new" onclick="clearCart()">
-                <i class="fa-solid fa-trash"></i> Hapus Semua Item
-            </button>
             
             <!-- Dynamic Inputs -->
             <div class="checkout-section">
@@ -1456,7 +1528,7 @@
                 }
             });
 
-            // 2. DENGARK PERUBAHAN STOK
+            // 2. DENGARK PERUBAHAN STOK HARIAN
             db.ref('bubur_grace/stock').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
@@ -1466,21 +1538,22 @@
                 }
             });
 
-            // 3. DENGARK PERUBAHAN MASTER WEEKEND (FITUR BARU)
-            db.ref('bubur_grace/settings/weekendEnabled').on('value', (snapshot) => {
-                const val = snapshot.val();
-                // Jika null (belum ada di DB), default true (aktif)
-                isWeekendEnabled = (val === null || val === true);
-                checkWeekendLocks(); // Re-evaluate locks immediately
-                renderAdminUI(); // Update switch state in admin
+            // 3. DENGARK PERUBAHAN STOK WEEKEND (BARU)
+            db.ref('bubur_grace/weekendStock').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    weekendStockData = data;
+                    applyWeekendStockStyles();
+                    renderAdminUI(); // Re-render admin list to show correct toggle states
+                }
             });
 
-            // 4. INISIALISASI AWAL (Jika belum ada data di database)
+            // 4. INISIALISASI AWAL DATA
+            // Init Harian
             db.ref('bubur_grace/stock').once('value').then((snapshot) => {
                 if(!snapshot.exists()){
-                    // Isi data awal dari HTML jika database kosong
                     const initialStock = {};
-                    document.querySelectorAll('.menu-card').forEach(card => {
+                    document.querySelectorAll('.menu-card:not(.weekend-only)').forEach(card => {
                         const name = card.querySelector('.card-title').innerText;
                         initialStock[name] = true;
                     });
@@ -1488,15 +1561,22 @@
                 }
             });
             
-            db.ref('bubur_grace/status').once('value').then((snapshot) => {
+            // Init Weekend
+            db.ref('bubur_grace/weekendStock').once('value').then((snapshot) => {
                 if(!snapshot.exists()){
-                    db.ref('bubur_grace/status').set('auto'); // Default auto
+                    const initialWeekendStock = {};
+                    document.querySelectorAll('.menu-card.weekend-only').forEach(card => {
+                        const name = card.querySelector('.card-title').innerText;
+                        initialWeekendStock[name] = true;
+                    });
+                    db.ref('bubur_grace/weekendStock').set(initialWeekendStock);
                 }
             });
-
-            db.ref('bubur_grace/settings/weekendEnabled').once('value').then((snapshot) => {
+            
+            // Init Status
+            db.ref('bubur_grace/status').once('value').then((snapshot) => {
                 if(!snapshot.exists()){
-                    db.ref('bubur_grace/settings/weekendEnabled').set(true); // Default aktif
+                    db.ref('bubur_grace/status').set('auto'); 
                 }
             });
         }
@@ -1504,7 +1584,23 @@
         // --- ADMIN SYSTEM (CLOUD VERSION) ---
         let storeStatusMode = 'auto'; 
         let stockData = {};
-        let isWeekendEnabled = true; // Default status weekend master switch
+        let weekendStockData = {}; // New variable
+
+        // Tab Switching Logic
+        function switchAdminTab(tabName) {
+            // UI Switch
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            
+            // Find clicked tab
+            const tabs = document.querySelectorAll('.admin-tab');
+            if(tabName === 'status') tabs[0].classList.add('active');
+            if(tabName === 'stock') tabs[1].classList.add('active');
+            if(tabName === 'weekend') tabs[2].classList.add('active');
+
+            // Show content
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
 
         function updateAdminStatusUI() {
             ['auto','open','close'].forEach(m => {
@@ -1522,43 +1618,26 @@
 
         function updateStoreMode(mode) {
             storeStatusMode = mode;
-            // KIRIM KE CLOUD
             if(db) db.ref('bubur_grace/status').set(mode);
             updateAdminStatusUI();
             checkStoreOperationalStatus();
         }
 
         function renderAdminUI() {
+            // 1. Render Daily Stock List
             const listContainer = document.getElementById('adminStockList');
             listContainer.innerHTML = '';
             
-            // 1. TAMBAHKAN MASTER SWITCH WEEKEND (Paling Atas)
-            const masterCard = document.createElement('div');
-            masterCard.className = 'stock-item-card weekend-master-card';
-            masterCard.innerHTML = `
-                <div class="stock-info">
-                    <div class="stock-name" style="color:var(--primary);">Mode Weekend (Nasi Uduk)</div>
-                    <div class="stock-cat">Master Switch</div>
-                </div>
-                <label class="stock-toggle">
-                    <input type="checkbox" ${isWeekendEnabled ? 'checked' : ''} onchange="toggleWeekendMaster()">
-                    <span class="slider-toggle"></span>
-                </label>
-            `;
-            listContainer.appendChild(masterCard);
-
-            // 2. RENDER LIST STOK MENU
-            const cards = Array.from(document.querySelectorAll('.menu-card'));
-            cards.sort((a, b) => {
+            const dailyCards = Array.from(document.querySelectorAll('.menu-card:not(.weekend-only)'));
+            dailyCards.sort((a, b) => {
                 const nameA = a.querySelector('.card-title').innerText;
                 const nameB = b.querySelector('.card-title').innerText;
                 return nameA.localeCompare(nameB);
             });
 
-            cards.forEach(card => {
+            dailyCards.forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
                 const cat = card.getAttribute('data-category').replace('-', ' ').toUpperCase();
-                // Pastikan stokData memiliki key ini, jika belum (default true)
                 const isAvailable = stockData[name] !== false;
                 
                 const item = document.createElement('div');
@@ -1570,62 +1649,80 @@
                         <div class="stock-cat">${cat}</div>
                     </div>
                     <label class="stock-toggle">
-                        <input type="checkbox" ${isAvailable ? 'checked' : ''} onchange="toggleStockItem('${name.replace(/'/g, "\\'")}')">
+                        <input type="checkbox" ${isAvailable ? 'checked' : ''} onchange="toggleStockItem('daily', '${name.replace(/'/g, "\\'")}')">
                         <span class="slider-toggle"></span>
                     </label>
                 `;
                 listContainer.appendChild(item);
             });
+
+            // 2. Render Weekend Stock List (NEW)
+            const weekendListContainer = document.getElementById('adminWeekendStockList');
+            weekendListContainer.innerHTML = '';
+
+            const weekendCards = Array.from(document.querySelectorAll('.menu-card.weekend-only'));
+            weekendCards.sort((a, b) => {
+                const nameA = a.querySelector('.card-title').innerText;
+                const nameB = b.querySelector('.card-title').innerText;
+                return nameA.localeCompare(nameB);
+            });
+
+            weekendCards.forEach(card => {
+                const name = card.querySelector('.card-title').innerText;
+                const cat = card.getAttribute('data-category').replace('-', ' ').toUpperCase();
+                // Default to true if not found
+                const isAvailable = weekendStockData[name] !== false;
+                
+                const item = document.createElement('div');
+                item.className = 'stock-item-card';
+                item.setAttribute('data-name', name.toLowerCase());
+                item.innerHTML = `
+                    <div class="stock-info">
+                        <div class="stock-name">${name}</div>
+                        <div class="stock-cat">${cat}</div>
+                    </div>
+                    <label class="stock-toggle">
+                        <input type="checkbox" ${isAvailable ? 'checked' : ''} onchange="toggleStockItem('weekend', '${name.replace(/'/g, "\\'")}')">
+                        <span class="slider-toggle"></span>
+                    </label>
+                `;
+                weekendListContainer.appendChild(item);
+            });
         }
 
-        // PERBAIKAN BUG SWITCH: Logic diperjelas agar sinkron dengan DB
-        function toggleStockItem(name) {
-            // 1. Update data local dulu (agar UI responsif)
-            stockData[name] = !stockData[name];
-            
-            // 2. Apply style langsung ke tampilan user tanpa re-render full (mencegah flicker/bug klik ganda)
-            applyStockStyles();
-
-            // 3. Kirim ke Cloud
-            if(db) {
-                db.ref('bubur_grace/stock').set(stockData).then(() => {
-                    // Optional: Render admin UI ulang hanya setelah sukses DB, 
-                    // tapi untuk UX lebih cepat kita biarkan re-render listener Firebase handle sinkronisasi final.
-                    renderAdminUI();
-                });
-            } else {
-                renderAdminUI();
+        // REVISED TOGGLE FUNCTION (Atomic Update)
+        function toggleStockItem(type, name) {
+            if(type === 'daily') {
+                stockData[name] = !stockData[name];
+                // Update only this specific path to avoid overwrite bug
+                if(db) db.ref('bubur_grace/stock/' + name).set(stockData[name]);
+            } else if (type === 'weekend') {
+                weekendStockData[name] = !weekendStockData[name];
+                // Update only this specific path
+                if(db) db.ref('bubur_grace/weekendStock/' + name).set(weekendStockData[name]);
             }
-        }
-
-        // FITUR BARU: Toggle Master Weekend
-        function toggleWeekendMaster() {
-            isWeekendEnabled = !isWeekendEnabled;
+            // We don't call renderAdminUI() immediately here to prevent UI flickering. 
+            // The Firebase listener will trigger the update naturally.
+            // However, to make it feel snappy, we manually flip the switch visual logic via CSS or let the listener handle it.
+            // For simplicity and consistency with the listener, we let the listener handle full re-render or local UI update.
+            // Actually, to avoid "bug" feeling, let's update the data locally immediately and rely on listener for backup.
             
-            // 1. Apply logic langsung
-            checkWeekendLocks();
-            
-            // 2. Kirim ke Cloud
-            if(db) {
-                db.ref('bubur_grace/settings/weekendEnabled').set(isWeekendEnabled).then(() => {
-                    renderAdminUI();
-                });
-            } else {
-                renderAdminUI();
-            }
+            // Trigger visual feedback manually on the specific card if possible, but renderAdminUI handles the list.
         }
 
         function applyStockStyles() {
-            document.querySelectorAll('.menu-card').forEach(card => {
+            document.querySelectorAll('.menu-card:not(.weekend-only)').forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
-                // Cek stok individual DAN status Weekend Master jika ini menu weekend
-                let isAvailable = stockData[name] !== false;
-                
-                // Jika adalah menu weekend-only dan master switch mati -> anggap tidak available
-                if (card.classList.contains('weekend-only') && !isWeekendEnabled) {
-                    isAvailable = false;
-                }
+                const isAvailable = stockData[name] !== false;
+                if (isAvailable) card.classList.remove('stock-empty');
+                else card.classList.add('stock-empty');
+            });
+        }
 
+        function applyWeekendStockStyles() {
+            document.querySelectorAll('.menu-card.weekend-only').forEach(card => {
+                const name = card.querySelector('.card-title').innerText;
+                const isAvailable = weekendStockData[name] !== false;
                 if (isAvailable) card.classList.remove('stock-empty');
                 else card.classList.add('stock-empty');
             });
@@ -1668,6 +1765,7 @@
             const modal = document.getElementById('adminModal');
             if (forceOpen) {
                 modal.classList.add('active');
+                switchAdminTab('status'); // Reset to status tab
                 renderAdminUI();
             } else {
                 modal.classList.contains('active') ? modal.classList.remove('active') : modal.classList.add('active');
@@ -1678,25 +1776,26 @@
             if (e.target.id === 'adminModal') toggleAdmin();
         }
 
-        // --- ADMIN SEARCH ---
+        // --- ADMIN SEARCH (Both Tabs) ---
         const adminSearch = document.getElementById('adminSearchInput');
         adminSearch.addEventListener('keyup', (e) => {
             const term = e.target.value.toLowerCase();
-            const items = document.querySelectorAll('.stock-item-card');
+            const items = document.querySelectorAll('#adminStockList .stock-item-card');
             items.forEach(item => {
-                // Abaikan kartu master weekend saat search item biasa? 
-                // Biarkan saja agar konsisten, atau filter logic.
-                // Mari kita filter berdasarkan nama di dalamnya.
                 const name = item.getAttribute('data-name');
-                // Skip filter pada master card (yang tidak punya data-name atau kosong) atau biarkan tampil selalu?
-                // Agar rapi, jika user cari, tampilkan yang cocok. Master card tidak punya data-name, jadi mungkin akan disembunyikan.
-                // Solusi: Beri master card pengecualian agar selalu tampil di atas.
-                if(item.classList.contains('weekend-master-card')) {
-                    item.style.display = 'flex'; // Selalu tampilkan master switch
-                } else {
-                    if (name.includes(term)) item.style.display = 'flex';
-                    else item.style.display = 'none';
-                }
+                if (name.includes(term)) item.style.display = 'flex';
+                else item.style.display = 'none';
+            });
+        });
+
+        const adminWeekendSearch = document.getElementById('adminWeekendSearchInput');
+        adminWeekendSearch.addEventListener('keyup', (e) => {
+            const term = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('#adminWeekendStockList .stock-item-card');
+            items.forEach(item => {
+                const name = item.getAttribute('data-name');
+                if (name.includes(term)) item.style.display = 'flex';
+                else item.style.display = 'none';
             });
         });
 
@@ -1714,14 +1813,8 @@
             const mainContainer = document.getElementById('mainContainer');
             const basoGrid = document.getElementById('basoGrid');
 
-            // Perbaikan Logika: Lock jika (Bukan Weekend ATAU Master Switch Mati)
-            const shouldLockByDay = !isWeekend;
-            const shouldLockByMaster = !isWeekendEnabled;
-            
-            // Posisi Section (Hanya jika ini Weekend dan Master Switch Nyala)
-            const shouldMove = isWeekend && isWeekendEnabled;
-
-            if (shouldMove) {
+            // Positioning Logic (Keep items near top if Weekend)
+            if (isWeekend) {
                 if (basoGrid && basoGrid.nextElementSibling !== sectionUdukAyam) {
                     basoGrid.parentNode.insertBefore(sectionUdukAyam, basoGrid.nextElementSibling);
                     mainContainer.insertBefore(gridUdukAyam, sectionUdukAyam.nextElementSibling);
@@ -1729,7 +1822,6 @@
                     mainContainer.insertBefore(gridUdukTelur, sectionUdukTelur.nextElementSibling);
                 }
             } else {
-                // Kembalikan ke bawah jika bukan weekend atau master mati
                 const noResult = document.getElementById('noResultMsg');
                 if (noResult && noResult.previousElementSibling !== gridUdukTelur) {
                     mainContainer.appendChild(sectionUdukAyam);
@@ -1739,19 +1831,25 @@
                 }
             }
 
-            // Apply Lock Style
+            // Availability Logic (Combined: Weekend Date + Stock Override)
             weekendCards.forEach(card => {
+                const name = card.querySelector('.card-title').innerText;
                 const btn = card.querySelector('.add-btn');
-                const isLocked = shouldLockByDay || shouldLockByMaster;
+                
+                // Check explicit stock out first (Admin override)
+                const isOutOfStock = (weekendStockData[name] === false);
+                
+                // Check Day
+                const isNotWeekend = !isWeekend;
 
-                if (!isLocked) {
-                    card.classList.remove('weekend-locked');
-                    btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
-                    btn.classList.remove('locked-btn');
-                } else {
+                if (isOutOfStock || isNotWeekend) {
                     card.classList.add('weekend-locked');
                     btn.innerHTML = '<i class="fa-solid fa-lock"></i>';
                     btn.classList.add('locked-btn');
+                } else {
+                    card.classList.remove('weekend-locked');
+                    btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+                    btn.classList.remove('locked-btn');
                 }
             });
         }
@@ -1798,6 +1896,7 @@
                 if(cart.length > 0) checkoutBtn.disabled = false;
             } else {
                 statusBadge.className = 'store-status-badge closed';
+                checkoutBtn.disabled = true; // Always disable checkout if closed
             }
             return isOpen;
         }
@@ -1850,7 +1949,7 @@
                     return;
                 }
                 if(card.classList.contains('weekend-locked')) {
-                    showToast("Menu ini hanya tersedia hari Sabtu & Minggu (atau dimatikan Admin)");
+                    showToast("Menu ini hanya tersedia hari Sabtu & Minggu");
                     return;
                 }
                 if (card) showVariantModal(card);
@@ -1960,7 +2059,7 @@
         }
         function clearCart() {
             if (cart.length === 0) return;
-            if(confirm("Apakah Anda yakin ingin menghapus semua pesanan?")) {
+            if(confirm("Yakin ingin menghapus semua pesanan?")) {
                 cart = []; 
                 updateCartUI();
                 showToast("Keranjang kosong.");
@@ -1971,21 +2070,19 @@
             const container = document.getElementById('cartItemsContainer');
             const badge = document.getElementById('cartBadge');
             const checkoutBtn = document.getElementById('btnCheckout');
-            const clearBtn = document.querySelector('.btn-clear-cart-new');
+            const bigClearBtn = document.getElementById('bigClearBtnContainer');
+            
             container.innerHTML = '';
             let totalQty = 0;
 
             if (cart.length === 0) {
                 container.innerHTML = `<div style="text-align:center; color:#999; margin-top:40px;"><i class="fa-solid fa-basket-shopping empty-state-icon" style="color:#eee;"></i><p style="margin-top:10px;">Keranjang masih kosong.</p></div>`;
                 badge.style.display = 'none';
-                checkoutBtn.classList.remove('has-items');
                 checkoutBtn.disabled = true;
-                if(clearBtn) clearBtn.style.display = 'none';
+                bigClearBtn.style.display = 'none';
             } else {
                 badge.style.display = 'flex';
-                checkoutBtn.classList.add('has-items');
-                if(clearBtn) clearBtn.style.display = 'flex';
-                
+                bigClearBtn.style.display = 'block'; // Show big clear button
                 cart.forEach((item, index) => {
                     totalQty += item.qty;
                     let unitPrice = item.price;
