@@ -220,7 +220,7 @@
             border-radius: 10px; pointer-events: none; z-index: 5;
         }
 
-        /* WEEKEND LOCKED STYLE (Logic handled in JS, but base style here) */
+        /* WEEKEND LOCKED STYLE */
         .menu-card.weekend-locked {
             pointer-events: none; 
             opacity: 0.6;
@@ -377,7 +377,7 @@
         }
         .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
 
-        /* --- ADMIN PANEL STYLES (REVISED & CLEAN) --- */
+        /* --- ADMIN PANEL STYLES --- */
         .admin-modal {
             background: white; width: 100%; max-width: 480px;
             border-radius: 20px 20px 0 0;
@@ -1492,18 +1492,16 @@
             initSpyScroll();
             
             checkWeekendLocks();
-            initFirebase(); // Inisialisasi Firebase
+            initFirebase(); 
         });
 
         // --- FIREBASE CONFIG & INIT ---
         let db;
         const firebaseConfig = {
-            // --- PENTING: ISI DENGAN KUNCI DARI FIREBASE ---
             apiKey: "AIzaSyCj__JH5w__RdSEqtR59Cr7ctEOyl6lzUg",
             authDomain: "buburgrace.firebaseapp.com",
             databaseURL: "https://buburgrace-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "buburgrace",
-            // ----------------------------------------------------
         };
 
         function initFirebase() {
@@ -1534,22 +1532,30 @@
                 if (data) {
                     stockData = data;
                     applyStockStyles();
-                    renderAdminUI();
+                    // Render Admin UI only if modal is open to prevent flicker
+                    if(document.getElementById('adminModal').classList.contains('active')) {
+                        renderAdminUI();
+                    }
+                    // Karena stok berubah, kita harus cek ulang status ketersediaan menu
+                    checkWeekendLocks(); 
                 }
             });
 
-            // 3. DENGARK PERUBAHAN STOK WEEKEND (BARU)
+            // 3. DENGARK PERUBAHAN STOK WEEKEND
             db.ref('bubur_grace/weekendStock').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     weekendStockData = data;
                     applyWeekendStockStyles();
-                    renderAdminUI(); // Re-render admin list to show correct toggle states
+                    if(document.getElementById('adminModal').classList.contains('active')) {
+                        renderAdminUI();
+                    }
+                    // FIX PENTING: Trigger pengecekan ulang saat stok weekend berubah
+                    checkWeekendLocks();
                 }
             });
 
             // 4. INISIALISASI AWAL DATA
-            // Init Harian
             db.ref('bubur_grace/stock').once('value').then((snapshot) => {
                 if(!snapshot.exists()){
                     const initialStock = {};
@@ -1561,7 +1567,6 @@
                 }
             });
             
-            // Init Weekend
             db.ref('bubur_grace/weekendStock').once('value').then((snapshot) => {
                 if(!snapshot.exists()){
                     const initialWeekendStock = {};
@@ -1573,7 +1578,6 @@
                 }
             });
             
-            // Init Status
             db.ref('bubur_grace/status').once('value').then((snapshot) => {
                 if(!snapshot.exists()){
                     db.ref('bubur_grace/status').set('auto'); 
@@ -1581,24 +1585,21 @@
             });
         }
 
-        // --- ADMIN SYSTEM (CLOUD VERSION) ---
+        // --- ADMIN SYSTEM ---
         let storeStatusMode = 'auto'; 
         let stockData = {};
-        let weekendStockData = {}; // New variable
+        let weekendStockData = {};
 
         // Tab Switching Logic
         function switchAdminTab(tabName) {
-            // UI Switch
             document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
             
-            // Find clicked tab
             const tabs = document.querySelectorAll('.admin-tab');
             if(tabName === 'status') tabs[0].classList.add('active');
             if(tabName === 'stock') tabs[1].classList.add('active');
             if(tabName === 'weekend') tabs[2].classList.add('active');
 
-            // Show content
             document.getElementById(`tab-${tabName}`).classList.add('active');
         }
 
@@ -1656,7 +1657,7 @@
                 listContainer.appendChild(item);
             });
 
-            // 2. Render Weekend Stock List (NEW)
+            // 2. Render Weekend Stock List
             const weekendListContainer = document.getElementById('adminWeekendStockList');
             weekendListContainer.innerHTML = '';
 
@@ -1670,7 +1671,6 @@
             weekendCards.forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
                 const cat = card.getAttribute('data-category').replace('-', ' ').toUpperCase();
-                // Default to true if not found
                 const isAvailable = weekendStockData[name] !== false;
                 
                 const item = document.createElement('div');
@@ -1690,24 +1690,31 @@
             });
         }
 
-        // REVISED TOGGLE FUNCTION (Atomic Update)
+        // FIXED TOGGLE FUNCTION (Instant Feedback + Recalc)
         function toggleStockItem(type, name) {
+            // 1. Update Local Data Model Immediately
             if(type === 'daily') {
                 stockData[name] = !stockData[name];
-                // Update only this specific path to avoid overwrite bug
+                // Send to Firebase (Async, but data is already local)
                 if(db) db.ref('bubur_grace/stock/' + name).set(stockData[name]);
             } else if (type === 'weekend') {
                 weekendStockData[name] = !weekendStockData[name];
-                // Update only this specific path
                 if(db) db.ref('bubur_grace/weekendStock/' + name).set(weekendStockData[name]);
             }
-            // We don't call renderAdminUI() immediately here to prevent UI flickering. 
-            // The Firebase listener will trigger the update naturally.
-            // However, to make it feel snappy, we manually flip the switch visual logic via CSS or let the listener handle it.
-            // For simplicity and consistency with the listener, we let the listener handle full re-render or local UI update.
-            // Actually, to avoid "bug" feeling, let's update the data locally immediately and rely on listener for backup.
-            
-            // Trigger visual feedback manually on the specific card if possible, but renderAdminUI handles the list.
+
+            // 2. Update Main Menu Visuals Immediately (Crucial for UX)
+            checkWeekendLocks();
+
+            // 3. Update Admin Panel Checkbox Visuals (Crucial for "Double Click" fix)
+            // Instead of re-rendering whole list (which kills focus), update the specific checkbox state
+            // Note: The listener might also fire, but this ensures immediate feedback.
+            // We force the checkbox to match the new local state before any async re-render.
+            const checkbox = event.target;
+            if(checkbox) {
+                // The browser already handled the click, so the checkbox is visually correct.
+                // But let's be absolutely sure by setting it manually to the data value.
+                checkbox.checked = (type === 'daily' ? stockData[name] : weekendStockData[name]);
+            }
         }
 
         function applyStockStyles() {
@@ -1765,7 +1772,7 @@
             const modal = document.getElementById('adminModal');
             if (forceOpen) {
                 modal.classList.add('active');
-                switchAdminTab('status'); // Reset to status tab
+                switchAdminTab('status'); 
                 renderAdminUI();
             } else {
                 modal.classList.contains('active') ? modal.classList.remove('active') : modal.classList.add('active');
@@ -1776,7 +1783,7 @@
             if (e.target.id === 'adminModal') toggleAdmin();
         }
 
-        // --- ADMIN SEARCH (Both Tabs) ---
+        // --- ADMIN SEARCH ---
         const adminSearch = document.getElementById('adminSearchInput');
         adminSearch.addEventListener('keyup', (e) => {
             const term = e.target.value.toLowerCase();
@@ -1813,7 +1820,7 @@
             const mainContainer = document.getElementById('mainContainer');
             const basoGrid = document.getElementById('basoGrid');
 
-            // Positioning Logic (Keep items near top if Weekend)
+            // Positioning Logic
             if (isWeekend) {
                 if (basoGrid && basoGrid.nextElementSibling !== sectionUdukAyam) {
                     basoGrid.parentNode.insertBefore(sectionUdukAyam, basoGrid.nextElementSibling);
@@ -1831,22 +1838,24 @@
                 }
             }
 
-            // Availability Logic (Combined: Weekend Date + Stock Override)
+            // FIX LOGIC: Availability Logic (Combined: Weekend Date + Stock Override)
             weekendCards.forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
                 const btn = card.querySelector('.add-btn');
                 
-                // Check explicit stock out first (Admin override)
+                // 1. Check Stock (Has Admin turned it off explicitly?)
                 const isOutOfStock = (weekendStockData[name] === false);
                 
-                // Check Day
+                // 2. Check Day (Is it Weekend today?)
                 const isNotWeekend = !isWeekend;
 
+                // Logic: If Out of Stock OR Not Weekend, LOCK it.
                 if (isOutOfStock || isNotWeekend) {
                     card.classList.add('weekend-locked');
                     btn.innerHTML = '<i class="fa-solid fa-lock"></i>';
                     btn.classList.add('locked-btn');
                 } else {
+                    // Both conditions true (Stock OK AND Weekend is ON) -> UNLOCK
                     card.classList.remove('weekend-locked');
                     btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
                     btn.classList.remove('locked-btn');
@@ -1862,7 +1871,6 @@
 
             let isOpen = false;
 
-            // 1. Check Firebase Status (Cloud)
             if (storeStatusMode === 'open') {
                 isOpen = true;
                 statusText.innerText = "BUKA";
@@ -1870,15 +1878,14 @@
                 isOpen = false;
                 statusText.innerText = "TUTUP";
             } else {
-                // 2. Auto Mode Logic
                 const now = new Date();
                 const day = now.getDay(); 
                 const isDayOff = (day === 1);
                 const hour = now.getHours();
                 const minute = now.getMinutes();
                 const currentTime = hour * 100 + minute; 
-                const openTime = 600;  // 06:00
-                const closeTime = 1200; // 12:00
+                const openTime = 600;  
+                const closeTime = 1200;
 
                 if (!isDayOff && currentTime >= openTime && currentTime < closeTime) {
                     isOpen = true;
@@ -1896,7 +1903,7 @@
                 if(cart.length > 0) checkoutBtn.disabled = false;
             } else {
                 statusBadge.className = 'store-status-badge closed';
-                checkoutBtn.disabled = true; // Always disable checkout if closed
+                checkoutBtn.disabled = true;
             }
             return isOpen;
         }
@@ -2082,7 +2089,7 @@
                 bigClearBtn.style.display = 'none';
             } else {
                 badge.style.display = 'flex';
-                bigClearBtn.style.display = 'block'; // Show big clear button
+                bigClearBtn.style.display = 'block'; 
                 cart.forEach((item, index) => {
                     totalQty += item.qty;
                     let unitPrice = item.price;
