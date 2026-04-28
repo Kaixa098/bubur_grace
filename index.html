@@ -722,7 +722,7 @@
         }
 
         /* --- ANIMATIONS --- */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity:1; } }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes shake {
@@ -1314,7 +1314,7 @@
         </div>
     </div>
 
-    <!-- NEW ADMIN PANEL MODAL (TAB SYSTEM) -->
+    <!-- ADMIN PANEL MODAL -->
     <div class="modal-overlay" id="adminModal" onclick="closeAdminModal(event)">
         <div class="admin-modal">
             <div class="admin-header">
@@ -1532,12 +1532,12 @@
                 if (data) {
                     stockData = data;
                     applyStockStyles();
-                    // Render Admin UI only if modal is open to prevent flicker
-                    if(document.getElementById('adminModal').classList.contains('active')) {
+                    // HANYA RENDER ADMIN UI JIKA MODAL BUKA (Ini solusi kunci untuk bug double click)
+                    // Agar listener tidak menimpa input user saat klik
+                    if(document.getElementById('adminModal').classList.contains('active') === false) {
                         renderAdminUI();
                     }
-                    // Karena stok berubah, kita harus cek ulang status ketersediaan menu
-                    checkWeekendLocks(); 
+                    checkWeekendLocks();
                 }
             });
 
@@ -1547,10 +1547,12 @@
                 if (data) {
                     weekendStockData = data;
                     applyWeekendStockStyles();
-                    if(document.getElementById('adminModal').classList.contains('active')) {
+                    // FIX PENTING: HANYA RENDER JIKA MODAL TIDAK AKTIF
+                    // Ini mencegah switch balik lagi saat user klik
+                    if(document.getElementById('adminModal').classList.contains('active') === false) {
                         renderAdminUI();
                     }
-                    // FIX PENTING: Trigger pengecekan ulang saat stok weekend berubah
+                    // PENTING: Trigger ulang logika Weekend setiap kali stok berubah
                     checkWeekendLocks();
                 }
             });
@@ -1639,7 +1641,8 @@
             dailyCards.forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
                 const cat = card.getAttribute('data-category').replace('-', ' ').toUpperCase();
-                const isAvailable = stockData[name] !== false;
+                // Defend against undefined data (assume true/available)
+                const isAvailable = (stockData[name] !== false);
                 
                 const item = document.createElement('div');
                 item.className = 'stock-item-card';
@@ -1671,7 +1674,8 @@
             weekendCards.forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
                 const cat = card.getAttribute('data-category').replace('-', ' ').toUpperCase();
-                const isAvailable = weekendStockData[name] !== false;
+                // Defend against undefined data
+                const isAvailable = (weekendStockData[name] !== false);
                 
                 const item = document.createElement('div');
                 item.className = 'stock-item-card';
@@ -1690,37 +1694,42 @@
             });
         }
 
-        // FIXED TOGGLE FUNCTION (Instant Feedback + Recalc)
+        // FIXING THE DOUBLE CLICK / FLICKER BUG
+        // Kita gunakan Optimistic UI Update
         function toggleStockItem(type, name) {
-            // 1. Update Local Data Model Immediately
-            if(type === 'daily') {
-                stockData[name] = !stockData[name];
-                // Send to Firebase (Async, but data is already local)
-                if(db) db.ref('bubur_grace/stock/' + name).set(stockData[name]);
-            } else if (type === 'weekend') {
-                weekendStockData[name] = !weekendStockData[name];
-                if(db) db.ref('bubur_grace/weekendStock/' + name).set(weekendStockData[name]);
-            }
+            // 1. Dapatkan checkbox saat ini untuk feedback visual
+            const checkbox = event.target;
+            const newValue = checkbox.checked;
 
-            // 2. Update Main Menu Visuals Immediately (Crucial for UX)
+            // 2. Update Data Object Lokal (Optimistic)
+            // Jika data undefined, default ke false, lalu diinvert jadi true
+            const currentValue = (type === 'daily' ? stockData[name] : weekendStockData[name]);
+            
+            // Pastikan nilai boolean yang benar
+            const finalValue = (newValue === true); 
+
+            if(type === 'daily') stockData[name] = finalValue;
+            else if (type === 'weekend') weekendStockData[name] = finalValue;
+
+            // 3. Update Tampilan Menu Utama SECARA INSTAN (Jangan tunggu Firebase)
             checkWeekendLocks();
 
-            // 3. Update Admin Panel Checkbox Visuals (Crucial for "Double Click" fix)
-            // Instead of re-rendering whole list (which kills focus), update the specific checkbox state
-            // Note: The listener might also fire, but this ensures immediate feedback.
-            // We force the checkbox to match the new local state before any async re-render.
-            const checkbox = event.target;
-            if(checkbox) {
-                // The browser already handled the click, so the checkbox is visually correct.
-                // But let's be absolutely sure by setting it manually to the data value.
-                checkbox.checked = (type === 'daily' ? stockData[name] : weekendStockData[name]);
+            // 4. Kirim ke Firebase
+            if(db) {
+                const path = (type === 'daily' ? 'bubur_grace/stock/' : 'bubur_grace/weekendStock/') + name;
+                db.ref(path).set(finalValue);
             }
+
+            // PENTING: JANGAN memanggil renderAdminUI() di sini.
+            // renderAdminUI() hanya dipanggil saat modal dibuka atau saat refresh data dari luar.
+            // Jika dipanggil sekarang, dia akan mereset checkbox ke posisi awal lama (flicker).
         }
 
         function applyStockStyles() {
             document.querySelectorAll('.menu-card:not(.weekend-only)').forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
-                const isAvailable = stockData[name] !== false;
+                // Jika undefined, anggap true (available)
+                const isAvailable = (stockData[name] !== false);
                 if (isAvailable) card.classList.remove('stock-empty');
                 else card.classList.add('stock-empty');
             });
@@ -1729,7 +1738,8 @@
         function applyWeekendStockStyles() {
             document.querySelectorAll('.menu-card.weekend-only').forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
-                const isAvailable = weekendStockData[name] !== false;
+                // Jika undefined, anggap true (available)
+                const isAvailable = (weekendStockData[name] !== false);
                 if (isAvailable) card.classList.remove('stock-empty');
                 else card.classList.add('stock-empty');
             });
@@ -1773,6 +1783,7 @@
             if (forceOpen) {
                 modal.classList.add('active');
                 switchAdminTab('status'); 
+                // Kita render saat modal dibuka
                 renderAdminUI();
             } else {
                 modal.classList.contains('active') ? modal.classList.remove('active') : modal.classList.add('active');
@@ -1838,24 +1849,23 @@
                 }
             }
 
-            // FIX LOGIC: Availability Logic (Combined: Weekend Date + Stock Override)
+            // FIX LOGIC WEEKEND ONLY
+            // Kunci jika: Bukan Weekend ATAU Stok Mati (false)
+            // Buka jika: Weekend DAN Stok Ada (true)
             weekendCards.forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
                 const btn = card.querySelector('.add-btn');
                 
-                // 1. Check Stock (Has Admin turned it off explicitly?)
+                // Cek stok: Jika undefined, defaultkan True (Tersedia)
                 const isOutOfStock = (weekendStockData[name] === false);
-                
-                // 2. Check Day (Is it Weekend today?)
                 const isNotWeekend = !isWeekend;
 
-                // Logic: If Out of Stock OR Not Weekend, LOCK it.
                 if (isOutOfStock || isNotWeekend) {
                     card.classList.add('weekend-locked');
                     btn.innerHTML = '<i class="fa-solid fa-lock"></i>';
                     btn.classList.add('locked-btn');
                 } else {
-                    // Both conditions true (Stock OK AND Weekend is ON) -> UNLOCK
+                    // Kedua syarat terpenuhi
                     card.classList.remove('weekend-locked');
                     btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
                     btn.classList.remove('locked-btn');
@@ -2100,7 +2110,7 @@
                     itemDiv.innerHTML = `
                         <div class="cart-item-row1">
                             <div class="item-info"><div class="item-title">${item.name}</div><div class="item-price-row">${formatRupiah(unitPrice)} / pcs</div></div>
-                            <button onclick="removeFromCart(${index})" style="background:none; border:none; color:var(--danger); font-size:1.2rem; padding: 5px;"><i class="fa-solid fa-trash-can"></i></button>
+                            <button onclick="removeFromCart(${index})" style="background:none; border:none; color:var(--danger); font-size:1.2rem; padding:5px;"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                         <div class="cart-item-row2">
                             <div class="item-controls"><button class="qty-btn" onclick="updateQty(${index}, -1)">-</button><span class="qty-num">${item.qty}</span><button class="qty-btn" onclick="updateQty(${index}, 1)">+</button></div>
