@@ -71,7 +71,7 @@
         }
 
         .header-top { display: flex; justify-content: space-between; align-items: center; }
-        .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; position: relative; }
+        .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         
         .brand-logo {
             width: 45px; height: 45px; object-fit: contain; flex-shrink: 0;
@@ -81,12 +81,6 @@
         .brand-text h1 { font-size: 1.2rem; line-height: 1.1; color: var(--primary); margin: 0; }
         .brand-text span { font-size: 0.7rem; font-weight: 300; letter-spacing: 1px; color: var(--secondary); text-transform: uppercase; }
         
-        .brand::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 50%; opacity: 0; transition: opacity 0.3s;
-        }
-        .brand:active::after { background: rgba(0,0,0,0.05); opacity: 1; }
-
         .store-status-badge {
             font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;
             display: flex; align-items: center; gap: 6px;
@@ -377,184 +371,7 @@
         }
         .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
 
-        /* --- ADMIN PANEL STYLES --- */
-        .admin-modal {
-            background: white; width: 100%; max-width: 480px;
-            border-radius: 20px 20px 0 0;
-            display: flex; flex-direction: column;
-            animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-            max-height: 90vh;
-            overflow: hidden;
-        }
-
-        .admin-header {
-            padding: 20px 20px 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #f0f0f0;
-            background: #fff;
-            flex-shrink: 0;
-        }
-        .admin-header h3 { color: var(--secondary); margin: 0; display: flex; align-items: center; gap: 10px; font-size: 1.2rem; }
-        .btn-close-admin { background: none; border: none; font-size: 1.2rem; color: #aaa; cursor: pointer; padding: 5px; }
-        .btn-close-admin:hover { color: var(--danger); }
-
-        .admin-content {
-            overflow-y: auto;
-            padding: 0;
-            -webkit-overflow-scrolling: touch;
-            flex-grow: 1;
-        }
-
-        /* Admin Tabs */
-        .admin-tabs {
-            display: flex;
-            border-bottom: 1px solid #eee;
-            background: #f9f9f9;
-            flex-shrink: 0;
-        }
-        .admin-tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            font-weight: 600;
-            color: #888;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-        .admin-tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-            background: white;
-        }
-
-        /* Tab Content Containers */
-        .tab-pane { display: none; padding: 20px; }
-        .tab-pane.active { display: block; animation: fadeIn 0.2s; }
-
-        /* Admin Status Section */
-        .admin-section-status { margin-bottom: 25px; background: #fff; border-radius: 12px; }
-        .section-title {
-            font-size: 0.85rem; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
-        }
-        .section-title i { color: var(--primary); font-size: 0.8rem; }
-
-        /* Toggle Switch for Status */
-        .status-segment {
-            background: #f0f2f5;
-            border-radius: 12px;
-            padding: 4px;
-            display: flex;
-            gap: 4px;
-        }
-        .status-option {
-            flex: 1;
-            text-align: center;
-            padding: 10px 0;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #888;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-        .status-option i { font-size: 1rem; }
-        .status-option.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .status-option.active.status-close { color: var(--danger); }
-        .status-option.active.status-open { color: var(--success); }
-
-        /* Admin Stock List Styles */
-        .admin-search-wrapper {
-            position: relative;
-            margin-bottom: 15px;
-        }
-        .admin-search-wrapper i {
-            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
-            color: #ccc; font-size: 0.9rem;
-        }
-        #adminSearchInput, #adminWeekendSearchInput {
-            width: 100%; padding: 12px 12px 12px 40px;
-            border: 1px solid #eee; border-radius: 10px;
-            font-size: 0.9rem; background: #fff;
-            transition: 0.2s;
-        }
-        #adminSearchInput:focus, #adminWeekendSearchInput:focus { border-color: var(--primary); outline: none; }
-
-        .stock-list { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
-        
-        .stock-item-card {
-            background: #fff;
-            border: 1px solid #eee;
-            border-radius: 10px;
-            padding: 12px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.2s;
-        }
-        .stock-item-card:hover { background: #fafafa; }
-        .stock-info { flex: 1; padding-right: 15px; }
-        .stock-name { font-weight: 600; font-size: 0.9rem; color: var(--secondary); margin-bottom: 2px; line-height: 1.3; }
-        .stock-cat { font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        /* Weekend Specific Styling */
-        .weekend-section-header {
-            display: flex; align-items: center; gap: 8px; color: var(--primary);
-            background: var(--primary-light); padding: 10px; border-radius: 8px; margin-bottom: 15px;
-        }
-
-        /* IOS Toggle Switch */
-        .stock-toggle {
-            position: relative; display: inline-block; width: 44px; height: 24px;
-            flex-shrink: 0;
-        }
-        .stock-toggle input { opacity: 0; width: 0; height: 0; }
-        .slider-toggle {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc; transition: .4s; border-radius: 24px;
-        }
-        .slider-toggle:before {
-            position: absolute; content: ""; height: 18px; width: 18px;
-            left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        input:checked + .slider-toggle { background-color: var(--success); }
-        input:checked + .slider-toggle:before { transform: translateX(20px); }
-
-        /* Password Modal */
-        .password-modal {
-            background: white; width: 100%; max-width: 320px;
-            border-radius: 20px; padding: 30px;
-            animation: fadeIn 0.2s;
-            text-align: center;
-            z-index: 3100; position: absolute; bottom: 0; margin-bottom: 20px;
-        }
-        .password-input {
-            width: 100%; padding: 12px; margin: 15px 0;
-            border: 2px solid #eee; border-radius: 10px; font-size: 1rem; text-align: center;
-            font-family: 'Poppins', sans-serif; letter-spacing: 2px;
-        }
-        .password-input:focus { border-color: var(--primary); outline: none; }
-        .btn-pass-confirm {
-            width: 100%; padding: 12px; background: var(--secondary); color: white;
-            border: none; border-radius: 10px; font-weight: 600; cursor: pointer;
-        }
-        .btn-pass-cancel {
-            width: 100%; padding: 10px; background: none; border: none;
-            color: #888; cursor: pointer; font-size: 0.9rem; margin-top: 5px;
-        }
-
-        /* Cart & Variant Modal Styles */
+        /* --- CART & VARIANT MODAL STYLES --- */
         .cart-modal {
             background: white; width: 100%; max-width: 500px;
             border-radius: 20px 20px 0 0;
@@ -709,7 +526,7 @@
 
         @media (min-width: 768px) {
             .modal-overlay { align-items: center; }
-            .cart-modal, .variant-modal, .admin-modal, .password-modal { border-radius: 20px; max-width: 500px; }
+            .cart-modal, .variant-modal { border-radius: 20px; max-width: 500px; }
             .menu-grid { gap: 25px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
             .card-img-wrapper { height: 180px; }
             .card-body { padding: 20px; }
@@ -740,8 +557,7 @@
 
     <header>
         <div class="header-top">
-            <!-- ADMIN SECRET TRIGGER -->
-            <div class="brand" id="brandLogo" oncontextmenu="return false;" title="Tahan 3 detik untuk Admin">
+            <div class="brand">
                 <img src="https://z-cdn-media.chatglm.cn/files/50ca2c37-9a98-4c90-923b-ae99959846b9.png?auth_key=1876671393-5447ef07c70045b48cce9108e1c0bf25-0-4f77a9446e7fe2d91efdbbfa00385980" alt="Logo Bubur Grace" class="brand-logo">
                 
                 <div class="brand-text">
@@ -1303,108 +1119,6 @@
     <button id="scrollTopBtn" onclick="scrollToTop()" title="Kembali ke atas"><i class="fa-solid fa-arrow-up"></i></button>
     <a href="https://wa.me/62817776175" class="fab-wa" target="_blank" aria-label="Chat WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
 
-    <!-- PASSWORD MODAL -->
-    <div class="modal-overlay" id="passwordModal" onclick="togglePasswordModal(false)">
-        <div class="password-modal" onclick="event.stopPropagation()">
-            <h3 style="margin-bottom:15px; color:var(--secondary);">Admin Login</h3>
-            <p style="font-size:0.85rem; color:#888; margin-bottom:10px;">Masukkan password akses.</p>
-            <input type="password" id="adminPasswordInput" class="password-input" placeholder="Password">
-            <button class="btn-pass-confirm" onclick="checkAdminPassword()">Masuk Panel</button>
-            <button class="btn-pass-cancel" onclick="togglePasswordModal(false)">Batal</button>
-        </div>
-    </div>
-
-    <!-- ADMIN PANEL MODAL -->
-    <div class="modal-overlay" id="adminModal" onclick="closeAdminModal(event)">
-        <div class="admin-modal">
-            <div class="admin-header">
-                <h3><i class="fa-solid fa-sliders"></i> Admin Panel</h3>
-                <button onclick="toggleAdmin()" class="btn-close-admin"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <!-- TABS -->
-            <div class="admin-tabs">
-                <div class="admin-tab active" onclick="switchAdminTab('status')">Status Toko</div>
-                <div class="admin-tab" onclick="switchAdminTab('stock')">Stok Harian</div>
-                <div class="admin-tab" onclick="switchAdminTab('weekend')">Stok Weekend</div>
-            </div>
-
-            <div class="admin-content">
-                <!-- TAB: STATUS -->
-                <div id="tab-status" class="tab-pane active">
-                    <div class="admin-section-status">
-                        <div class="section-title">
-                            <i class="fa-regular fa-clock"></i> Status Toko
-                        </div>
-                        <div class="status-segment">
-                            <div class="status-option" id="opt-auto" onclick="updateStoreMode('auto')">
-                                <i class="fa-solid fa-robot"></i>
-                                <span>Otomatis</span>
-                            </div>
-                            <div class="status-option" id="opt-open" onclick="updateStoreMode('open')">
-                                <i class="fa-solid fa-store"></i>
-                                <span>Buka</span>
-                            </div>
-                            <div class="status-option" id="opt-close" onclick="updateStoreMode('close')">
-                                <i class="fa-solid fa-store-slash"></i>
-                                <span>Tutup</span>
-                            </div>
-                        </div>
-                        <small style="color:#aaa; font-size:0.7rem; display:block; margin-top:8px; line-height:1.4;">
-                            *Otomatis: Ikuti jadwal buka/tutup.<br>
-                            *Buka: Paksa toko buka (Termasuk Nasi Uduk).<br>
-                            *Tutup: Paksa toko tutup.
-                        </small>
-                    </div>
-                </div>
-
-                <!-- TAB: STOCK HARIAN -->
-                <div id="tab-stock" class="tab-pane">
-                    <div class="admin-section-stock">
-                        <div class="section-title">
-                            <i class="fa-solid fa-boxes-stacked"></i> Kelola Stok Harian
-                        </div>
-                        <!-- Search -->
-                        <div class="admin-search-wrapper">
-                            <i class="fa-solid fa-search"></i>
-                            <input type="search" id="adminSearchInput" placeholder="Cari menu..." autocomplete="off">
-                        </div>
-                        
-                        <div class="stock-list" id="adminStockList">
-                            <!-- Items generated by JS -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB: WEEKEND STOCK -->
-                <div id="tab-weekend" class="tab-pane">
-                    <div class="admin-section-stock">
-                        <div class="weekend-section-header">
-                            <i class="fa-solid fa-sun"></i>
-                            <span>Stok Khusus Nasi Uduk (Weekend)</span>
-                        </div>
-                        <p style="font-size:0.75rem; color:#666; margin-bottom:10px;">Menu ini hanya tampil Sabtu/Minggu kecuali Anda mematikan stoknya di sini.</p>
-                        
-                        <!-- Search Weekend -->
-                        <div class="admin-search-wrapper">
-                            <i class="fa-solid fa-search"></i>
-                            <input type="search" id="adminWeekendSearchInput" placeholder="Cari menu weekend..." autocomplete="off">
-                        </div>
-
-                        <div class="stock-list" id="adminWeekendStockList">
-                            <!-- Weekend items generated by JS -->
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div style="padding: 15px 20px 20px; background:#f9f9f9; border-top:1px solid #eee;">
-                <button class="btn-checkout" style="background:#888;" onclick="toggleAdmin()">Tutup Panel</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Variant Selection Modal -->
     <div class="modal-overlay" id="variantModal" onclick="closeVariantModal(event)">
         <div class="variant-modal">
@@ -1492,7 +1206,7 @@
             window.addEventListener('scroll', handleScroll);
             initSpyScroll();
             
-            checkWeekendLocks();
+            checkWeekendLocks(); // Initial check based on default values
             initFirebase(); 
         });
 
@@ -1517,196 +1231,103 @@
         }
 
         function listenToFirebase() {
-            // 1. DENGARK PERUBAHAN STATUS TOKO
+            // 1. LISTEN STATUS TOKO (READ ONLY)
             db.ref('bubur_grace/status').on('value', (snapshot) => {
                 const val = snapshot.val();
                 if (val) {
                     storeStatusMode = val;
-                    updateAdminStatusUI();
                     checkStoreOperationalStatus();
-                    // PENTING: Trigger pengecekan weekend saat status berubah
                     checkWeekendLocks();
                 }
             });
 
-            // 2. DENGARK PERUBAHAN STOK HARIAN
+            // 2. LISTEN STOK HARIAN (READ ONLY)
             db.ref('bubur_grace/stock').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     stockData = data;
                     applyStockStyles();
-                    if(document.getElementById('adminModal').classList.contains('active') === false) {
-                        renderAdminUI();
-                    }
                     checkWeekendLocks();
                 }
             });
 
-            // 3. DENGARK PERUBAHAN STOK WEEKEND
+            // 3. LISTEN STOK WEEKEND (READ ONLY)
             db.ref('bubur_grace/weekendStock').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     weekendStockData = data;
                     applyWeekendStockStyles();
-                    if(document.getElementById('adminModal').classList.contains('active') === false) {
-                        renderAdminUI();
-                    }
                     checkWeekendLocks();
-                }
-            });
-
-            // 4. INISIALISASI AWAL DATA
-            db.ref('bubur_grace/stock').once('value').then((snapshot) => {
-                if(!snapshot.exists()){
-                    const initialStock = {};
-                    document.querySelectorAll('.menu-card:not(.weekend-only)').forEach(card => {
-                        const name = card.querySelector('.card-title').innerText;
-                        initialStock[name] = true;
-                    });
-                    db.ref('bubur_grace/stock').set(initialStock);
-                }
-            });
-            
-            db.ref('bubur_grace/weekendStock').once('value').then((snapshot) => {
-                if(!snapshot.exists()){
-                    const initialWeekendStock = {};
-                    document.querySelectorAll('.menu-card.weekend-only').forEach(card => {
-                        const name = card.querySelector('.card-title').innerText;
-                        initialWeekendStock[name] = true;
-                    });
-                    db.ref('bubur_grace/weekendStock').set(initialWeekendStock);
-                }
-            });
-            
-            db.ref('bubur_grace/status').once('value').then((snapshot) => {
-                if(!snapshot.exists()){
-                    db.ref('bubur_grace/status').set('auto'); 
                 }
             });
         }
 
-        // --- ADMIN SYSTEM ---
+        // --- ADMIN SYSTEM REMOVED ---
+        // Logic moved to separate admin file.
+        // This file now only contains logic to READ data and display it to customers.
+
+        // --- DATA VARIABLES ---
         let storeStatusMode = 'auto'; 
         let stockData = {};
         let weekendStockData = {};
 
-        // Tab Switching Logic
-        function switchAdminTab(tabName) {
-            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-            
-            const tabs = document.querySelectorAll('.admin-tab');
-            if(tabName === 'status') tabs[0].classList.add('active');
-            if(tabName === 'stock') tabs[1].classList.add('active');
-            if(tabName === 'weekend') tabs[2].classList.add('active');
+        // --- SMART LOCK LOGIC (NASI UDUK) & POSITIONING ---
+        function checkWeekendLocks() {
+            const now = new Date();
+            const day = now.getDay(); 
+            let isWeekend = (day === 0 || day === 6);
 
-            document.getElementById(`tab-${tabName}`).classList.add('active');
-        }
-
-        function updateAdminStatusUI() {
-            ['auto','open','close'].forEach(m => {
-                const el = document.getElementById(`opt-${m}`);
-                if(el) el.classList.remove('active', 'status-open', 'status-close');
-            });
-
-            const activeEl = document.getElementById(`opt-${storeStatusMode}`);
-            if(activeEl) {
-                activeEl.classList.add('active');
-                if(storeStatusMode === 'open') activeEl.classList.add('status-open');
-                if(storeStatusMode === 'close') activeEl.classList.add('status-close');
+            // Paksa Weekend jika Admin set "Buka"
+            if (storeStatusMode === 'open') {
+                isWeekend = true;
+            } else if (storeStatusMode === 'close') {
+                isWeekend = false;
             }
-        }
 
-        function updateStoreMode(mode) {
-            storeStatusMode = mode;
-            if(db) db.ref('bubur_grace/status').set(mode);
-            updateAdminStatusUI();
-            checkStoreOperationalStatus();
-            // TAMBAHAN: Trigger checkWeekendLocks agar UI berubah saat status admin diganti
-            checkWeekendLocks();
-        }
+            const weekendCards = document.querySelectorAll('.weekend-only');
+            const sectionUdukAyam = document.querySelector('div[data-category="nasi-uduk-ayam"]');
+            const gridUdukAyam = sectionUdukAyam.nextElementSibling;
+            const sectionUdukTelur = document.querySelector('div[data-category="nasi-uduk-telur"]');
+            const gridUdukTelur = sectionUdukTelur.nextElementSibling;
+            const mainContainer = document.getElementById('mainContainer');
+            const basoGrid = document.getElementById('basoGrid');
 
-        function renderAdminUI() {
-            // 1. Render Daily Stock List
-            const listContainer = document.getElementById('adminStockList');
-            listContainer.innerHTML = '';
-            
-            const dailyCards = Array.from(document.querySelectorAll('.menu-card:not(.weekend-only)'));
-            dailyCards.sort((a, b) => {
-                const nameA = a.querySelector('.card-title').innerText;
-                const nameB = b.querySelector('.card-title').innerText;
-                return nameA.localeCompare(nameB);
-            });
+            // Positioning Logic
+            if (isWeekend) {
+                if (basoGrid && basoGrid.nextElementSibling !== sectionUdukAyam) {
+                    basoGrid.parentNode.insertBefore(sectionUdukAyam, basoGrid.nextElementSibling);
+                    mainContainer.insertBefore(gridUdukAyam, sectionUdukAyam.nextElementSibling);
+                    mainContainer.insertBefore(sectionUdukTelur, gridUdukAyam.nextElementSibling);
+                    mainContainer.insertBefore(gridUdukTelur, sectionUdukTelur.nextElementSibling);
+                }
+            } else {
+                const noResult = document.getElementById('noResultMsg');
+                if (noResult && noResult.previousElementSibling !== gridUdukTelur) {
+                    mainContainer.appendChild(sectionUdukAyam);
+                    mainContainer.appendChild(gridUdukAyam);
+                    mainContainer.appendChild(sectionUdukTelur);
+                    mainContainer.appendChild(gridUdukTelur);
+                }
+            }
 
-            dailyCards.forEach(card => {
-                const name = card.querySelector('.card-title').innerText;
-                const cat = card.getAttribute('data-category').replace('-', ' ').toUpperCase();
-                const isAvailable = (stockData[name] !== false);
-                
-                const item = document.createElement('div');
-                item.className = 'stock-item-card';
-                item.setAttribute('data-name', name.toLowerCase());
-                item.innerHTML = `
-                    <div class="stock-info">
-                        <div class="stock-name">${name}</div>
-                        <div class="stock-cat">${cat}</div>
-                    </div>
-                    <label class="stock-toggle">
-                        <input type="checkbox" ${isAvailable ? 'checked' : ''} onchange="toggleStockItem('daily', '${name.replace(/'/g, "\\'")}')">
-                        <span class="slider-toggle"></span>
-                    </label>
-                `;
-                listContainer.appendChild(item);
-            });
-
-            // 2. Render Weekend Stock List
-            const weekendListContainer = document.getElementById('adminWeekendStockList');
-            weekendListContainer.innerHTML = '';
-
-            const weekendCards = Array.from(document.querySelectorAll('.menu-card.weekend-only'));
-            weekendCards.sort((a, b) => {
-                const nameA = a.querySelector('.card-title').innerText;
-                const nameB = b.querySelector('.card-title').innerText;
-                return nameA.localeCompare(nameB);
-            });
-
+            // Lock/Unlock Logic
             weekendCards.forEach(card => {
                 const name = card.querySelector('.card-title').innerText;
-                const cat = card.getAttribute('data-category').replace('-', ' ').toUpperCase();
-                const isAvailable = (weekendStockData[name] !== false);
+                const btn = card.querySelector('.add-btn');
                 
-                const item = document.createElement('div');
-                item.className = 'stock-item-card';
-                item.setAttribute('data-name', name.toLowerCase());
-                item.innerHTML = `
-                    <div class="stock-info">
-                        <div class="stock-name">${name}</div>
-                        <div class="stock-cat">${cat}</div>
-                    </div>
-                    <label class="stock-toggle">
-                        <input type="checkbox" ${isAvailable ? 'checked' : ''} onchange="toggleStockItem('weekend', '${name.replace(/'/g, "\\'")}')">
-                        <span class="slider-toggle"></span>
-                    </label>
-                `;
-                weekendListContainer.appendChild(item);
+                const isOutOfStock = (weekendStockData[name] === false);
+                const isLocked = (!isWeekend || isOutOfStock);
+
+                if (isLocked) {
+                    card.classList.add('weekend-locked');
+                    btn.innerHTML = '<i class="fa-solid fa-lock"></i>';
+                    btn.classList.add('locked-btn');
+                } else {
+                    card.classList.remove('weekend-locked');
+                    btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+                    btn.classList.remove('locked-btn');
+                }
             });
-        }
-
-        function toggleStockItem(type, name) {
-            const checkbox = event.target;
-            const newValue = checkbox.checked;
-            const currentValue = (type === 'daily' ? stockData[name] : weekendStockData[name]);
-            const finalValue = (newValue === true); 
-
-            if(type === 'daily') stockData[name] = finalValue;
-            else if (type === 'weekend') weekendStockData[name] = finalValue;
-
-            checkWeekendLocks();
-
-            if(db) {
-                const path = (type === 'daily' ? 'bubur_grace/stock/' : 'bubur_grace/weekendStock/') + name;
-                db.ref(path).set(finalValue);
-            }
         }
 
         function applyStockStyles() {
@@ -1724,144 +1345,6 @@
                 const isAvailable = (weekendStockData[name] !== false);
                 if (isAvailable) card.classList.remove('stock-empty');
                 else card.classList.add('stock-empty');
-            });
-        }
-
-        // --- PASSWORD & ACCESS ---
-        let pressTimer;
-        const brandLogo = document.getElementById('brandLogo');
-        
-        brandLogo.addEventListener('mousedown', () => { pressTimer = setTimeout(openPasswordPrompt, 3000); });
-        brandLogo.addEventListener('touchstart', () => { pressTimer = setTimeout(openPasswordPrompt, 3000); });
-        ['mouseup', 'mouseleave', 'touchend'].forEach(evt => {
-            brandLogo.addEventListener(evt, () => { clearTimeout(pressTimer); });
-        });
-
-        function openPasswordPrompt() {
-            document.getElementById('adminPasswordInput').value = '';
-            document.getElementById('passwordModal').classList.add('active');
-        }
-
-        function togglePasswordModal(show) {
-            const modal = document.getElementById('passwordModal');
-            if(show) modal.classList.add('active');
-            else modal.classList.remove('active');
-        }
-
-        function checkAdminPassword() {
-            const input = document.getElementById('adminPasswordInput').value;
-            if(input === "buburgrace123") {
-                togglePasswordModal(false);
-                toggleAdmin(true);
-            } else {
-                showToast("Password Salah!", "error");
-                document.getElementById('adminPasswordInput').value = '';
-                document.getElementById('adminPasswordInput').focus();
-            }
-        }
-
-        function toggleAdmin(forceOpen = false) {
-            const modal = document.getElementById('adminModal');
-            if (forceOpen) {
-                modal.classList.add('active');
-                switchAdminTab('status'); 
-                renderAdminUI();
-            } else {
-                modal.classList.contains('active') ? modal.classList.remove('active') : modal.classList.add('active');
-            }
-        }
-
-        function closeAdminModal(e) {
-            if (e.target.id === 'adminModal') toggleAdmin();
-        }
-
-        // --- ADMIN SEARCH ---
-        const adminSearch = document.getElementById('adminSearchInput');
-        adminSearch.addEventListener('keyup', (e) => {
-            const term = e.target.value.toLowerCase();
-            const items = document.querySelectorAll('#adminStockList .stock-item-card');
-            items.forEach(item => {
-                const name = item.getAttribute('data-name');
-                if (name.includes(term)) item.style.display = 'flex';
-                else item.style.display = 'none';
-            });
-        });
-
-        const adminWeekendSearch = document.getElementById('adminWeekendSearchInput');
-        adminWeekendSearch.addEventListener('keyup', (e) => {
-            const term = e.target.value.toLowerCase();
-            const items = document.querySelectorAll('#adminWeekendStockList .stock-item-card');
-            items.forEach(item => {
-                const name = item.getAttribute('data-name');
-                if (name.includes(term)) item.style.display = 'flex';
-                else item.style.display = 'none';
-            });
-        });
-
-        // --- SMART LOCK LOGIC (NASI UDUK) & POSITIONING ---
-        function checkWeekendLocks() {
-            const now = new Date();
-            const day = now.getDay(); 
-            // Default: Sabtu(6) atau Minggu(0)
-            let isWeekend = (day === 0 || day === 6);
-
-            // REVISI LOGIKA: Paksa Weekend jika Admin set "Buka"
-            if (storeStatusMode === 'open') {
-                isWeekend = true; // Paksa Buka = Paksa Weekend
-            } else if (storeStatusMode === 'close') {
-                // Jika Tutup Paksa, kita anggap bukan Weekend (Sembunyikan menu Weekend)
-                isWeekend = false;
-            }
-            // Jika 'auto', gunakan isWeekend asli (Sabtu/Minggu)
-
-            const weekendCards = document.querySelectorAll('.weekend-only');
-            const sectionUdukAyam = document.querySelector('div[data-category="nasi-uduk-ayam"]');
-            const gridUdukAyam = sectionUdukAyam.nextElementSibling;
-            const sectionUdukTelur = document.querySelector('div[data-category="nasi-uduk-telur"]');
-            const gridUdukTelur = sectionUdukTelur.nextElementSibling;
-            const mainContainer = document.getElementById('mainContainer');
-            const basoGrid = document.getElementById('basoGrid');
-
-            // Positioning Logic
-            if (isWeekend) {
-                // Pindahkan ke atas jika weekend (atau force open)
-                if (basoGrid && basoGrid.nextElementSibling !== sectionUdukAyam) {
-                    basoGrid.parentNode.insertBefore(sectionUdukAyam, basoGrid.nextElementSibling);
-                    mainContainer.insertBefore(gridUdukAyam, sectionUdukAyam.nextElementSibling);
-                    mainContainer.insertBefore(sectionUdukTelur, gridUdukAyam.nextElementSibling);
-                    mainContainer.insertBefore(gridUdukTelur, sectionUdukTelur.nextElementSibling);
-                }
-            } else {
-                // Pindahkan ke bawah jika bukan weekend (dan bukan force open)
-                const noResult = document.getElementById('noResultMsg');
-                if (noResult && noResult.previousElementSibling !== gridUdukTelur) {
-                    mainContainer.appendChild(sectionUdukAyam);
-                    mainContainer.appendChild(gridUdukAyam);
-                    mainContainer.appendChild(sectionUdukTelur);
-                    mainContainer.appendChild(gridUdukTelur);
-                }
-            }
-
-            // Lock/Unlock Logic
-            weekendCards.forEach(card => {
-                const name = card.querySelector('.card-title').innerText;
-                const btn = card.querySelector('.add-btn');
-                
-                // Cek stok: Jika undefined, defaultkan True (Tersedia)
-                const isOutOfStock = (weekendStockData[name] === false);
-                // Kunci jika: Bukan Weekend (atau Force Close) ATAU Stok Mati
-                const isLocked = (!isWeekend || isOutOfStock);
-
-                if (isLocked) {
-                    card.classList.add('weekend-locked');
-                    btn.innerHTML = '<i class="fa-solid fa-lock"></i>';
-                    btn.classList.add('locked-btn');
-                } else {
-                    // Kedua syarat terpenuhi
-                    card.classList.remove('weekend-locked');
-                    btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
-                    btn.classList.remove('locked-btn');
-                }
             });
         }
 
