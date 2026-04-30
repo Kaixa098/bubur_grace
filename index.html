@@ -704,10 +704,10 @@
                 <div class="card-img-wrapper"><img src="foto/buburtelor.JPG" class="card-img-top" alt="Bubur Telur"></div>
                 <div class="card-body"><div class="badge">Best Seller</div><div class="card-title">Bubur + Telur Ayam Kampung</div><div class="card-footer"><span class="price">Rp 28.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="bubur" data-price="15000">
-                <div class="card-img-wrapper"><img src="foto/buburpolos.JPG" class="card-img-top" alt="Bubur Polos"></div>
-                <div class="card-body"><div class="card-title">Bubur Polos / Putih</div><div class="card-footer"><span class="price">Rp 15.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-            </div>
+           <div class="menu-card" data-name="Bubur Polos / Putih" data-category="bubur" data-price="15000">
+    <div class="card-img-wrapper"><img src="foto/buburpolos.JPG" class="card-img-top" alt="Bubur Polos"></div>
+    <div class="card-body"><div class="card-title">Bubur Polos / Putih</div><div class="card-footer"><span class="price">Rp 15.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+</div>
             <div class="menu-card" data-category="bubur" data-price="6000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/extraayamkmpung.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Topping</div><div class="card-title">Extra Merah Telur Ayam Kampung</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
@@ -1196,7 +1196,7 @@
 
     <div id="toast">Item ditambahkan!</div>
 
-    <script>
+        <script>
         document.addEventListener('DOMContentLoaded', () => {
             const cards = document.querySelectorAll('.menu-card');
             cards.forEach((card, index) => {
@@ -1206,7 +1206,7 @@
             window.addEventListener('scroll', handleScroll);
             initSpyScroll();
             
-            checkWeekendLocks(); // Initial check based on default values
+            checkWeekendLocks(); 
             initFirebase(); 
         });
 
@@ -1262,14 +1262,20 @@
             });
         }
 
-        // --- ADMIN SYSTEM REMOVED ---
-        // Logic moved to separate admin file.
-        // This file now only contains logic to READ data and display it to customers.
-
         // --- DATA VARIABLES ---
         let storeStatusMode = 'auto'; 
         let stockData = {};
         let weekendStockData = {};
+
+        // --- HELPER: AMBIL NAMA MENU (PERBAIKAN UTAMA) ---
+        function getMenuName(card) {
+            // Jika ada atribut data-name, gunakan itu (lebih akurat)
+            if (card.hasAttribute('data-name')) {
+                return card.getAttribute('data-name');
+            }
+            // Jika tidak ada, ambil dari teks judul dan bersihkan spasi
+            return card.querySelector('.card-title').innerText.trim();
+        }
 
         // --- SMART LOCK LOGIC (NASI UDUK) & POSITIONING ---
         function checkWeekendLocks() {
@@ -1312,7 +1318,7 @@
 
             // Lock/Unlock Logic
             weekendCards.forEach(card => {
-                const name = card.querySelector('.card-title').innerText;
+                const name = getMenuName(card); // Menggunakan helper baru
                 const btn = card.querySelector('.add-btn');
                 
                 const isOutOfStock = (weekendStockData[name] === false);
@@ -1332,7 +1338,7 @@
 
         function applyStockStyles() {
             document.querySelectorAll('.menu-card:not(.weekend-only)').forEach(card => {
-                const name = card.querySelector('.card-title').innerText;
+                const name = getMenuName(card); // Menggunakan helper baru
                 const isAvailable = (stockData[name] !== false);
                 if (isAvailable) card.classList.remove('stock-empty');
                 else card.classList.add('stock-empty');
@@ -1341,7 +1347,7 @@
 
         function applyWeekendStockStyles() {
             document.querySelectorAll('.menu-card.weekend-only').forEach(card => {
-                const name = card.querySelector('.card-title').innerText;
+                const name = getMenuName(card); // Menggunakan helper baru
                 const isAvailable = (weekendStockData[name] !== false);
                 if (isAvailable) card.classList.remove('stock-empty');
                 else card.classList.add('stock-empty');
@@ -1450,7 +1456,7 @@
 
         function showVariantModal(card) {
             currentVariantCard = card;
-            const baseName = card.querySelector('.card-title').innerText;
+            const baseName = getMenuName(card); // Menggunakan helper baru
             const hasVariants = card.getAttribute('data-has-variants') === 'true';
             selectedOrderType = 'dine-in';
             document.getElementById('btnDineIn').classList.add('selected');
@@ -1513,7 +1519,7 @@
 
         function confirmVariantSelection() {
             if (!currentVariantCard) return;
-            let finalName = currentVariantCard.querySelector('.card-title').innerText;
+            let finalName = getMenuName(currentVariantCard); // Menggunakan helper baru
             const hasVariants = currentVariantCard.getAttribute('data-has-variants') === 'true';
             if (hasVariants) {
                 const selectedOpt = document.querySelector('input[name="variantOpt"]:checked').value;
@@ -1700,7 +1706,7 @@
                     const cardsInGrid = grid.querySelectorAll('.menu-card');
                     let hasResultInGrid = false;
                     cardsInGrid.forEach(card => {
-                        const title = card.querySelector('.card-title').innerText.toLowerCase();
+                        const title = getMenuName(card).toLowerCase().trim(); // Menggunakan helper baru
                         if(title.includes(term)) { card.style.display = 'flex'; hasResultInGrid = true; hasGlobalResult = true; }
                         else card.style.display = 'none';
                     });
