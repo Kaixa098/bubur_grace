@@ -34,6 +34,7 @@
             --shadow-soft: 0 4px 15px rgba(0,0,0,0.05);
             --shadow-hover: 0 10px 25px rgba(0,0,0,0.08);
             --radius-card: 12px;
+            --transition-speed: 0.3s;
         }
 
         /* --- RESET --- */
@@ -84,7 +85,7 @@
         .store-status-badge {
             font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;
             display: flex; align-items: center; gap: 6px;
-            background: #f0f0f0; color: #888; transition: all 0.3s ease;
+            background: #f0f0f0; color: #888; transition: all var(--transition-speed);
         }
         .store-status-badge.open { background: #e8f5e9; color: var(--success); border: 1px solid rgba(37, 211, 102, 0.2); }
         .store-status-badge.closed { background: #ffebee; color: var(--danger); border: 1px solid rgba(231, 76, 60, 0.2); }
@@ -98,7 +99,7 @@
             border: 1px solid #eee; border-radius: 25px;
             font-family: 'Poppins', sans-serif; font-size: 15px;
             background: #f8f9fa;
-            transition: all 0.3s ease; outline: none;
+            transition: all var(--transition-speed); outline: none;
             -webkit-appearance: none;
         }
         #searchInput:focus { background: white; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1); }
@@ -123,7 +124,7 @@
             padding: 0 18px; height: 38px;
             background: white; border: 1px solid #eee;
             border-radius: 20px; font-size: 0.8rem; font-weight: 500;
-            color: var(--text-main); cursor: pointer; transition: all 0.3s ease;
+            color: var(--text-main); cursor: pointer; transition: all var(--transition-speed);
             flex-shrink: 0;
             display: inline-flex; align-items: center; justify-content: center;
         }
@@ -169,29 +170,36 @@
         }
         .section-line { height: 1px; background: #eee; flex-grow: 1; opacity: 0.5; }
         
+        /* --- FIXED GRID & CARD STYLES --- */
         .menu-grid { 
             display: grid; 
-            gap: 15px; 
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 16px; /* Spasi yang lebih rapi */
+            /* Mobile: 2 kolom kecil atau auto */
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
             position: relative; 
         }
 
         .no-result { text-align: center; padding: 40px 20px; color: #888; grid-column: 1 / -1; font-size: 0.9rem; display: none; }
         .empty-state-icon { font-size: 3rem; color: #e0e0e0; margin-bottom: 15px; display: inline-block; animation: float 3s ease-in-out infinite; }
 
-        /* --- MENU CARD --- */
+        /* --- MENU CARD FIX --- */
         .menu-card {
             background: var(--card-bg); 
             border-radius: var(--radius-card);
             box-shadow: var(--shadow-soft); 
             overflow: hidden;
+            
+            /* MAGIC FIX: Flex Column untuk menyeragamkan tinggi kartu */
             display: flex; 
             flex-direction: column;
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s;
+            
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
             border: 1px solid rgba(0,0,0,0.03);
             position: relative;
             opacity: 0;
             animation: fadeInUp 0.6s ease forwards;
+            
+            /* Memastikan kartu memenuhi tinggi baris grid */
             height: 100%;
         }
         
@@ -224,10 +232,11 @@
         
         .card-img-wrapper {
             width: 100%; 
-            height: 140px;
+            height: 140px; /* Tinggi gambar seragam */
             overflow: hidden; 
             background-color: #f0f0f0; 
             position: relative;
+            flex-shrink: 0; /* Mencegah gambar mengecil */
         }
         
         .card-img-top { 
@@ -235,6 +244,7 @@
             width: 100%; 
             object-fit: cover; 
             transition: transform 0.5s ease; 
+            display: block;
         }
         .menu-card:not(.weekend-locked):not(.stock-empty):hover .card-img-top { transform: scale(1.05); }
         
@@ -242,7 +252,8 @@
             padding: 12px; 
             display: flex; 
             flex-direction: column; 
-            flex-grow: 1;
+            /* Mengisi ruang kosong agar footer selalu di bawah */
+            flex-grow: 1; 
         }
         
         .badge { 
@@ -269,19 +280,20 @@
             -webkit-line-clamp: 2; 
             -webkit-box-orient: vertical; 
             overflow: hidden; 
-            flex-grow: 1;
+            /* Tidak perlu flex-grow di title agar tidak merusak layout */
         }
         
         .card-desc { 
-            font-size: 0.7rem; 
+            font-size: 0.75rem; /* Sedikit lebih kecil agar tidak memakan tempat */
             color: #999; 
             margin-bottom: 10px; 
             display: -webkit-box; 
-            -webkit-line-clamp: 1; 
+            -webkit-line-clamp: 2; /* 2 baris desc agar rapi */
             -webkit-box-orient: vertical; 
             overflow: hidden; 
         }
         
+        /* MAGIC FIX: Margin auto akan mendorong footer ke bawah */
         .card-footer { 
             margin-top: auto; 
             display: flex; 
@@ -524,10 +536,17 @@
         .contact-item { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 8px 0; font-size: 0.95rem; }
         .hours-box { margin-top: 20px; font-size: 0.85rem; opacity: 0.8; }
 
+        /* --- RESPONSIVE DESIGN FIXES --- */
         @media (min-width: 768px) {
             .modal-overlay { align-items: center; }
             .cart-modal, .variant-modal { border-radius: 20px; max-width: 500px; }
-            .menu-grid { gap: 25px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+            
+            /* Desktop Grid Layout */
+            .menu-grid { 
+                gap: 25px; 
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            }
+            
             .card-img-wrapper { height: 180px; }
             .card-body { padding: 20px; }
             .card-title { font-size: 1rem; }
@@ -536,6 +555,10 @@
             header { padding: 20px 5%; flex-direction: row; flex-wrap: wrap; }
             .brand-text h1 { font-size: 1.8rem; }
             .brand-logo { width: 60px; height: 60px; }
+        }
+        @media (max-width: 360px) {
+            /* Small phone fix */
+            .menu-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         /* --- ANIMATIONS --- */
@@ -704,10 +727,18 @@
                 <div class="card-img-wrapper"><img src="foto/buburtelor.JPG" class="card-img-top" alt="Bubur Telur"></div>
                 <div class="card-body"><div class="badge">Best Seller</div><div class="card-title">Bubur + Telur Ayam Kampung</div><div class="card-footer"><span class="price">Rp 28.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-           <div class="menu-card" data-name="Bubur Polos / Putih" data-category="bubur" data-price="15000">
-    <div class="card-img-wrapper"><img src="foto/buburpolos.JPG" class="card-img-top" alt="Bubur Polos"></div>
-    <div class="card-body"><div class="card-title">Bubur Polos / Putih</div><div class="card-footer"><span class="price">Rp 15.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
-</div>
+            <!-- Fixed HTML Tag Break Here -->
+            <div class="menu-card" data-category="bubur" data-price="15000" data-name="Bubur Polos Putih">
+                <div class="card-img-wrapper"><img src="foto/buburpolos.JPG" class="card-img-top"></div>
+                <div class="card-body">
+                    <div class="card-title">Bubur Polos / Putih</div>
+                    <div class="card-footer">
+                        <span class="price">Rp 15.000</span>
+                        <button class="add-btn"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+            
             <div class="menu-card" data-category="bubur" data-price="6000" data-packaging="no">
                 <div class="card-img-wrapper"><img src="foto/extraayamkmpung.JPG" class="card-img-top"></div>
                 <div class="card-body"><div class="badge">Topping</div><div class="card-title">Extra Merah Telur Ayam Kampung</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
