@@ -58,7 +58,7 @@
 
         /* --- HEADER --- */
         header {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255,255,255, 0.95);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             padding: 10px 5%;
@@ -107,7 +107,7 @@
 
         /* --- CATEGORY NAV --- */
         .category-nav {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255,255,255, 0.95);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             padding: 10px 0;
@@ -1300,11 +1300,9 @@
 
         // --- HELPER: AMBIL NAMA MENU (PERBAIKAN UTAMA) ---
         function getMenuName(card) {
-            // Jika ada atribut data-name, gunakan itu (lebih akurat)
             if (card.hasAttribute('data-name')) {
                 return card.getAttribute('data-name');
             }
-            // Jika tidak ada, ambil dari teks judul dan bersihkan spasi
             return card.querySelector('.card-title').innerText.trim();
         }
 
@@ -1352,7 +1350,7 @@
                 const name = getMenuName(card); // Menggunakan helper baru
                 const btn = card.querySelector('.add-btn');
                 
-                const isOutOfStock = (weekendStockData[name] === false);
+                const isOutOfStock = (weekendStockData[name] === 0); // Cek angka 0
                 const isLocked = (!isWeekend || isOutOfStock);
 
                 if (isLocked) {
@@ -1367,10 +1365,12 @@
             });
         }
 
+        // --- UPDATE FUNGSI CEK STOK (NUMERIK) ---
         function applyStockStyles() {
             document.querySelectorAll('.menu-card:not(.weekend-only)').forEach(card => {
-                const name = getMenuName(card); // Menggunakan helper baru
-                const isAvailable = (stockData[name] !== false);
+                const name = getMenuName(card); 
+                // Logika: 0 = Habis, selain itu = Tersedia (termasuk null/undefined/unlimited)
+                const isAvailable = (stockData[name] !== 0);
                 if (isAvailable) card.classList.remove('stock-empty');
                 else card.classList.add('stock-empty');
             });
@@ -1378,8 +1378,8 @@
 
         function applyWeekendStockStyles() {
             document.querySelectorAll('.menu-card.weekend-only').forEach(card => {
-                const name = getMenuName(card); // Menggunakan helper baru
-                const isAvailable = (weekendStockData[name] !== false);
+                const name = getMenuName(card); 
+                const isAvailable = (weekendStockData[name] !== 0);
                 if (isAvailable) card.classList.remove('stock-empty');
                 else card.classList.add('stock-empty');
             });
@@ -1648,6 +1648,7 @@
                 total += unitPrice * item.qty;
             });
             totalEl.innerText = formatRupiah(total);
+            return total;
         }
         function updateCheckoutInputsVisibility() {
             const hasDineIn = cart.some(i => i.orderType === 'dine-in');
@@ -1679,16 +1680,18 @@
             badge.classList.add('pulse');
             setTimeout(() => badge.classList.remove('pulse'), 300);
         }
+
+        // --- UPDATE FUNGSI CHECKOUT DENGAN TRANSAKSI STOK (NUMERIK) ---
         function checkout() {
             if (!checkStoreOperationalStatus()) { showToast("Mohon maaf, toko sedang TUTUP.", "error"); return; }
             if (cart.length === 0) { showToast("Keranjang masih kosong!", "error"); return; }
+            
             const btn = document.getElementById('btnCheckout');
             const originalText = document.getElementById('checkoutText').innerText;
             const originalIcon = btn.querySelector('i').className;
-            btn.disabled = true;
-            document.getElementById('checkoutText').innerText = "Memproses...";
-            btn.querySelector('i').className = "fa-solid fa-circle-notch fa-spin";
+            const originalBg = btn.style.background;
 
+            // Validasi Input
             const hasDineIn = cart.some(i => i.orderType === 'dine-in');
             const hasTakeaway = cart.some(i => i.orderType === 'takeaway');
             const tableInput = document.getElementById('tableNumberInput');
@@ -1700,11 +1703,88 @@
 
             if(errorMsg) {
                 showToast(errorMsg + "!", "error");
-                setTimeout(() => { btn.disabled = false; document.getElementById('checkoutText').innerText = originalText; btn.querySelector('i').className = originalIcon; }, 1000);
                 return;
             }
 
-            setTimeout(() => {
+            // Loading UI
+            btn.disabled = true;
+            document.getElementById('checkoutText').innerText = "Cek Stok & Memproses...";
+            btn.querySelector('i').className = "fa-solid fa-circle-notch fa-spin";
+
+            const total = updateTotal();
+            let customerInfo = "";
+            if(hasDineIn && !hasTakeaway) customerInfo = `Meja ${tableInput.value}`;
+            else if (!hasDineIn && hasTakeaway) customerInfo = nameInput.value;
+            else customerInfo = `${nameInput.value} (Meja ${tableInput.value})`;
+
+            // --- LOGIKA KURANGI STOK (TRANSACTION) ---
+            const stockDeductionPromises = cart.map(item => {
+                // 1. Bersihkan nama item dari varian (contoh: "Mie Yamin Biasa (Kecil)" -> "Mie Yamin Biasa")
+                // Ini penting karena stok admin biasanya tidak pisah berdasarkan varian
+                let stockName = item.name.replace(/ \([^)]+\)$/, ""); 
+
+                // 2. Tentukan path stok (Weekend atau Harian)
+                let stockPath = 'bubur_grace/stock/' + stockName;
+                if(stockName.includes("Nasi Uduk")) {
+                    stockPath = 'bubur_grace/weekendStock/' + stockName;
+                }
+
+                return new Promise((resolve, reject) => {
+                    db.ref(stockPath).transaction((currentStock) => {
+                        // currentStock bisa: 10 (angka), null (unlimited), 0 (habis), atau undefined (baru)
+                        
+                        // Jika null/undefined (Unlimited), biarkan saja (tidak perlu dikurangi)
+                        if (currentStock === null || currentStock === undefined) {
+                            return null; 
+                        }
+
+                        // Jika 0, tolak transaksi
+                        if (currentStock === 0) {
+                            return; 
+                        }
+
+                        // Jika cukup, kurangi
+                        if (currentStock >= item.qty) {
+                            return currentStock - item.qty;
+                        } else {
+                            return; 
+                        }
+                    }, (error, committed, snapshot) => {
+                        if (error) {
+                            reject("Error database");
+                        } else if (!committed) {
+                            // Transaksi ditolak karena stok tidak cukup (return undefined/null di atas)
+                            // Atau karena race condition
+                            reject(stockName); // Return nama item yang gagal
+                        } else {
+                            resolve(); // Sukses
+                        }
+                    });
+                });
+            });
+
+            // Jalankan semua pengecekan stok sekaligus
+            Promise.all(stockDeductionPromises)
+            .then(() => {
+                // Jika semua stok berhasil dikurangi, simpan order
+                return db.ref('bubur_grace/orders').push({
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    customerInfo: customerInfo,
+                    total: total,
+                    items: cart,
+                    status: 'pending'
+                });
+            })
+            .then(() => {
+                // SUKSES TOTAL
+                cart = []; 
+                updateCartUI();
+                btn.disabled = false;
+                document.getElementById('checkoutText').innerText = originalText;
+                btn.querySelector('i').className = originalIcon;
+                btn.style.background = originalBg;
+
+                // Build Message WhatsApp
                 let message = "";
                 if(hasDineIn && !hasTakeaway) message += `*NO MEJA - ${tableInput.value}*%0A`;
                 else if (!hasDineIn && hasTakeaway) message += `*NAMA: ${nameInput.value}*%0A`;
@@ -1712,11 +1792,28 @@
                 message += "%0A";
                 if(hasDineIn) { message += `*DINE IN:*%0A`; cart.filter(i => i.orderType === 'dine-in').forEach(i => { message += `- (${i.qty}x) ${i.name}%0A`; if(i.notes) message += `*${i.notes}*%0A`; }); }
                 if(hasTakeaway) { message += `%0A*TAKEAWAY:*%0A`; cart.filter(i => i.orderType === 'takeaway').forEach(i => { message += `- (${i.qty}x) ${i.name}%0A`; if(i.notes) message += `*${i.notes}*%0A`; }); }
+                message += `%0A*TOTAL: ${formatRupiah(total)}*`;
+
                 window.open(`https://wa.me/62817776175?text=${message}`, '_blank');
+            })
+            .catch((error) => {
+                // GAGAL (Stok tidak cukup atau Error)
+                console.error("Checkout Error:", error);
+                cart = []; // Reset cart user karena stok berubah saat checkout
+                updateCartUI();
+                
                 btn.disabled = false;
                 document.getElementById('checkoutText').innerText = originalText;
                 btn.querySelector('i').className = originalIcon;
-            }, 800); 
+                btn.style.background = originalBg;
+
+                if (typeof error === 'string') {
+                    // Error karena stok habis
+                    alert(`Maaf, stok menu "${error}" tidak mencukupi atau baru saja habis dibeli orang lain. Silakan cek kembali menu.`);
+                } else {
+                    alert("Terjadi kesalahan sistem. Silakan coba lagi.");
+                }
+            });
         }
 
         // --- SEARCH & FILTER ---
