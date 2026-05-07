@@ -1050,7 +1050,7 @@
                 <div class="card-body"><div class="card-title">Kopi O + Gula</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 17.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
             <div class="menu-card" data-category="kopi" data-price="17000" data-has-variants="true" data-options="Panas,Dingin" data-variant-name="Suhu">
-                <div class="card-img-wrapper"><img src="zoom/kopiOSusu.webp" class="card-img-top"></div>
+                <div class="card-img-wrapper"><img src="zoom/kopiosusu.webp" class="card-img-top"></div>
                 <div class="card-body"><div class="card-title">Kopi O + Susu</div><div class="card-desc">Pilihan: Panas / Dingin</div><div class="card-footer"><span class="price">Rp 17.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
             <div class="menu-card" data-category="kopi" data-price="25000" data-has-variants="true" data-options="Panas,Dingin" data-variant-name="Suhu">
@@ -1681,7 +1681,7 @@
             setTimeout(() => badge.classList.remove('pulse'), 300);
         }
 
-        // --- UPDATE FUNGSI CHECKOUT DENGAN TRANSAKSI STOK (NUMERIK) ---
+        // --- UPDATE FUNGSI CHECKOUT DENGAN PERBAIKAN FORMAT WA ---
         function checkout() {
             if (!checkStoreOperationalStatus()) { showToast("Mohon maaf, toko sedang TUTUP.", "error"); return; }
             if (cart.length === 0) { showToast("Keranjang masih kosong!", "error"); return; }
@@ -1711,7 +1711,10 @@
             document.getElementById('checkoutText').innerText = "Cek Stok & Memproses...";
             btn.querySelector('i').className = "fa-solid fa-circle-notch fa-spin";
 
+            // 1. SIMPAN DATA KERANJANG KE VARIABEL BARU (Sebelum dikosongkan)
+            const cartDataForWA = [...cart]; 
             const total = updateTotal();
+            
             let customerInfo = "";
             if(hasDineIn && !hasTakeaway) customerInfo = `Meja ${tableInput.value}`;
             else if (!hasDineIn && hasTakeaway) customerInfo = nameInput.value;
@@ -1719,11 +1722,8 @@
 
             // --- LOGIKA KURANGI STOK (TRANSACTION) ---
             const stockDeductionPromises = cart.map(item => {
-                // 1. Bersihkan nama item dari varian (contoh: "Mie Yamin Biasa (Kecil)" -> "Mie Yamin Biasa")
-                // Ini penting karena stok admin biasanya tidak pisah berdasarkan varian
                 let stockName = item.name.replace(/ \([^)]+\)$/, ""); 
 
-                // 2. Tentukan path stok (Weekend atau Harian)
                 let stockPath = 'bubur_grace/stock/' + stockName;
                 if(stockName.includes("Nasi Uduk")) {
                     stockPath = 'bubur_grace/weekendStock/' + stockName;
@@ -1731,19 +1731,12 @@
 
                 return new Promise((resolve, reject) => {
                     db.ref(stockPath).transaction((currentStock) => {
-                        // currentStock bisa: 10 (angka), null (unlimited), 0 (habis), atau undefined (baru)
-                        
-                        // Jika null/undefined (Unlimited), biarkan saja (tidak perlu dikurangi)
                         if (currentStock === null || currentStock === undefined) {
                             return null; 
                         }
-
-                        // Jika 0, tolak transaksi
                         if (currentStock === 0) {
                             return; 
                         }
-
-                        // Jika cukup, kurangi
                         if (currentStock >= item.qty) {
                             return currentStock - item.qty;
                         } else {
@@ -1753,11 +1746,9 @@
                         if (error) {
                             reject("Error database");
                         } else if (!committed) {
-                            // Transaksi ditolak karena stok tidak cukup (return undefined/null di atas)
-                            // Atau karena race condition
-                            reject(stockName); // Return nama item yang gagal
+                            reject(stockName); 
                         } else {
-                            resolve(); // Sukses
+                            resolve(); 
                         }
                     });
                 });
@@ -1766,33 +1757,55 @@
             // Jalankan semua pengecekan stok sekaligus
             Promise.all(stockDeductionPromises)
             .then(() => {
-                // Jika semua stok berhasil dikurangi, simpan order
+                // Simpan order ke DB
                 return db.ref('bubur_grace/orders').push({
                     timestamp: firebase.database.ServerValue.TIMESTAMP,
                     customerInfo: customerInfo,
                     total: total,
-                    items: cart,
+                    items: cartDataForWA,
                     status: 'pending'
                 });
             })
             .then(() => {
                 // SUKSES TOTAL
+                // 2. BARU SEKARANG KOSONGKAN KERANJANG LOCAL
                 cart = []; 
                 updateCartUI();
+                toggleCart(); // Tutup modal otomatis
+
+                // Reset Button UI
                 btn.disabled = false;
                 document.getElementById('checkoutText').innerText = originalText;
                 btn.querySelector('i').className = originalIcon;
                 btn.style.background = originalBg;
 
-                // Build Message WhatsApp
-                let message = "";
-                if(hasDineIn && !hasTakeaway) message += `*NO MEJA - ${tableInput.value}*%0A`;
-                else if (!hasDineIn && hasTakeaway) message += `*NAMA: ${nameInput.value}*%0A`;
-                else { message += `*NO MEJA: ${tableInput.value}*%0A*NAMA: ${nameInput.value}*%0A`; }
-                message += "%0A";
-                if(hasDineIn) { message += `*DINE IN:*%0A`; cart.filter(i => i.orderType === 'dine-in').forEach(i => { message += `- (${i.qty}x) ${i.name}%0A`; if(i.notes) message += `*${i.notes}*%0A`; }); }
-                if(hasTakeaway) { message += `%0A*TAKEAWAY:*%0A`; cart.filter(i => i.orderType === 'takeaway').forEach(i => { message += `- (${i.qty}x) ${i.name}%0A`; if(i.notes) message += `*${i.notes}*%0A`; }); }
-                message += `%0A*TOTAL: ${formatRupiah(total)}*`;
+                // 3. BUILD MESSAGE WHATSAPP MENGGUNAKAN cartDataForWA
+                let message = "Halo Bubur Grace, saya mau pesan:%0A%0A";
+                
+                if(hasDineIn) {
+                    if(!hasTakeaway) message += `*NO MEJA: ${tableInput.value}*%0A`;
+                    else message += `*Makan di Tempat (Meja ${tableInput.value})*%0A`;
+                    message += "-----------------------------------%0A";
+                    cartDataForWA.filter(i => i.orderType === 'dine-in').forEach(i => {
+                        message += `• ${i.name} (${i.qty}x)%0A`;
+                        if(i.notes) message += `   _Catatan: ${i.notes}_%0A`;
+                    });
+                }
+
+                if(hasTakeaway) {
+                    message += "%0A";
+                    if(!hasDineIn) message += `*NAMA: ${nameInput.value}* (Bungkus)%0A`;
+                    else message += `*BUNGKUS Utk: ${nameInput.value}*%0A`;
+                    message += "-----------------------------------%0A";
+                    cartDataForWA.filter(i => i.orderType === 'takeaway').forEach(i => {
+                        message += `• ${i.name} (${i.qty}x)%0A`;
+                        if(i.notes) message += `   _Catatan: ${i.notes}_%0A`;
+                    });
+                }
+
+                message += "%0A-----------------------------------%0A";
+                message += `*TOTAL BAYAR: ${formatRupiah(total)}*`;
+                message += "%0A%0AMohon segera diproses ya, Terima kasih! 🙏";
 
                 window.open(`https://wa.me/62817776175?text=${message}`, '_blank');
             })
@@ -1808,7 +1821,6 @@
                 btn.style.background = originalBg;
 
                 if (typeof error === 'string') {
-                    // Error karena stok habis
                     alert(`Maaf, stok menu "${error}" tidak mencukupi atau baru saja habis dibeli orang lain. Silakan cek kembali menu.`);
                 } else {
                     alert("Terjadi kesalahan sistem. Silakan coba lagi.");
