@@ -105,6 +105,13 @@
         #searchInput:focus { background: white; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1); }
         .clear-search { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); cursor: pointer; display: none; font-size: 1.2rem; padding: 10px; }
 
+        /* --- QUEUE COUNTER --- */
+        .queue-counter {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 0.75rem; font-weight: 600; color: var(--secondary);
+            background: rgba(44, 62, 80, 0.05); padding: 4px 10px; border-radius: 12px;
+        }
+
         /* --- CATEGORY NAV --- */
         .category-nav {
             background: rgba(255,255,255, 0.95);
@@ -239,6 +246,7 @@
             background-color: #f0f0f0; 
             position: relative;
             flex-shrink: 0; 
+            cursor: zoom-in;
         }
         
         .card-img-top { 
@@ -377,10 +385,25 @@
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 3000;
-            display: none; justify-content: center; align-items: flex-end;
+            display: none; justify-content: center; align-items: center; /* Centered for Image Modal */
             backdrop-filter: blur(3px);
         }
         .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
+
+        /* --- IMAGE ZOOM MODAL --- */
+        .image-modal-content {
+            max-width: 90%; max-height: 90%;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        .close-image-zoom {
+            position: absolute; top: -40px; right: 0;
+            color: white; font-size: 2rem; cursor: pointer;
+            background: rgba(0,0,0,0.5); width: 40px; height: 40px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
 
         /* --- CART & VARIANT MODAL STYLES --- */
         .cart-modal {
@@ -389,6 +412,7 @@
             padding: 20px; max-height: 90vh;
             display: flex; flex-direction: column;
             animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            align-self: flex-end; 
         }
         
         .cart-header {
@@ -430,6 +454,7 @@
             padding: 25px 20px;
             animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
             max-height: 85vh; overflow-y: auto;
+            align-self: flex-end;
         }
         .variant-title { font-size: 1.2rem; font-weight: bold; color: var(--secondary); margin-bottom: 15px; text-align: center; }
         .variant-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
@@ -535,8 +560,8 @@
 
         /* --- RESPONSIVE DESIGN FIXES --- */
         @media (min-width: 768px) {
-            .modal-overlay { align-items: center; }
-            .cart-modal, .variant-modal { border-radius: 20px; max-width: 500px; }
+            .modal-overlay { align-items: center; } /* Centered on desktop */
+            .cart-modal, .variant-modal { border-radius: 20px; max-width: 500px; align-self: center; }
             .menu-grid { gap: 25px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
             .card-img-wrapper { height: 180px; }
             .card-body { padding: 20px; }
@@ -564,6 +589,7 @@
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
         @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(46, 204, 113, 0); } 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); } }
         @keyframes rotateBg { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity:0; } to { transform: scale(1); opacity:1; } }
     </style>
 </head>
 <body>
@@ -577,9 +603,15 @@
                     <span>RASA ISTIMEWA</span>
                 </div>
             </div>
-            <div id="storeStatusBadge" class="store-status-badge open">
-                <span class="status-dot"></span>
-                <span id="storeStatusText">BUKA</span>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
+                <div id="storeStatusBadge" class="store-status-badge open">
+                    <span class="status-dot"></span>
+                    <span id="storeStatusText">BUKA</span>
+                </div>
+                <!-- Queue Counter -->
+                <div class="queue-counter" id="queueCounter">
+                    <i class="fa-solid fa-users-viewfinder"></i> <span id="queueNum">-</span>
+                </div>
             </div>
         </div>
         <div class="search-wrapper">
@@ -1067,9 +1099,13 @@
                 <div class="card-img-wrapper"><img src="zoom/tehmanis.webp" class="card-img-top" onerror="this.src='https://picsum.photos/seed/tmanis/300/200'"></div>
                 <div class="card-body"><div class="card-title">Es Teh Manis</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="8000" data-has-variants="true" data-options="Tawar,Manis" data-variant-name="Rasa">
-                <div class="card-img-wrapper"><img src="foto/estehmapa.JPG" class="card-img-top" onerror="this.src='https://picsum.photos/seed/et/300/200'"></div>
-                <div class="card-body"><div class="card-title">Es Teh</div><div class="card-desc">Pilihan: Tawar / Manis</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+                       <div class="menu-card" data-category="minuman" data-price="6000">
+                <div class="card-img-wrapper"><img src="zoom/tehtawar.webp" class="card-img-top" onerror="this.src='https://picsum.photos/seed/ttawarpanas/300/200'"></div>
+                <div class="card-body"><div class="card-title">Teh Tawar Panas</div><div class="card-footer"><span class="price">Rp 6.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
+            </div>
+            <div class="menu-card" data-category="minuman" data-price="8000">
+                <div class="card-img-wrapper"><img src="zoom/tehmanis.webp" class="card-img-top" onerror="this.src='https://picsum.photos/seed/tmanispanas/300/200'"></div>
+                <div class="card-body"><div class="card-title">Teh Manis Panas</div><div class="card-footer"><span class="price">Rp 8.000</span><button class="add-btn"><i class="fa-solid fa-plus"></i></button></div></div>
             </div>
             <div class="menu-card" data-category="minuman" data-price="6000">
                 <div class="card-img-wrapper"><img src="zoom/aquabotol.webp" class="card-img-top" onerror="this.src='https://picsum.photos/seed/aqua/300/200'"></div>
@@ -1189,6 +1225,14 @@
         </div>
     </div>
 
+    <!-- Image Zoom Modal -->
+    <div class="modal-overlay" id="imageZoomModal" onclick="closeImageZoom()">
+        <div class="image-modal-content">
+            <div class="close-image-zoom" onclick="closeImageZoom()">&times;</div>
+            <img id="zoomedImage" src="" style="width:100%; height:100%; object-fit:contain; border-radius:12px;">
+        </div>
+    </div>
+
     <div id="toast">Item ditambahkan!</div>
 
     <script>
@@ -1197,6 +1241,16 @@
             cards.forEach((card, index) => {
                 const delay = Math.min(index * 50, 1000); 
                 card.style.animationDelay = `${delay}ms`;
+                
+                // Add click event for image zoom
+                const imgWrapper = card.querySelector('.card-img-wrapper');
+                const img = imgWrapper.querySelector('img');
+                if(img) {
+                    img.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openImageZoom(img.src);
+                    });
+                }
             });
             window.addEventListener('scroll', handleScroll);
             initSpyScroll();
@@ -1204,6 +1258,17 @@
             checkWeekendLocks(); 
             initFirebase(); 
         });
+
+        // Image Zoom Functions
+        function openImageZoom(src) {
+            const modal = document.getElementById('imageZoomModal');
+            const img = document.getElementById('zoomedImage');
+            img.src = src;
+            modal.classList.add('active');
+        }
+        function closeImageZoom() {
+            document.getElementById('imageZoomModal').classList.remove('active');
+        }
 
         // --- FIREBASE CONFIG & INIT ---
         let db;
@@ -1220,13 +1285,13 @@
                 db = firebase.database();
                 listenToFirebase();
             } catch (error) {
-                console.error("Firebase Error: Kunci belum diisi atau salah.", error);
+                console.error("Firebase Error:", error);
                 showToast("Error Koneksi Database", "error");
             }
         }
 
         function listenToFirebase() {
-            // 1. LISTEN STATUS TOKO (READ ONLY)
+            // 1. LISTEN STATUS TOKO
             db.ref('bubur_grace/status').on('value', (snapshot) => {
                 const val = snapshot.val();
                 if (val) {
@@ -1236,7 +1301,7 @@
                 }
             });
 
-            // 2. LISTEN STOK HARIAN (READ ONLY)
+            // 2. LISTEN STOK HARIAN
             db.ref('bubur_grace/stock').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
@@ -1246,7 +1311,7 @@
                 }
             });
 
-            // 3. LISTEN STOK WEEKEND (READ ONLY)
+            // 3. LISTEN STOK WEEKEND
             db.ref('bubur_grace/weekendStock').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
@@ -1254,6 +1319,25 @@
                     applyWeekendStockStyles();
                     checkWeekendLocks();
                 }
+            });
+
+            // 4. LISTEN QUEUE COUNT
+            updateQueueCount();
+            db.ref('bubur_grace/orders').on('value', () => {
+                updateQueueCount();
+            });
+        }
+
+        // Queue Counter Logic
+        function updateQueueCount() {
+            const queueNumEl = document.getElementById('queueNum');
+            const now = new Date();
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            const endOfDay = startOfDay + 86400000; 
+
+            db.ref('bubur_grace/orders').orderByChild('timestamp').startAt(startOfDay).endAt(endOfDay).once('value', (snapshot) => {
+                const count = snapshot.numChildren();
+                queueNumEl.innerText = count > 0 ? `${count} Order` : "Sepi";
             });
         }
 
@@ -1264,8 +1348,10 @@
 
         // --- HELPER: AMBIL NAMA MENU ---
         function getMenuName(card) {
+            // Gunakan data-name jika ada, jika tidak ambil dari text title
+            // Penting: trim() untuk menghindari error whitespace
             if (card.hasAttribute('data-name')) {
-                return card.getAttribute('data-name');
+                return card.getAttribute('data-name').trim();
             }
             return card.querySelector('.card-title').innerText.trim();
         }
@@ -1290,13 +1376,11 @@
 
             // Positioning Logic
             if (isWeekend) {
-                // Pindahkan ke atas (se setelah Baso)
                 if (basoGrid && basoGrid.nextElementSibling !== weekendHeader) {
                     mainContainer.insertBefore(weekendHeader, basoGrid.nextElementSibling);
                     mainContainer.insertBefore(weekendGrid, weekendHeader.nextElementSibling);
                 }
             } else {
-                // Pindahkan ke bawah (paling bawah sebelum footer/no result)
                 const noResult = document.getElementById('noResultMsg');
                 if (noResult && noResult.previousElementSibling !== weekendGrid) {
                     mainContainer.appendChild(weekendHeader);
@@ -1310,6 +1394,7 @@
                 const name = getMenuName(card); 
                 const btn = card.querySelector('.add-btn');
                 
+                // Check logic: jika stoknya 0, maka Habis.
                 const isOutOfStock = (weekendStockData[name] === 0); 
                 const isLocked = (!isWeekend || isOutOfStock);
 
@@ -1325,11 +1410,16 @@
             });
         }
 
-        // --- UPDATE FUNGSI CEK STOK (NUMERIK) ---
+        // --- UPDATE FUNGSI CEK STOK (PERBAIKAN) ---
+        // Jika key tidak ada (undefined/null) dianggap Unlimited.
+        // Jika key ada dan isinya 0, dianggap Habis.
         function applyStockStyles() {
             document.querySelectorAll('.menu-card:not(.weekend-only)').forEach(card => {
-                const name = getMenuName(card); 
-                const isAvailable = (stockData[name] !== 0);
+                const name = getMenuName(card);
+                // Perbaikan: Cek tipe data secara eksplisit
+                const val = stockData[name];
+                const isAvailable = (val !== 0); // true jika val adalah undefined, null, atau > 0
+                
                 if (isAvailable) card.classList.remove('stock-empty');
                 else card.classList.add('stock-empty');
             });
@@ -1337,8 +1427,10 @@
 
         function applyWeekendStockStyles() {
             document.querySelectorAll('.menu-card.weekend-only').forEach(card => {
-                const name = getMenuName(card); 
-                const isAvailable = (weekendStockData[name] !== 0);
+                const name = getMenuName(card);
+                const val = weekendStockData[name];
+                const isAvailable = (val !== 0);
+
                 if (isAvailable) card.classList.remove('stock-empty');
                 else card.classList.add('stock-empty');
             });
@@ -1526,12 +1618,12 @@
 
         // --- UPDATE LOGIKA TAMBAH KE KERANJANG (VALIDASI STOK) ---
         function addToCart(name, price, category, packaging = 'yes', orderType = 'dine-in') {
-            // Bersihkan nama (hilangkan varian dalam kurung untuk cek stok)
-            const cleanName = name.replace(/ \([^)]+\)$/, "");
+            // Bersihkan nama (hilangkan varian dalam kurung untuk cek stok dasar)
+            const cleanName = name.replace(/ \([^)]+\)$/, "").trim();
 
             // Tentukan sumber stok
             let currentStock = null;
-            let isWeekendItem = name.includes("Nasi Uduk");
+            let isWeekendItem = cleanName.includes("Nasi Uduk");
 
             if (isWeekendItem) {
                 currentStock = weekendStockData[cleanName];
@@ -1552,8 +1644,8 @@
             const currentQtyInCart = existingItem ? existingItem.qty : 0;
             const requestedQty = currentQtyInCart + 1;
 
+            // Hanya cek limit jika stok memiliki nilai angka (bukan undefined/null)
             if (currentStock !== null && currentStock !== undefined && requestedQty > currentStock) {
-                // Stok tidak mencukupi
                 if (currentStock === 1) {
                     showToast(`Maaf, "${cleanName}" sisa 1 stok.`, "error");
                 } else {
@@ -1583,11 +1675,11 @@
             }
 
             // Bersihkan nama
-            const cleanName = item.name.replace(/ \([^)]+\)$/, "");
+            const cleanName = item.name.replace(/ \([^)]+\)$/, "").trim();
 
             // Cek stok lagi sebelum menambah
             let currentStock = null;
-            let isWeekendItem = item.name.includes("Nasi Uduk");
+            let isWeekendItem = cleanName.includes("Nasi Uduk");
 
             if (isWeekendItem) {
                 currentStock = weekendStockData[cleanName];
@@ -1716,7 +1808,7 @@
             setTimeout(() => badge.classList.remove('pulse'), 300);
         }
 
-        // --- UPDATE FUNGSI CHECKOUT (FINAL VALIDASI STOK) ---
+        // --- UPDATE FUNGSI CHECKOUT (FINAL VALIDASI STOK & PERSISTENSI OMSET) ---
         function checkout() {
             if (!checkStoreOperationalStatus()) { showToast("Mohon maaf, toko sedang TUTUP.", "error"); return; }
             if (cart.length === 0) { showToast("Keranjang masih kosong!", "error"); return; }
@@ -1758,7 +1850,7 @@
             // 1. Kumpulkan path stok yang dicek
             const pathsToCheck = [];
             cart.forEach(item => {
-                let cleanName = item.name.replace(/ \([^)]+\)$/, "");
+                let cleanName = item.name.replace(/ \([^)]+\)$/, "").trim();
                 let isWeekend = cleanName.includes("Nasi Uduk");
                 let path = isWeekend ? 'bubur_grace/weekendStock/' + cleanName : 'bubur_grace/stock/' + cleanName;
                 pathsToCheck.push({ path: path, name: cleanName, qty: item.qty });
@@ -1773,34 +1865,34 @@
                     const itemData = pathsToCheck[i];
                     const currentStock = snapshot.val();
                     
-                    if (currentStock !== null && currentStock !== undefined) {
-                        if (currentStock < itemData.qty) {
-                            // Reset UI
-                            btn.disabled = false;
-                            document.getElementById('checkoutText').innerText = originalText;
-                            btn.querySelector('i').className = originalIcon;
-                            
-                            let msg = `Maaf, stok "${itemData.name}" tidak mencukupi`;
-                            if (currentStock === 0) msg = `Maaf, stok "${itemData.name}" HABIS`;
-                            else if (currentStock === 1) msg = `Maaf, stok "${itemData.name}" sisa 1`;
-                            else msg = `Maaf, stok "${itemData.name}" hanya tersedia ${currentStock}`;
-                            
-                            alert(msg);
-                            throw new Error(msg); 
-                        }
+                    // Perbaikan: currentStock === 0 adalah habis. undefined/null adalah unlimited
+                    if (currentStock !== null && currentStock !== undefined && currentStock < itemData.qty) {
+                        // Reset UI
+                        btn.disabled = false;
+                        document.getElementById('checkoutText').innerText = originalText;
+                        btn.querySelector('i').className = originalIcon;
+                        
+                        let msg = `Maaf, stok "${itemData.name}" tidak mencukupi`;
+                        if (currentStock === 0) msg = `Maaf, stok "${itemData.name}" HABIS`;
+                        else if (currentStock === 1) msg = `Maaf, stok "${itemData.name}" sisa 1`;
+                        else msg = `Maaf, stok "${itemData.name}" hanya tersedia ${currentStock}`;
+                        
+                        alert(msg);
+                        throw new Error(msg); 
                     }
                 }
 
                 // 4. JIKA AMAN, LAKUKAN TRANSACTION (Atomic Update)
                 const stockDeductionPromises = cart.map(item => {
-                    let cleanName = item.name.replace(/ \([^)]+\)$/, ""); 
+                    let cleanName = item.name.replace(/ \([^)]+\)$/, "").trim(); 
                     let isWeekend = cleanName.includes("Nasi Uduk");
                     let stockPath = isWeekend ? 'bubur_grace/weekendStock/' + cleanName : 'bubur_grace/stock/' + cleanName;
 
                     return new Promise((resolve, reject) => {
                         db.ref(stockPath).transaction((currentStock) => {
+                            // Perbaikan: Jika null/undefined (Unlimited), abaikan (return undefined atau null agar tidak create node)
                             if (currentStock === null || currentStock === undefined) {
-                                return null; // Unlimited, abaikan
+                                return undefined; // Tidak mengubah apapun
                             }
                             if (currentStock >= item.qty) {
                                 return currentStock - item.qty;
@@ -1826,6 +1918,18 @@
                     items: cartDataForWA,
                     status: 'pending'
                 });
+            })
+            .then((orderRef) => {
+                // SISTEM BARU: Update Omset Harian Agar Persisten di Admin
+                // Menggunakan transaction agar atomik
+                db.ref('bubur_grace/daily_stats').transaction((stats) => {
+                    stats = stats || { total: 0, count: 0 };
+                    stats.total += total;
+                    stats.count += 1;
+                    return stats;
+                });
+
+                return orderRef;
             })
             .then(() => {
                 // SUKSES TOTAL
@@ -1890,25 +1994,30 @@
         const noResultMsg = document.getElementById('noResultMsg');
         const sectionHeaders = document.querySelectorAll('.section-header');
         const menuGrids = document.querySelectorAll('.menu-grid');
-
+        
+        // Debounce for search
+        let searchTimeout;
         searchInput.addEventListener('keyup', (e) => {
-            const term = e.target.value.toLowerCase();
-            if(term.length > 0) {
-                clearSearchBtn.style.display = 'block';
-                let hasGlobalResult = false;
-                menuGrids.forEach((grid, index) => {
-                    const header = sectionHeaders[index];
-                    const cardsInGrid = grid.querySelectorAll('.menu-card');
-                    let hasResultInGrid = false;
-                    cardsInGrid.forEach(card => {
-                        const title = getMenuName(card).toLowerCase().trim(); 
-                        if(title.includes(term)) { card.style.display = 'flex'; hasResultInGrid = true; hasGlobalResult = true; }
-                        else card.style.display = 'none';
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const term = e.target.value.toLowerCase();
+                if(term.length > 0) {
+                    clearSearchBtn.style.display = 'block';
+                    let hasGlobalResult = false;
+                    menuGrids.forEach((grid, index) => {
+                        const header = sectionHeaders[index];
+                        const cardsInGrid = grid.querySelectorAll('.menu-card');
+                        let hasResultInGrid = false;
+                        cardsInGrid.forEach(card => {
+                            const title = getMenuName(card).toLowerCase().trim(); 
+                            if(title.includes(term)) { card.style.display = 'flex'; hasResultInGrid = true; hasGlobalResult = true; }
+                            else card.style.display = 'none';
+                        });
+                        header.style.display = hasResultInGrid ? 'flex' : 'none';
                     });
-                    header.style.display = hasResultInGrid ? 'flex' : 'none';
-                });
-                noResultMsg.style.display = hasGlobalResult ? 'none' : 'block';
-            } else resetSearch();
+                    noResultMsg.style.display = hasGlobalResult ? 'none' : 'block';
+                } else resetSearch();
+            }, 300); 
         });
 
         function resetSearch() {
