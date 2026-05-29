@@ -1410,18 +1410,30 @@
             });
         }
 
-        // --- UPDATE FUNGSI CEK STOK (PERBAIKAN) ---
-        // Jika key tidak ada (undefined/null) dianggap Unlimited.
-        // Jika key ada dan isinya 0, dianggap Habis.
+        // --- UPDATE FUNGSI CEK STOK (0 = UNLIMITED) ---
         function applyStockStyles() {
             document.querySelectorAll('.menu-card:not(.weekend-only)').forEach(card => {
                 const name = getMenuName(card);
-                // Perbaikan: Cek tipe data secara eksplisit
+                // PERBAIKAN: 0 dianggap Unlimited.
+                // Item HANYA habis jika stok < 0 (negatif - jarang terjadi)
                 const val = stockData[name];
-                const isAvailable = (val !== 0); // true jika val adalah undefined, null, atau > 0
+                const isAvailable = (val !== false); // true unless logic fails, but specifically for stock 0:
                 
-                if (isAvailable) card.classList.remove('stock-empty');
-                else card.classList.add('stock-empty');
+                // Logika Baru:
+                // undefined (belum diset) -> Available (Unlimited)
+                // null -> Available (Unlimited)
+                // 0 -> Available (Unlimited sesuai request)
+                // > 0 -> Available
+                // < 0 -> Habis (Error case)
+                
+                // Kita hanya class 'stock-empty' jika val < 0 (ataau jika kita ingin fitur habis, kita bisa ubah logika ini)
+                // Namun sesuai permintaan "0 = Unlimited", kita tidak memblokir di 0.
+                
+                if (val >= 0 || val === undefined || val === null) {
+                    card.classList.remove('stock-empty');
+                } else {
+                    card.classList.add('stock-empty'); // Hanya blokir jika negatif
+                }
             });
         }
 
@@ -1429,10 +1441,12 @@
             document.querySelectorAll('.menu-card.weekend-only').forEach(card => {
                 const name = getMenuName(card);
                 const val = weekendStockData[name];
-                const isAvailable = (val !== 0);
-
-                if (isAvailable) card.classList.remove('stock-empty');
-                else card.classList.add('stock-empty');
+                // Logika Sama: 0 adalah Unlimited
+                if (val >= 0 || val === undefined || val === null) {
+                    card.classList.remove('stock-empty');
+                } else {
+                    card.classList.add('stock-empty');
+                }
             });
         }
 
@@ -1524,6 +1538,7 @@
             const btn = e.target.closest('.add-btn');
             if (btn) {
                 const card = btn.closest('.menu-card');
+                // Cek Stock Empty (Negatif)
                 if(card.classList.contains('stock-empty')) {
                     showToast("Maaf, menu ini sedang HABIS.");
                     return;
@@ -1616,7 +1631,7 @@
             currentVariantCard = null;
         }
 
-        // --- UPDATE LOGIKA TAMBAH KE KERANJANG (VALIDASI STOK) ---
+        // --- LOGIKA TAMBAH KE KERANJANG (0 = UNLIMITED) ---
         function addToCart(name, price, category, packaging = 'yes', orderType = 'dine-in') {
             // Bersihkan nama (hilangkan varian dalam kurung untuk cek stok dasar)
             const cleanName = name.replace(/ \([^)]+\)$/, "").trim();
@@ -1632,25 +1647,22 @@
             }
 
             // LOGIKA VALIDASI STOK SAAT ADD TO CART
-            // 1. Cek apakah stok habis (0)
-            if (currentStock === 0) {
-                showToast(`Maaf, "${cleanName}" sudah HABIS.`, "error");
+            // Jika currentStock undefined/null/0 -> Unlimited (Jangan blokir)
+            // Hanya blokir jika currentStock < 0
+            
+            if (currentStock !== undefined && currentStock !== null && currentStock < 0) {
+                showToast(`Maaf, "${cleanName}" sedang HABIS.`, "error");
                 return;
             }
 
-            // 2. Cek apakah stok terbatas (angka > 0)
             // Hitung total qty item ini yang SUDAH ada di keranjang
             const existingItem = cart.find(item => item.name === name && item.orderType === orderType);
             const currentQtyInCart = existingItem ? existingItem.qty : 0;
             const requestedQty = currentQtyInCart + 1;
 
-            // Hanya cek limit jika stok memiliki nilai angka (bukan undefined/null)
-            if (currentStock !== null && currentStock !== undefined && requestedQty > currentStock) {
-                if (currentStock === 1) {
-                    showToast(`Maaf, "${cleanName}" sisa 1 stok.`, "error");
-                } else {
-                    showToast(`Maaf, stok "${cleanName}" hanya tersedia ${currentStock}.`, "error");
-                }
+            // Jika stok terbatas (> 0), cek limit
+            if (currentStock > 0 && requestedQty > currentStock) {
+                showToast(`Maaf, stok "${cleanName}" hanya tersedia ${currentStock}.`, "error");
                 return;
             }
 
@@ -1664,7 +1676,7 @@
 
         function removeFromCart(index) { cart.splice(index,1); updateCartUI(); }
         
-        // --- UPDATE LOGIKA UPDATE QTY (+/-) ---
+        // --- LOGIKA UPDATE QTY (+/-) ---
         function updateQty(index, change) {
             const item = cart[index];
             const newQty = item.qty + change;
@@ -1677,7 +1689,7 @@
             // Bersihkan nama
             const cleanName = item.name.replace(/ \([^)]+\)$/, "").trim();
 
-            // Cek stok lagi sebelum menambah
+            // Cek stok lagi
             let currentStock = null;
             let isWeekendItem = cleanName.includes("Nasi Uduk");
 
@@ -1687,20 +1699,16 @@
                 currentStock = stockData[cleanName];
             }
 
-            // Cek apakah stok mencukupi untuk qty baru (HANYA jika menambah)
-            if (change > 0) {
-                if (currentStock === 0) {
-                    showToast(`Maaf, "${cleanName}" sudah HABIS.`, "error");
-                    return; 
-                }
-                if (currentStock !== null && currentStock !== undefined && newQty > currentStock) {
-                     if (currentStock === 1) {
-                        showToast(`Maaf, "${cleanName}" sisa 1 stok.`, "error");
-                    } else {
-                        showToast(`Maaf, stok "${cleanName}" hanya tersedia ${currentStock}.`, "error");
-                    }
-                    return; 
-                }
+            // Jika stok negatif (habis manual), blokir
+            if (currentStock < 0) {
+                showToast(`Maaf, "${cleanName}" sudah HABIS.`, "error");
+                return; 
+            }
+
+            // Jika stok terbatas, cek limit
+            if (currentStock > 0 && newQty > currentStock) {
+                showToast(`Maaf, stok "${cleanName}" hanya tersedia ${currentStock}.`, "error");
+                return; 
             }
 
             item.qty = newQty;
@@ -1808,7 +1816,7 @@
             setTimeout(() => badge.classList.remove('pulse'), 300);
         }
 
-        // --- UPDATE FUNGSI CHECKOUT (FINAL VALIDASI STOK & PERSISTENSI OMSET) ---
+        // --- LOGIKA CHECKOUT (0 = UNLIMITED TRANSACTION) ---
         function checkout() {
             if (!checkStoreOperationalStatus()) { showToast("Mohon maaf, toko sedang TUTUP.", "error"); return; }
             if (cart.length === 0) { showToast("Keranjang masih kosong!", "error"); return; }
@@ -1865,20 +1873,22 @@
                     const itemData = pathsToCheck[i];
                     const currentStock = snapshot.val();
                     
-                    // Perbaikan: currentStock === 0 adalah habis. undefined/null adalah unlimited
-                    if (currentStock !== null && currentStock !== undefined && currentStock < itemData.qty) {
-                        // Reset UI
+                    // Jika stok < 0 (Habis Manual), blokir
+                    if (currentStock !== null && currentStock !== undefined && currentStock < 0) {
                         btn.disabled = false;
                         document.getElementById('checkoutText').innerText = originalText;
                         btn.querySelector('i').className = originalIcon;
-                        
-                        let msg = `Maaf, stok "${itemData.name}" tidak mencukupi`;
-                        if (currentStock === 0) msg = `Maaf, stok "${itemData.name}" HABIS`;
-                        else if (currentStock === 1) msg = `Maaf, stok "${itemData.name}" sisa 1`;
-                        else msg = `Maaf, stok "${itemData.name}" hanya tersedia ${currentStock}`;
-                        
-                        alert(msg);
-                        throw new Error(msg); 
+                        alert(`Maaf, stok "${itemData.name}" HABIS.`);
+                        throw new Error(itemData.name); 
+                    }
+                    
+                    // Jika stok > 0 (Terbatas), cek apakah cukup
+                    if (currentStock !== null && currentStock !== undefined && currentStock > 0 && currentStock < itemData.qty) {
+                        btn.disabled = false;
+                        document.getElementById('checkoutText').innerText = originalText;
+                        btn.querySelector('i').className = originalIcon;
+                        alert(`Maaf, stok "${itemData.name}" hanya tersedia ${currentStock}.`);
+                        throw new Error(itemData.name); 
                     }
                 }
 
@@ -1890,10 +1900,11 @@
 
                     return new Promise((resolve, reject) => {
                         db.ref(stockPath).transaction((currentStock) => {
-                            // Perbaikan: Jika null/undefined (Unlimited), abaikan (return undefined atau null agar tidak create node)
-                            if (currentStock === null || currentStock === undefined) {
-                                return undefined; // Tidak mengubah apapun
+                            // PERBAIKAN: 0, null, undefined = UNLIMITED (Jangan update)
+                            if (currentStock === null || currentStock === undefined || currentStock === 0) {
+                                return undefined; // Tidak mengubah apapun, pesanan diperbolehkan
                             }
+                            // Jika > 0, kurangi stok
                             if (currentStock >= item.qty) {
                                 return currentStock - item.qty;
                             } else {
@@ -1919,9 +1930,8 @@
                     status: 'pending'
                 });
             })
-            .then((orderRef) => {
+            .then(() => {
                 // SISTEM BARU: Update Omset Harian Agar Persisten di Admin
-                // Menggunakan transaction agar atomik
                 db.ref('bubur_grace/daily_stats').transaction((stats) => {
                     stats = stats || { total: 0, count: 0 };
                     stats.total += total;
@@ -1929,7 +1939,7 @@
                     return stats;
                 });
 
-                return orderRef;
+                return;
             })
             .then(() => {
                 // SUKSES TOTAL
