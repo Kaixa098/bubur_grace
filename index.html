@@ -628,7 +628,7 @@
             <div class="hero-subtitle">Citra rasa Bubur Ayam sejak 2000</div>
             <div class="hero-info">
                 <i class="fa-regular fa-clock"></i>
-                <span>Buka Setiap Hari (Kecuali Senin) • 06:00 - 12:00 WIB</span>
+                <span id="heroHours">Memuat jam...</span>
             </div>
         </div>
     </div>
@@ -1175,8 +1175,8 @@
             </div>
             <div class="hours-box">
                 <p><i class="fa-regular fa-clock"></i> <strong>Jam Operasional:</strong></p>
-                <p>Selasa - Minggu: 06:00 - 12:00 WIB</p>
-                <p>Senin: Libur (Tanggal merah tetap BUKA)</p>
+                <p id="footerHours">Memuat jam...</p>
+                <p id="footerDayOff" style="display:none;"></p>
             </div>
         </div>
     </footer>
@@ -1309,6 +1309,21 @@
 
         // --- FIREBASE CONFIG & INIT ---
         let db;
+        // STORE CONFIG VAR
+        let storeConfig = {
+            schedule: {
+                // 0=Mgg, 1=Sen, ..., 6=Sab
+                // Default: Buka Selasa-Minggu 06-12, Senin Tutup
+                0: { isOpen: true, open: "06:00", close: "12:00" },
+                1: { isOpen: false, open: "", close: "" },
+                2: { isOpen: true, open: "06:00", close: "12:00" },
+                3: { isOpen: true, open: "06:00", close: "12:00" },
+                4: { isOpen: true, open: "06:00", close: "12:00" },
+                5: { isOpen: true, open: "06:00", close: "12:00" },
+                6: { isOpen: true, open: "06:00", close: "12:00" },
+            }
+        };
+
         const firebaseConfig = {
             apiKey: "AIzaSyCj__JH5w__RdSEqtR59Cr7ctEOyl6lzUg",
             authDomain: "buburgrace.firebaseapp.com",
@@ -1328,7 +1343,17 @@
         }
 
         function listenToFirebase() {
-            // 1. LISTEN STATUS TOKO
+            // 1. LISTEN CONFIG (NEW STRUCTURE)
+            db.ref('bubur_grace/config').on('value', (snapshot) => {
+                const val = snapshot.val();
+                if(val && val.schedule) {
+                    storeConfig.schedule = val.schedule;
+                }
+                updateHourDisplays(); // Update text UI
+                checkStoreOperationalStatus(); // Recalculate status
+            });
+
+            // 2. LISTEN STATUS TOKO
             db.ref('bubur_grace/status').on('value', (snapshot) => {
                 const val = snapshot.val();
                 if (val) {
@@ -1338,7 +1363,7 @@
                 }
             });
 
-            // 2. LISTEN STOK HARIAN
+            // 3. LISTEN STOK HARIAN
             db.ref('bubur_grace/stock').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
@@ -1348,7 +1373,7 @@
                 }
             });
 
-            // 3. LISTEN STOK WEEKEND
+            // 4. LISTEN STOK WEEKEND
             db.ref('bubur_grace/weekendStock').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
@@ -1358,11 +1383,99 @@
                 }
             });
 
-            // 4. LISTEN QUEUE COUNT
+            // 5. LISTEN QUEUE COUNT
             updateQueueCount();
             db.ref('bubur_grace/orders').on('value', () => {
                 updateQueueCount();
             });
+        }
+
+        // --- HELPER: TIME STRING TO INT ---
+        function timeStringToInt(timeStr) {
+            if(!timeStr) return 0;
+            const [h, m] = timeStr.split(':').map(Number);
+            return (h * 100) + (m > 0 ? m : 0);
+        }
+
+        // --- UPDATE UI TEXT DYNAMIC (GOJEK STYLE LOGIC) ---
+        function updateHourDisplays() {
+            const heroEl = document.getElementById('heroHours');
+            const footerHoursEl = document.getElementById('footerHours');
+            const footerDayOffEl = document.getElementById('footerDayOff');
+
+            // Logic Grouping: Group days by identical opening hours
+            const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const activeGroups = {}; // { "06:00-12:00": [0, 2, 3, 4, 5, 6] }
+            const closedDays = [];
+
+            // 1. Grouping Loop
+            for(let i=0; i<7; i++) {
+                const dayConf = storeConfig.schedule[i];
+                if(dayConf && dayConf.isOpen) {
+                    const key = `${dayConf.open}-${dayConf.close}`;
+                    if(!activeGroups[key]) activeGroups[key] = [];
+                    activeGroups[key].push(i);
+                } else {
+                    closedDays.push(i);
+                }
+            }
+
+            // 2. Generate Text
+            let textParts = [];
+            
+            // Handle Active Days
+            for(const [timeRange, days] of Object.entries(activeGroups)) {
+                const [open, close] = timeRange.split('-');
+                const dayNamesList = days.map(d => dayNames[d]);
+                
+                // Format Day Range (e.g., Senin - Jumat)
+                let dayString = "";
+                if(days.length === 7) {
+                    dayString = "Setiap Hari";
+                } else {
+                    // Simple logic: if consecutive, use dash
+                    if (isConsecutive(days)) {
+                        dayString = `${dayNames[days[0]]} - ${dayNames[days[days.length-1]]}`;
+                    } else {
+                        // If not consecutive (rare), just list
+                        dayString = dayNamesList.join(", ");
+                    }
+                }
+                
+                textParts.push(`${dayString}: ${open} - ${close} WIB`);
+            }
+
+            // Handle Closed Days
+            if(closedDays.length > 0) {
+                const closedNames = closedDays.map(d => dayNames[d]).join(", ");
+                textParts.push(`Libur: ${closedNames}`);
+            }
+
+            const finalText = textParts.join(" • ");
+            heroEl.innerText = finalText || "Jam belum diatur";
+
+            // Footer specific
+            if(closedDays.length > 0 && closedDays.length < 7) {
+                footerDayOffEl.style.display = "block";
+                footerDayOffEl.innerText = `Libur: ${closedDays.map(d => dayNames[d]).join(", ")}`;
+            } else {
+                footerDayOffEl.style.display = "none";
+            }
+            // Footer Hours takes first active group or all if closed
+            if(Object.keys(activeGroups).length > 0) {
+                const firstKey = Object.keys(activeGroups)[0];
+                const [open, close] = firstKey.split('-');
+                footerHoursEl.innerText = `${open} - ${close} WIB`;
+            } else {
+                footerHoursEl.innerText = "Tutup";
+            }
+        }
+
+        function isConsecutive(arr) {
+            for (let i = 0; i < arr.length - 1; i++) {
+                if (arr[i + 1] !== arr[i] + 1) return false;
+            }
+            return true;
         }
 
         // Queue Counter Logic
@@ -1385,8 +1498,6 @@
 
         // --- HELPER: AMBIL NAMA MENU ---
         function getMenuName(card) {
-            // Gunakan data-name jika ada, jika tidak ambil dari text title
-            // Penting: trim() untuk menghindari error whitespace
             if (card.hasAttribute('data-name')) {
                 return card.getAttribute('data-name').trim();
             }
@@ -1431,7 +1542,6 @@
                 const name = getMenuName(card); 
                 const btn = card.querySelector('.add-btn');
                 
-                // Check logic: jika stoknya 0, maka Habis.
                 const isOutOfStock = (weekendStockData[name] === 0); 
                 const isLocked = (!isWeekend || isOutOfStock);
 
@@ -1451,25 +1561,11 @@
         function applyStockStyles() {
             document.querySelectorAll('.menu-card:not(.weekend-only)').forEach(card => {
                 const name = getMenuName(card);
-                // PERBAIKAN: 0 dianggap Unlimited.
-                // Item HANYA habis jika stok < 0 (negatif - jarang terjadi)
                 const val = stockData[name];
-                const isAvailable = (val !== false); // true unless logic fails, but specifically for stock 0:
-                
-                // Logika Baru:
-                // undefined (belum diset) -> Available (Unlimited)
-                // null -> Available (Unlimited)
-                // 0 -> Available (Unlimited sesuai request)
-                // > 0 -> Available
-                // < 0 -> Habis (Error case)
-                
-                // Kita hanya class 'stock-empty' jika val < 0 (ataau jika kita ingin fitur habis, kita bisa ubah logika ini)
-                // Namun sesuai permintaan "0 = Unlimited", kita tidak memblokir di 0.
-                
                 if (val >= 0 || val === undefined || val === null) {
                     card.classList.remove('stock-empty');
                 } else {
-                    card.classList.add('stock-empty'); // Hanya blokir jika negatif
+                    card.classList.add('stock-empty'); 
                 }
             });
         }
@@ -1478,7 +1574,6 @@
             document.querySelectorAll('.menu-card.weekend-only').forEach(card => {
                 const name = getMenuName(card);
                 const val = weekendStockData[name];
-                // Logika Sama: 0 adalah Unlimited
                 if (val >= 0 || val === undefined || val === null) {
                     card.classList.remove('stock-empty');
                 } else {
@@ -1487,7 +1582,7 @@
             });
         }
 
-        // --- OPERATIONAL HOURS SYSTEM ---
+        // --- OPERATIONAL HOURS SYSTEM (DYNAMIC GOJEK STYLE) ---
         function checkStoreOperationalStatus() {
             const statusBadge = document.getElementById('storeStatusBadge');
             const statusText = document.getElementById('storeStatusText');
@@ -1504,21 +1599,29 @@
             } else {
                 const now = new Date();
                 const day = now.getDay(); 
-                const isDayOff = (day === 1);
                 const hour = now.getHours();
                 const minute = now.getMinutes();
                 const currentTime = hour * 100 + minute; 
-                const openTime = 600;  
-                const closeTime = 1200;
 
-                if (!isDayOff && currentTime >= openTime && currentTime < closeTime) {
-                    isOpen = true;
-                    statusText.innerText = "BUKA";
+                // Check specific day config
+                const dayConfig = storeConfig.schedule[day];
+                
+                if (dayConfig && dayConfig.isOpen) {
+                    const openTime = timeStringToInt(dayConfig.open);
+                    const closeTime = timeStringToInt(dayConfig.close);
+
+                    if (currentTime >= openTime && currentTime < closeTime) {
+                        isOpen = true;
+                        statusText.innerText = "BUKA";
+                    } else {
+                        isOpen = false;
+                        if (currentTime < openTime) statusText.innerText = "BELUM BUKA";
+                        else statusText.innerText = "TUTUP";
+                    }
                 } else {
                     isOpen = false;
-                    if (isDayOff) statusText.innerText = "SENIN LIBUR";
-                    else if (currentTime < openTime) statusText.innerText = "BELUM BUKA";
-                    else statusText.innerText = "TUTUP";
+                    const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+                    statusText.innerText = `${dayNames[day].toUpperCase()} LIBUR`;
                 }
             }
 
@@ -1575,7 +1678,6 @@
             const btn = e.target.closest('.add-btn');
             if (btn) {
                 const card = btn.closest('.menu-card');
-                // Cek Stock Empty (Negatif)
                 if(card.classList.contains('stock-empty')) {
                     showToast("Maaf, menu ini sedang HABIS.");
                     return;
@@ -1670,10 +1772,7 @@
 
         // --- LOGIKA TAMBAH KE KERANJANG (0 = UNLIMITED) ---
         function addToCart(name, price, category, packaging = 'yes', orderType = 'dine-in') {
-            // Bersihkan nama (hilangkan varian dalam kurung untuk cek stok dasar)
             const cleanName = name.replace(/ \([^)]+\)$/, "").trim();
-
-            // Tentukan sumber stok
             let currentStock = null;
             let isWeekendItem = cleanName.includes("Nasi Uduk");
 
@@ -1683,27 +1782,20 @@
                 currentStock = stockData[cleanName];
             }
 
-            // LOGIKA VALIDASI STOK SAAT ADD TO CART
-            // Jika currentStock undefined/null/0 -> Unlimited (Jangan blokir)
-            // Hanya blokir jika currentStock < 0
-            
             if (currentStock !== undefined && currentStock !== null && currentStock < 0) {
                 showToast(`Maaf, "${cleanName}" sedang HABIS.`, "error");
                 return;
             }
 
-            // Hitung total qty item ini yang SUDAH ada di keranjang
             const existingItem = cart.find(item => item.name === name && item.orderType === orderType);
             const currentQtyInCart = existingItem ? existingItem.qty : 0;
             const requestedQty = currentQtyInCart + 1;
 
-            // Jika stok terbatas (> 0), cek limit
             if (currentStock > 0 && requestedQty > currentStock) {
                 showToast(`Maaf, stok "${cleanName}" hanya tersedia ${currentStock}.`, "error");
                 return;
             }
 
-            // Jika lolos validasi, tambahkan ke keranjang
             if (existingItem) existingItem.qty++;
             else cart.push({ name, price, category, qty:1, packaging, orderType, notes: '' });
             updateCartUI();
@@ -1713,7 +1805,6 @@
 
         function removeFromCart(index) { cart.splice(index,1); updateCartUI(); }
         
-        // --- LOGIKA UPDATE QTY (+/-) ---
         function updateQty(index, change) {
             const item = cart[index];
             const newQty = item.qty + change;
@@ -1723,10 +1814,7 @@
                 return;
             }
 
-            // Bersihkan nama
             const cleanName = item.name.replace(/ \([^)]+\)$/, "").trim();
-
-            // Cek stok lagi
             let currentStock = null;
             let isWeekendItem = cleanName.includes("Nasi Uduk");
 
@@ -1736,13 +1824,11 @@
                 currentStock = stockData[cleanName];
             }
 
-            // Jika stok negatif (habis manual), blokir
             if (currentStock < 0) {
                 showToast(`Maaf, "${cleanName}" sudah HABIS.`, "error");
                 return; 
             }
 
-            // Jika stok terbatas, cek limit
             if (currentStock > 0 && newQty > currentStock) {
                 showToast(`Maaf, stok "${cleanName}" hanya tersedia ${currentStock}.`, "error");
                 return; 
@@ -1853,7 +1939,6 @@
             setTimeout(() => badge.classList.remove('pulse'), 300);
         }
 
-        // --- LOGIKA CHECKOUT (0 = UNLIMITED TRANSACTION) ---
         function checkout() {
             if (!checkStoreOperationalStatus()) { showToast("Mohon maaf, toko sedang TUTUP.", "error"); return; }
             if (cart.length === 0) { showToast("Keranjang masih kosong!", "error"); return; }
@@ -1862,7 +1947,6 @@
             const originalText = document.getElementById('checkoutText').innerText;
             const originalIcon = btn.querySelector('i').className;
 
-            // Validasi Input
             const hasDineIn = cart.some(i => i.orderType === 'dine-in');
             const hasTakeaway = cart.some(i => i.orderType === 'takeaway');
             const tableInput = document.getElementById('tableNumberInput');
@@ -1877,12 +1961,10 @@
                 return;
             }
 
-            // Loading UI
             btn.disabled = true;
             document.getElementById('checkoutText').innerText = "Cek Ketersediaan Stok...";
             btn.querySelector('i').className = "fa-solid fa-circle-notch fa-spin";
 
-            // Simpan data keranjang
             const cartDataForWA = [...cart]; 
             const total = updateTotal();
             
@@ -1891,8 +1973,6 @@
             else if (!hasDineIn && hasTakeaway) customerInfo = nameInput.value;
             else customerInfo = `${nameInput.value} (Meja ${tableInput.value})`;
 
-            // --- FINAL STOCK CHECK & TRANSACTION ---
-            // 1. Kumpulkan path stok yang dicek
             const pathsToCheck = [];
             cart.forEach(item => {
                 let cleanName = item.name.replace(/ \([^)]+\)$/, "").trim();
@@ -1901,16 +1981,13 @@
                 pathsToCheck.push({ path: path, name: cleanName, qty: item.qty });
             });
 
-            // 2. Fetch semua stok terakhir secara bersamaan
             Promise.all(pathsToCheck.map(p => db.ref(p.path).once('value')))
             .then((snapshots) => {
-                // 3. Validasi Stok (Double Check)
                 for (let i = 0; i < snapshots.length; i++) {
                     const snapshot = snapshots[i];
                     const itemData = pathsToCheck[i];
                     const currentStock = snapshot.val();
                     
-                    // Jika stok < 0 (Habis Manual), blokir
                     if (currentStock !== null && currentStock !== undefined && currentStock < 0) {
                         btn.disabled = false;
                         document.getElementById('checkoutText').innerText = originalText;
@@ -1919,7 +1996,6 @@
                         throw new Error(itemData.name); 
                     }
                     
-                    // Jika stok > 0 (Terbatas), cek apakah cukup
                     if (currentStock !== null && currentStock !== undefined && currentStock > 0 && currentStock < itemData.qty) {
                         btn.disabled = false;
                         document.getElementById('checkoutText').innerText = originalText;
@@ -1929,7 +2005,6 @@
                     }
                 }
 
-                // 4. JIKA AMAN, LAKUKAN TRANSACTION (Atomic Update)
                 const stockDeductionPromises = cart.map(item => {
                     let cleanName = item.name.replace(/ \([^)]+\)$/, "").trim(); 
                     let isWeekend = cleanName.includes("Nasi Uduk");
@@ -1937,19 +2012,17 @@
 
                     return new Promise((resolve, reject) => {
                         db.ref(stockPath).transaction((currentStock) => {
-                            // PERBAIKAN: 0, null, undefined = UNLIMITED (Jangan update)
                             if (currentStock === null || currentStock === undefined || currentStock === 0) {
-                                return undefined; // Tidak mengubah apapun, pesanan diperbolehkan
+                                return undefined;
                             }
-                            // Jika > 0, kurangi stok
                             if (currentStock >= item.qty) {
                                 return currentStock - item.qty;
                             } else {
-                                return; // Abort jika stok berubah kurang saat transaction
+                                return;
                             }
                         }, (error, committed) => {
                             if (error) reject("Error database");
-                            else if (!committed) reject(cleanName); // Gagal commit karena stok habis di detik terakhir
+                            else if (!committed) reject(cleanName); 
                             else resolve();
                         });
                     });
@@ -1958,7 +2031,6 @@
                 return Promise.all(stockDeductionPromises);
             })
             .then(() => {
-                // Simpan order ke DB
                 return db.ref('bubur_grace/orders').push({
                     timestamp: firebase.database.ServerValue.TIMESTAMP,
                     customerInfo: customerInfo,
@@ -1968,7 +2040,6 @@
                 });
             })
             .then(() => {
-                // SISTEM BARU: Update Omset Harian Agar Persisten di Admin
                 db.ref('bubur_grace/daily_stats').transaction((stats) => {
                     stats = stats || { total: 0, count: 0 };
                     stats.total += total;
@@ -1979,7 +2050,6 @@
                 return;
             })
             .then(() => {
-                // SUKSES TOTAL
                 cart = []; 
                 updateCartUI();
                 toggleCart(); 
@@ -1988,7 +2058,6 @@
                 document.getElementById('checkoutText').innerText = originalText;
                 btn.querySelector('i').className = originalIcon;
 
-                // BUILD MESSAGE WHATSAPP
                 let message = "Halo Bubur Grace, saya mau pesan:%0A%0A";
                 
                 if(hasDineIn) {
@@ -2019,22 +2088,15 @@
                 window.open(`https://wa.me/62817776175?text=${message}`, '_blank');
             })
             .catch((error) => {
-                // GAGAL
                 console.error("Checkout Error:", error);
-                
                 btn.disabled = false;
                 document.getElementById('checkoutText').innerText = originalText;
                 btn.querySelector('i').className = originalIcon;
-
-                if (typeof error === 'string') {
-                    showToast(`Gagal: Stok ${error} tidak cukup.`, "error");
-                } else {
-                    showToast("Terjadi kesalahan sistem. Silakan coba lagi.", "error");
-                }
+                if (typeof error === 'string') showToast(`Gagal: Stok ${error} tidak cukup.`, "error");
+                else showToast("Terjadi kesalahan sistem. Silakan coba lagi.", "error");
             });
         }
 
-        // --- SEARCH & FILTER ---
         const searchInput = document.getElementById('searchInput');
         const clearSearchBtn = document.getElementById('clearSearchBtn');
         const cards = document.querySelectorAll('.menu-card');
@@ -2042,7 +2104,6 @@
         const sectionHeaders = document.querySelectorAll('.section-header');
         const menuGrids = document.querySelectorAll('.menu-grid');
         
-        // Debounce for search
         let searchTimeout;
         searchInput.addEventListener('keyup', (e) => {
             clearTimeout(searchTimeout);
