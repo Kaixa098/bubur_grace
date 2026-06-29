@@ -82,13 +82,23 @@
         .brand-text h1 { font-size: 1.2rem; line-height: 1.1; color: var(--primary); margin: 0; }
         .brand-text span { font-size: 0.7rem; font-weight: 300; letter-spacing: 1px; color: var(--secondary); text-transform: uppercase; }
         
+        /* GOJEK STYLE BADGE */
         .store-status-badge {
-            font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 20px;
             display: flex; align-items: center; gap: 6px;
             background: #f0f0f0; color: #888; transition: all var(--transition-speed);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .store-status-badge.open { background: #e8f5e9; color: var(--success); border: 1px solid rgba(37, 211, 102, 0.2); }
-        .store-status-badge.closed { background: #ffebee; color: var(--danger); border: 1px solid rgba(231, 76, 60, 0.2); }
+        .store-status-badge.open { 
+            background: #e8f5e9; 
+            color: var(--success); 
+            border: 1px solid rgba(37, 211, 102, 0.2); 
+        }
+        .store-status-badge.closed { 
+            background: #ffebee; 
+            color: var(--danger); 
+            border: 1px solid rgba(231, 76, 60, 0.2); 
+        }
         .status-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
         .store-status-badge.open .status-dot { animation: pulse-green 2s infinite; }
 
@@ -188,7 +198,6 @@
         .no-result { text-align: center; padding: 40px 20px; color: #888; grid-column: 1 / -1; font-size: 0.9rem; display: none; }
         .empty-state-icon { font-size: 3rem; color: #e0e0e0; margin-bottom: 15px; display: inline-block; animation: float 3s ease-in-out infinite; }
 
-        /* --- MENU CARD FIX --- */
         .menu-card {
             background: var(--card-bg); 
             border-radius: var(--radius-card);
@@ -385,12 +394,11 @@
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 3000;
-            display: none; justify-content: center; align-items: center; /* Centered for Image Modal */
+            display: none; justify-content: center; align-items: center; 
             backdrop-filter: blur(3px);
         }
         .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
 
-        /* --- IMAGE ZOOM MODAL --- */
         .image-modal-content {
             max-width: 90%; max-height: 90%;
             border-radius: 12px;
@@ -405,7 +413,6 @@
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
         }
 
-        /* --- CART & VARIANT MODAL STYLES --- */
         .cart-modal {
             background: white; width: 100%; max-width: 500px;
             border-radius: 20px 20px 0 0;
@@ -560,7 +567,7 @@
 
         /* --- RESPONSIVE DESIGN FIXES --- */
         @media (min-width: 768px) {
-            .modal-overlay { align-items: center; } /* Centered on desktop */
+            .modal-overlay { align-items: center; } 
             .cart-modal, .variant-modal { border-radius: 20px; max-width: 500px; align-self: center; }
             .menu-grid { gap: 25px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
             .card-img-wrapper { height: 180px; }
@@ -604,6 +611,7 @@
                 </div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
+                <!-- STATUS BADGE (GOJEK STYLE) -->
                 <div id="storeStatusBadge" class="store-status-badge open">
                     <span class="status-dot"></span>
                     <span id="storeStatusText">BUKA</span>
@@ -626,6 +634,7 @@
         <div class="hero-content">
             <div class="hero-title">Bubur GRace</div>
             <div class="hero-subtitle">Citra rasa Bubur Ayam sejak 2000</div>
+            <!-- DYNAMIC HOURS DISPLAY -->
             <div class="hero-info">
                 <i class="fa-regular fa-clock"></i>
                 <span id="heroHours">Memuat jam...</span>
@@ -1353,7 +1362,7 @@
                 checkStoreOperationalStatus(); // Recalculate status
             });
 
-            // 2. LISTEN STATUS TOKO
+            // 2. LISTEN STATUS TOKO (FORCE OPEN/CLOSE)
             db.ref('bubur_grace/status').on('value', (snapshot) => {
                 const val = snapshot.val();
                 if (val) {
@@ -1405,7 +1414,7 @@
 
             // Logic Grouping: Group days by identical opening hours
             const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-            const activeGroups = {}; // { "06:00-12:00": [0, 2, 3, 4, 5, 6] }
+            const activeGroups = {}; 
             const closedDays = [];
 
             // 1. Grouping Loop
@@ -1433,11 +1442,9 @@
                 if(days.length === 7) {
                     dayString = "Setiap Hari";
                 } else {
-                    // Simple logic: if consecutive, use dash
                     if (isConsecutive(days)) {
                         dayString = `${dayNames[days[0]]} - ${dayNames[days[days.length-1]]}`;
                     } else {
-                        // If not consecutive (rare), just list
                         dayString = dayNamesList.join(", ");
                     }
                 }
@@ -1461,7 +1468,6 @@
             } else {
                 footerDayOffEl.style.display = "none";
             }
-            // Footer Hours takes first active group or all if closed
             if(Object.keys(activeGroups).length > 0) {
                 const firstKey = Object.keys(activeGroups)[0];
                 const [open, close] = firstKey.split('-');
