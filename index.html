@@ -434,7 +434,6 @@
             box-shadow: var(--shadow-hover);
         }
 
-        /* Stock kosong */
         .menu-card.stock-empty {
             pointer-events: none;
             opacity: 0.6;
@@ -462,7 +461,6 @@
             z-index: 5;
         }
 
-        /* Weekend locked */
         .menu-card.weekend-locked {
             pointer-events: none;
             opacity: 0.7;
@@ -486,7 +484,6 @@
             pointer-events: none;
         }
 
-        /* Category disabled */
         .menu-card.cat-disabled {
             pointer-events: none;
             opacity: 0.5;
@@ -1030,7 +1027,6 @@
 
         /* ==============================
            SWITCH DINE IN / BAWA PULANG
-           (Diperjelas agar user tahu bisa diklik)
         ============================== */
         .status-toggle-area {
             display: flex;
@@ -1209,7 +1205,6 @@
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
 
-        /* Rincian biaya */
         .fee-detail-row {
             display: flex;
             justify-content: space-between;
@@ -1373,120 +1368,39 @@
            RESPONSIVE
         ============================== */
         @media (min-width: 768px) {
-            .modal-overlay {
-                align-items: center;
-            }
-
-            .cart-modal,
-            .variant-modal {
-                border-radius: 20px;
-                max-width: 500px;
-                align-self: center;
-            }
-
-            .menu-grid {
-                gap: 25px;
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            }
-
-            .card-img-wrapper {
-                height: 180px;
-            }
-
-            .card-body {
-                padding: 20px;
-            }
-
-            .card-title {
-                font-size: 1rem;
-            }
-
-            .add-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 1.1rem;
-            }
-
-            .category-nav {
-                top: 110px;
-            }
-
-            header {
-                padding: 20px 5%;
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-
-            .brand-text h1 {
-                font-size: 1.8rem;
-            }
-
-            .brand-logo {
-                width: 60px;
-                height: 60px;
-            }
+            .modal-overlay { align-items: center; }
+            .cart-modal, .variant-modal { border-radius: 20px; max-width: 500px; align-self: center; }
+            .menu-grid { gap: 25px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+            .card-img-wrapper { height: 180px; }
+            .card-body { padding: 20px; }
+            .card-title { font-size: 1rem; }
+            .add-btn { width: 44px; height: 44px; font-size: 1.1rem; }
+            .category-nav { top: 110px; }
+            header { padding: 20px 5%; flex-direction: row; flex-wrap: wrap; }
+            .brand-text h1 { font-size: 1.8rem; }
+            .brand-logo { width: 60px; height: 60px; }
         }
 
         @media (max-width: 360px) {
-            .menu-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .menu-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         /* ==============================
            ANIMATIONS
         ============================== */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(46, 204, 113, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
-        }
-
-        @keyframes rotateBg {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes zoomIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        /* Animasi perhatian untuk badge status baru di cart */
-        @keyframes badgeAttention {
-            0% { opacity: 0; transform: scale(0.8); }
-            50% { transform: scale(1.05); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shake { 10%,90%{transform:translate3d(-1px,0,0)} 20%,80%{transform:translate3d(2px,0,0)} 30%,50%,70%{transform:translate3d(-4px,0,0)} 40%,60%{transform:translate3d(4px,0,0)} }
+        @keyframes pulse-green { 0%{box-shadow:0 0 0 0 rgba(46,204,113,0.4)} 70%{box-shadow:0 0 0 6px rgba(46,204,113,0)} 100%{box-shadow:0 0 0 0 rgba(46,204,113,0)} }
+        @keyframes rotateBg { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        @keyframes zoomIn { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} }
+        @keyframes badgeAttention { 0%{opacity:0;transform:scale(0.8)} 50%{transform:scale(1.05)} 100%{opacity:1;transform:scale(1)} }
     </style>
 </head>
 <body>
 
-    <!-- ================================
-         HEADER
-    ================================ -->
+    <!-- HEADER -->
     <header>
         <div class="header-top">
             <div class="brand">
@@ -1514,9 +1428,7 @@
         </div>
     </header>
 
-    <!-- ================================
-         HERO BANNER
-    ================================ -->
+    <!-- HERO BANNER -->
     <div class="hero-banner">
         <div class="hero-content">
             <div class="hero-title">Bubur GRace</div>
@@ -1528,9 +1440,7 @@
         </div>
     </div>
 
-    <!-- ================================
-         CATEGORY NAV
-    ================================ -->
+    <!-- CATEGORY NAV -->
     <nav class="category-nav">
         <div class="cat-list">
             <button class="cat-pill active" data-target="all" onclick="filterCat('all')">Semua</button>
@@ -1553,18 +1463,14 @@
         </div>
     </nav>
 
-    <!-- ================================
-         MAIN MENU CONTENT
-    ================================ -->
+    <!-- MAIN MENU CONTENT -->
     <main class="container" id="mainContainer">
 
         <!-- PAKET BUBUR -->
         <div class="section-header" data-category="paket-bubur">
             <h2>Menu Paket</h2>
             <div class="section-line"></div>
-            <div style="font-size: 0.7rem; color: var(--primary); margin-left: auto; font-weight: 600;">
-                <i class="fa-solid fa-tags"></i> Best Value
-            </div>
+            <div style="font-size: 0.7rem; color: var(--primary); margin-left: auto; font-weight: 600;"><i class="fa-solid fa-tags"></i> Best Value</div>
         </div>
         <div class="menu-grid">
             <div class="menu-card" data-category="paket-bubur" data-price="36000" data-has-variants="true" data-options="Sari Kacang Ijo,Susu Kacang Kedelai,Thai Tea,Jeruk Murni" data-variant-name="Minuman">
@@ -2289,9 +2195,7 @@
 
     </main>
 
-    <!-- ================================
-         IMAGE ZOOM MODAL
-    ================================ -->
+    <!-- IMAGE ZOOM MODAL -->
     <div class="modal-overlay" id="imageModal">
         <div class="image-modal-content">
             <div class="close-image-zoom" id="closeImageZoom"><i class="fa-solid fa-xmark"></i></div>
@@ -2299,9 +2203,7 @@
         </div>
     </div>
 
-    <!-- ================================
-         CART MODAL
-    ================================ -->
+    <!-- CART MODAL -->
     <div class="modal-overlay" id="cartModal">
         <div class="cart-modal">
             <div class="cart-header">
@@ -2313,26 +2215,19 @@
                 <div style="text-align:center;padding:30px;color:#ccc;"><i class="fa-solid fa-bag-shopping" style="font-size:2rem;margin-bottom:10px;display:block;"></i>Keranjang kosong</div>
             </div>
             <div class="checkout-section" id="checkoutSection" style="display:none;">
-
-                <!-- Info mode pesanan -->
                 <div class="checkout-mode-info" id="checkoutModeInfo">
                     <i class="fa-solid fa-circle-info" style="color:var(--primary);"></i>
                     <span id="checkoutModeText">Semua pesanan Dine In</span>
                     <div class="mode-icons" id="checkoutModeIcons"></div>
                 </div>
-
-                <!-- Nomor Meja (muncul jika ada Dine In) -->
                 <div class="input-section-container" id="mejaSection">
                     <label class="input-label"><i class="fa-solid fa-chair"></i>Nomor Meja</label>
                     <input type="text" class="input-field" id="inputMeja" placeholder="Contoh: Meja 5">
                 </div>
-
-                <!-- Nama Pemesan (muncul jika ada Takeaway) -->
                 <div class="input-section-container" id="namaSection">
                     <label class="input-label"><i class="fa-solid fa-user"></i>Nama Pemesan</label>
                     <input type="text" class="input-field" id="inputNama" placeholder="Masukkan nama Anda">
                 </div>
-
                 <div class="fee-detail-row"><span>Subtotal</span><span id="subtotalDisplay">Rp 0</span></div>
                 <div class="fee-detail-row takeaway-row" id="takeawayFeeRow" style="display:none;">
                     <span>Biaya Takeaway (<span id="takeawayCount">0</span> item makanan berat)</span>
@@ -2344,9 +2239,7 @@
         </div>
     </div>
 
-    <!-- ================================
-         VARIANT MODAL
-    ================================ -->
+    <!-- VARIANT MODAL -->
     <div class="modal-overlay" id="variantModal">
         <div class="variant-modal">
             <div class="variant-title" id="variantTitle">Pilih Variant</div>
@@ -2355,26 +2248,22 @@
         </div>
     </div>
 
-    <!-- ================================
-         FLOATING BUTTONS
-    ================================ -->
+    <!-- FLOATING BUTTONS -->
     <div class="fab-cart" id="fabCart">
         <i class="fa-solid fa-cart-shopping"></i>
         <div class="cart-badge" id="cartBadge">0</div>
     </div>
-    <a href="https://wa.me/6281234567890" target="_blank" class="fab-wa"><i class="fa-brands fa-whatsapp"></i></a>
+    <a href="https://wa.me/62817776175" target="_blank" class="fab-wa"><i class="fa-brands fa-whatsapp"></i></a>
     <button id="scrollTopBtn"><i class="fa-solid fa-chevron-up"></i></button>
 
-    <!-- ================================
-         FOOTER
-    ================================ -->
+    <!-- FOOTER -->
     <footer>
         <div class="footer-brand">
             <h2>Bubur GRace</h2>
             <p style="opacity:0.7;font-size:0.9rem;">Citra Rasa Istimewa</p>
             <div class="contact-box">
                 <div class="contact-item"><i class="fa-solid fa-location-dot"></i> Lokasi Bubur Grace</div>
-                <div class="contact-item"><i class="fa-brands fa-whatsapp"></i> 0812-xxxx-xxxx</div>
+                <div class="contact-item"><i class="fa-brands fa-whatsapp"></i> 0817-776-175</div>
             </div>
             <div class="hours-box">
                 <p><i class="fa-regular fa-clock"></i> <span id="footerHours">Memuat jam...</span></p>
@@ -2382,9 +2271,7 @@
         </div>
     </footer>
 
-    <!-- ================================
-         TOAST
-    ================================ -->
+    <!-- TOAST -->
     <div id="toast"></div>
 
 <script>
@@ -2392,16 +2279,23 @@
    KONFIGURASI
 ================================================================ */
 var LOGO_URL = 'https://z-cdn-media.chatglm.cn/files/50ca2c37-9a98-4c90-923b-ae99959846b9.png?auth_key=1876671393-5447ef07c70045b48cce9108e1c0bf25-0-4f77a9446e7fe2d91efdbbfa00385980';
-var WA_NUMBER = '6281234567890';
+var WA_NUMBER = '62817776175';
 var TAKEAWAY_FEE = 3000;
 
 /* Kategori makanan berat — kena biaya takeaway Rp 3.000/pcs */
 var MAKANAN_BERAT = ['paket-bubur','bubur','mie-kecil','mie-lebar','mie-yamin','kwetiau','bihun','baso','nasi-uduk'];
 
-/* Mapping kategori admin switch ke kategori user */
+/*
+   Mapping kategori admin switch ke kategori user.
+   Key harus EXACTLY sama dengan key di CAT_SWITCH_CONFIG admin.
+*/
 var CAT_SWITCH_MAP = {
     bubur: ['bubur'],
-    mie: ['mie-kecil','mie-lebar','mie-yamin'],
+    mieKecil: ['mie-kecil'],
+    mieLebar: ['mie-lebar'],
+    mieYamin: ['mie-yamin'],
+    kwetiau: ['kwetiau'],
+    bihun: ['bihun'],
     baso: ['baso'],
     nasiUduk: ['nasi-uduk']
 };
@@ -2421,7 +2315,16 @@ var db = null;
 var storeIsOpen = true;
 var stockData = {};
 var weekendStockData = {};
-var categorySwitches = { bubur:true, mie:true, baso:true, nasiUduk:true };
+var categorySwitches = { 
+    bubur: true, 
+    mieKecil: true, 
+    mieLebar: true, 
+    mieYamin: true, 
+    kwetiau: true, 
+    bihun: true, 
+    baso: true, 
+    nasiUduk: true 
+};
 var scheduleData = null;
 var pendingVariantCard = null;
 var selectedVariant = '';
@@ -2451,7 +2354,6 @@ function parseTime(str) {
 function getTodayDay() { return new Date().getDay(); }
 function isWeekendNow() { var d = getTodayDay(); return d === 0 || d === 6; }
 
-/* Cek apakah item termasuk makanan berat (kena fee takeaway) */
 function isMakananBerat(category, isTopping) {
     if (isTopping) return false;
     return MAKANAN_BERAT.indexOf(category) !== -1;
@@ -2607,7 +2509,6 @@ function addToCart(card, variant) {
             variant: variant
         });
     }
-
     updateCartBadge();
     showToast(name + ' ditambahkan');
 }
@@ -2651,8 +2552,6 @@ function renderCart() {
         html += '<div class="cart-item-row1">';
         html += '<div class="item-info"><div class="item-title">' + displayName + '</div>';
         html += '<div class="item-price-row">' + fmtRp(item.price) + '/pcs</div></div>';
-
-        /* Area toggle status + petunjuk */
         html += '<div class="status-toggle-area">';
         html += '<span class="item-status-badge ' + (isAway ? 'badge-away' : 'badge-dine') + '" data-idx="' + idx + '">';
         html += '<i class="fa-solid ' + (isAway ? 'fa-bag-shopping' : 'fa-utensils') + '"></i> ';
@@ -2664,9 +2563,7 @@ function renderCart() {
         }
         html += '<span class="tap-hint">ketuk untuk ubah</span>';
         html += '</div>';
-
         html += '</div>';
-
         html += '<div class="cart-item-row2">';
         html += '<div class="item-controls">';
         html += '<button class="qty-btn" data-idx="' + idx + '" data-delta="-1"><i class="fa-solid fa-minus"></i></button>';
@@ -2680,7 +2577,6 @@ function renderCart() {
 
     container.innerHTML = html;
 
-    /* Bind events */
     container.querySelectorAll('.item-status-badge').forEach(function(b) {
         b.addEventListener('click', function() {
             var idx = parseInt(this.getAttribute('data-idx'));
@@ -2710,9 +2606,6 @@ function renderCart() {
 
 /* ================================================================
    UPDATE FORM CHECKOUT (DINAMIS)
-   - Semua Dine In → hanya Nomor Meja
-   - Semua Takeaway → hanya Nama
-   - Campuran → Nomor Meja + Nama
 ================================================================ */
 function updateCheckoutForm() {
     if (cart.length === 0) return;
@@ -2732,24 +2625,20 @@ function updateCheckoutForm() {
     var modeText = document.getElementById('checkoutModeText');
     var modeIcons = document.getElementById('checkoutModeIcons');
 
-    /* Build mode icon chips */
     var iconsHtml = '';
     if (hasDine) iconsHtml += '<span class="mode-icon-chip chip-dine"><i class="fa-solid fa-utensils"></i> Dine In ' + dineCount + '</span>';
     if (hasAway) iconsHtml += '<span class="mode-icon-chip chip-away"><i class="fa-solid fa-bag-shopping"></i> Bawa Pulang ' + awayCount + '</span>';
     modeIcons.innerHTML = iconsHtml;
 
     if (hasDine && hasAway) {
-        /* Campuran */
         mejaSection.style.display = '';
         namaSection.style.display = '';
         modeText.textContent = 'Anda memiliki pesanan Dine In & Bawa Pulang';
     } else if (hasDine) {
-        /* Semua Dine In */
         mejaSection.style.display = '';
         namaSection.style.display = 'none';
         modeText.textContent = 'Semua pesanan Dine In — isi nomor meja';
     } else {
-        /* Semua Takeaway */
         mejaSection.style.display = 'none';
         namaSection.style.display = '';
         modeText.textContent = 'Semua pesanan Bawa Pulang — isi nama';
@@ -2825,7 +2714,6 @@ document.getElementById('btnCheckout').addEventListener('click', function() {
     var mejaVal = '';
     var namaVal = '';
 
-    /* Validasi berdasarkan mode */
     if (hasDine) {
         mejaVal = document.getElementById('inputMeja').value.trim();
         if (!mejaVal) {
@@ -2854,10 +2742,8 @@ document.getElementById('btnCheckout').addEventListener('click', function() {
     lines.push('*PESANAN BARU - Bubur GRace*');
     lines.push('Waktu: ' + new Date().toLocaleString('id-ID'));
     lines.push('---');
-
     if (hasDine) lines.push('Meja: ' + mejaVal);
     if (hasAway) lines.push('Nama: ' + namaVal);
-
     lines.push('---');
 
     cart.forEach(function(item) {
@@ -2885,58 +2771,30 @@ document.getElementById('btnCheckout').addEventListener('click', function() {
     var msg = encodeURIComponent(lines.join('\n'));
     window.open('https://wa.me/' + WA_NUMBER + '?text=' + msg, '_blank');
 
-    /* Simpan ke Firebase */
     saveOrderToFirebase(mejaVal, namaVal, subtotal, takeawayCount * TAKEAWAY_FEE);
 });
 
-/* Hapus error state saat user mengetik */
-document.getElementById('inputMeja').addEventListener('input', function() {
-    this.classList.remove('input-error');
-});
-document.getElementById('inputNama').addEventListener('input', function() {
-    this.classList.remove('input-error');
-});
+document.getElementById('inputMeja').addEventListener('input', function() { this.classList.remove('input-error'); });
+document.getElementById('inputNama').addEventListener('input', function() { this.classList.remove('input-error'); });
 
 /* ================================================================
    SIMPAN ORDER KE FIREBASE
 ================================================================ */
 function saveOrderToFirebase(meja, nama, subtotal, takeawayFee) {
     if (!db) return;
-
     var orderRef = db.ref('bubur_grace/orders').push();
     var items = cart.map(function(c) {
-        return {
-            name: c.name,
-            variant: c.variant || '',
-            qty: c.qty,
-            price: c.price,
-            note: c.note,
-            status: c.status
-        };
+        return { name: c.name, variant: c.variant || '', qty: c.qty, price: c.price, note: c.note, status: c.status };
     });
-
-    var orderData = {
-        items: items,
-        subtotal: subtotal,
-        takeawayFee: takeawayFee,
-        total: subtotal + takeawayFee,
-        timestamp: Date.now()
-    };
-
+    var orderData = { items: items, subtotal: subtotal, takeawayFee: takeawayFee, total: subtotal + takeawayFee, timestamp: Date.now() };
     if (meja) orderData.meja = meja;
     if (nama) orderData.nama = nama;
-
     orderRef.set(orderData);
-
-    /* Update daily stats */
     var today = new Date().toISOString().slice(0, 10);
     var statsRef = db.ref('bubur_grace/daily_stats/' + today);
     statsRef.transaction(function(current) {
         if (!current) return { total: subtotal + takeawayFee, count: 1 };
-        return {
-            total: (current.total || 0) + subtotal + takeawayFee,
-            count: (current.count || 0) + 1
-        };
+        return { total: (current.total || 0) + subtotal + takeawayFee, count: (current.count || 0) + 1 };
     });
 }
 
@@ -2947,9 +2805,7 @@ var scrollBtn = document.getElementById('scrollTopBtn');
 window.addEventListener('scroll', function() {
     scrollBtn.style.display = window.scrollY > 400 ? 'block' : 'none';
 });
-scrollBtn.addEventListener('click', function() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+scrollBtn.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
 /* ================================================================
    FIREBASE INIT
@@ -2961,9 +2817,7 @@ function initFirebase() {
         if (!existing) firebase.initializeApp(firebaseConfig);
         db = firebase.database();
         startListeners();
-    } catch (e) {
-        console.error('Firebase init error:', e);
-    }
+    } catch (e) { console.error('Firebase init error:', e); }
 }
 
 /* ================================================================
@@ -2971,44 +2825,34 @@ function initFirebase() {
 ================================================================ */
 function startListeners() {
     if (!db) return;
-
     db.ref('bubur_grace/status').on('value', function(snap) {
         determineStoreStatus(snap.val() || 'auto');
     });
-
     db.ref('bubur_grace/config/schedule').on('value', function(snap) {
         scheduleData = snap.val();
         updateHoursDisplay();
-        db.ref('bubur_grace/status').once('value', function(s) {
-            determineStoreStatus(s.val() || 'auto');
-        });
+        db.ref('bubur_grace/status').once('value', function(s) { determineStoreStatus(s.val() || 'auto'); });
     });
-
     db.ref('bubur_grace/queue').on('value', function(snap) {
         var q = snap.val();
         document.getElementById('queueNum').textContent = (q !== null && q !== undefined) ? q : '-';
     });
-
     db.ref('bubur_grace/stock').on('value', function(snap) {
         stockData = {};
         var raw = snap.val() || {};
         for (var k in raw) stockData[k] = !!raw[k];
         applyStockAndSwitch();
     });
-
     db.ref('bubur_grace/weekendStock').on('value', function(snap) {
         weekendStockData = {};
         var raw = snap.val() || {};
         for (var k in raw) weekendStockData[k] = !!raw[k];
         applyStockAndSwitch();
     });
-
     db.ref('bubur_grace/categorySwitches').on('value', function(snap) {
         var raw = snap.val();
         if (raw && typeof raw === 'object') {
-            for (var k in categorySwitches) {
-                if (raw[k] !== undefined) categorySwitches[k] = !!raw[k];
-            }
+            for (var k in categorySwitches) { if (raw[k] !== undefined) categorySwitches[k] = !!raw[k]; }
         }
         applyStockAndSwitch();
     });
@@ -3024,17 +2868,10 @@ function applyStockAndSwitch() {
         if (!titleEl) return;
         var name = titleEl.textContent;
         var isWeekendItem = card.getAttribute('data-weekend') === 'true';
-
         card.classList.remove('stock-empty', 'weekend-locked', 'cat-disabled');
-
-        if (isWeekendItem) {
-            if (weekendStockData[name] === false) card.classList.add('stock-empty');
-        } else {
-            if (stockData[name] === false) card.classList.add('stock-empty');
-        }
-
+        if (isWeekendItem) { if (weekendStockData[name] === false) card.classList.add('stock-empty'); }
+        else { if (stockData[name] === false) card.classList.add('stock-empty'); }
         if (isWeekendItem && !weekend) card.classList.add('weekend-locked');
-
         var cat = card.getAttribute('data-category') || '';
         for (var swKey in CAT_SWITCH_MAP) {
             if (CAT_SWITCH_MAP[swKey].indexOf(cat) !== -1 && categorySwitches[swKey] === false) {
@@ -3043,7 +2880,6 @@ function applyStockAndSwitch() {
             }
         }
     });
-
     if (activeFilter !== 'all') filterCat(activeFilter);
 }
 
@@ -3053,38 +2889,28 @@ function applyStockAndSwitch() {
 function determineStoreStatus(mode) {
     var badge = document.getElementById('storeStatusBadge');
     var text = document.getElementById('storeStatusText');
-
     if (mode === 'open') {
         storeIsOpen = true;
-        badge.className = 'store-status-badge open';
-        text.textContent = 'BUKA';
+        badge.className = 'store-status-badge open'; text.textContent = 'BUKA';
     } else if (mode === 'close') {
         storeIsOpen = false;
-        badge.className = 'store-status-badge closed';
-        text.textContent = 'TUTUP';
+        badge.className = 'store-status-badge closed'; text.textContent = 'TUTUP';
     } else {
         var now = new Date();
         var day = now.getDay();
         var minutes = now.getHours() * 60 + now.getMinutes();
         var sched = null;
         if (scheduleData) sched = scheduleData[day] || scheduleData[String(day)];
-
         if (sched && sched.isOpen) {
             var openT = parseTime(sched.open);
             var closeT = parseTime(sched.close);
             if (openT !== null && closeT !== null && minutes >= openT && minutes < closeT) {
-                storeIsOpen = true;
-                badge.className = 'store-status-badge open';
-                text.textContent = 'BUKA';
+                storeIsOpen = true; badge.className = 'store-status-badge open'; text.textContent = 'BUKA';
             } else {
-                storeIsOpen = false;
-                badge.className = 'store-status-badge closed';
-                text.textContent = 'TUTUP';
+                storeIsOpen = false; badge.className = 'store-status-badge closed'; text.textContent = 'TUTUP';
             }
         } else {
-            storeIsOpen = false;
-            badge.className = 'store-status-badge closed';
-            text.textContent = 'TUTUP';
+            storeIsOpen = false; badge.className = 'store-status-badge closed'; text.textContent = 'TUTUP';
         }
     }
 }
@@ -3098,11 +2924,8 @@ function updateHoursDisplay() {
     var sched = scheduleData[day] || scheduleData[String(day)];
     var dayName = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][day];
     var text = '';
-    if (sched && sched.isOpen) {
-        text = dayName + ': ' + sched.open + ' - ' + sched.close;
-    } else {
-        text = dayName + ': Tutup';
-    }
+    if (sched && sched.isOpen) { text = dayName + ': ' + sched.open + ' - ' + sched.close; }
+    else { text = dayName + ': Tutup'; }
     document.getElementById('heroHours').textContent = text;
     document.getElementById('footerHours').textContent = text;
 }
@@ -3110,9 +2933,7 @@ function updateHoursDisplay() {
 /* ================================================================
    INIT
 ================================================================ */
-document.addEventListener('DOMContentLoaded', function() {
-    initFirebase();
-});
+document.addEventListener('DOMContentLoaded', function() { initFirebase(); });
 </script>
 </body>
 </html>
