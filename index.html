@@ -2313,6 +2313,10 @@ var firebaseConfig = {
 var cart = [];
 var db = null;
 var storeIsOpen = true;
+/* currentStoreMode menyimpan mode override dari admin: 'auto' | 'open' | 'close'
+   Dipakai supaya saat admin "Paksa Buka", menu Nasi Uduk (weekend-only)
+   ikut terbuka walaupun hari ini bukan weekend. */
+var currentStoreMode = 'auto';
 var stockData = {};
 var weekendStockData = {};
 var categorySwitches = { 
@@ -2862,7 +2866,10 @@ function startListeners() {
    TERAPKAN STOK & SWITCH KE KARTU MENU
 ================================================================ */
 function applyStockAndSwitch() {
-    var weekend = isWeekendNow();
+    /* Nasi Uduk (weekend-only) otomatis ikut terbuka kalau admin
+       sedang mengaktifkan mode "Paksa Buka" (currentStoreMode === 'open'),
+       meskipun hari ini bukan Sabtu/Minggu. */
+    var weekend = isWeekendNow() || currentStoreMode === 'open';
     document.querySelectorAll('.menu-card').forEach(function(card) {
         var titleEl = card.querySelector('.card-title');
         if (!titleEl) return;
@@ -2887,6 +2894,7 @@ function applyStockAndSwitch() {
    TENTUKAN STATUS TOKO
 ================================================================ */
 function determineStoreStatus(mode) {
+    currentStoreMode = mode;
     var badge = document.getElementById('storeStatusBadge');
     var text = document.getElementById('storeStatusText');
     if (mode === 'open') {
@@ -2913,6 +2921,9 @@ function determineStoreStatus(mode) {
             storeIsOpen = false; badge.className = 'store-status-badge closed'; text.textContent = 'TUTUP';
         }
     }
+    /* Setiap kali mode/status berubah, hitung ulang lock stok
+       (terutama untuk sinkronisasi Nasi Uduk saat Paksa Buka/Tutup/Otomatis) */
+    applyStockAndSwitch();
 }
 
 /* ================================================================
