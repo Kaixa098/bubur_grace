@@ -3436,21 +3436,34 @@
             lines.push('*PESANAN BARU - Bubur GRace*');
             lines.push('Waktu: ' + new Date().toLocaleString('id-ID'));
             lines.push('---');
-            if (hasDine) lines.push('Meja: ' + mejaVal);
-            if (hasAway) lines.push('Nama: ' + namaVal);
+            if (hasDine) lines.push('*NO MEJA - ' + mejaVal + '*');
+            if (hasAway) lines.push('*NAMA - ' + namaVal + '*');
             lines.push('---');
 
-            cart.forEach(function (item) {
-                var sub = item.price * item.qty;
-                subtotal += sub;
-                var displayName = item.name + (item.variant ? ' (' + item.variant + ')' : '');
-                var statusLabel = item.status === 'away' ? ' \uD83E\uDD5B Bawa Pulang' : ' \uD83C\uDF7D\uFE0F Dine In';
-                lines.push('\u2022 ' + displayName + statusLabel + ' x' + item.qty + ' = ' + fmtRp(sub));
-                if (item.note) lines.push('  Catatan: ' + item.note);
-                if (item.status === 'away' && isMakananBerat(item.category, item.isTopping)) {
-                    takeawayCount += item.qty;
-                }
-            });
+            var dineItems = cart.filter(function (item) { return item.status === 'dine'; });
+            var awayItems = cart.filter(function (item) { return item.status === 'away'; });
+
+            function pushItemLines(items) {
+                items.forEach(function (item) {
+                    var sub = item.price * item.qty;
+                    subtotal += sub;
+                    var displayName = item.name + (item.variant ? ' (' + item.variant + ')' : '');
+                    lines.push('- (' + item.qty + 'x) ' + displayName);
+                    if (item.note) lines.push('*' + item.note);
+                    if (item.status === 'away' && isMakananBerat(item.category, item.isTopping)) {
+                        takeawayCount += item.qty;
+                    }
+                });
+            }
+
+            if (dineItems.length > 0) {
+                lines.push('*DINE IN:*');
+                pushItemLines(dineItems);
+            }
+            if (awayItems.length > 0) {
+                lines.push('*TAKE AWAY:*');
+                pushItemLines(awayItems);
+            }
 
             lines.push('---');
             lines.push('Subtotal: ' + fmtRp(subtotal));
