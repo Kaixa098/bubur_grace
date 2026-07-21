@@ -793,6 +793,13 @@
             max-height: 90vh;
             display: flex;
             flex-direction: column;
+            /* REVISI: modal ini sekarang yang men-scroll seluruh isinya
+               (bukan hanya daftar item), supaya bagian checkout di bawah
+               (form meja/nama + tombol WhatsApp) bisa "menempel" (sticky)
+               dan tidak pernah tertutup / hilang di layar HP. */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
             animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
             align-self: flex-end;
         }
@@ -804,6 +811,7 @@
             margin-bottom: 15px;
             border-bottom: 1px solid #f0f0f0;
             padding-bottom: 15px;
+            flex-shrink: 0;
         }
 
         .cart-header h3 {
@@ -849,6 +857,7 @@
             margin-bottom: 15px;
             margin-top: 5px;
             font-family: 'Poppins', sans-serif;
+            flex-shrink: 0;
         }
 
         .btn-clear-cart-big:hover {
@@ -963,12 +972,13 @@
            CART ITEMS
         ============================== */
         .cart-items {
-            overflow-y: auto;
-            flex-grow: 1;
+            /* REVISI: dulu punya overflow-y:auto + flex-grow:1 + min-height:100px
+               sendiri, sehingga ketika modal penuh, area checkout (termasuk
+               tombol WhatsApp) bisa terdorong keluar layar. Sekarang area ini
+               mengikuti alur normal dan scroll ditangani oleh .cart-modal. */
+            flex-shrink: 0;
             margin-bottom: 15px;
             padding-right: 5px;
-            -webkit-overflow-scrolling: touch;
-            min-height: 100px;
         }
 
         .cart-item {
@@ -1162,6 +1172,18 @@
             margin-top: 10px;
             border-top: 2px dashed #eee;
             padding-top: 15px;
+            /* REVISI: bagian ini (form meja/nama, subtotal, total, tombol
+               WhatsApp) dibuat "sticky" menempel di bagian bawah modal
+               keranjang. Sekarang modal (.cart-modal) yang men-scroll, dan
+               bagian ini akan selalu terlihat & bisa ditekan walau daftar
+               pesanan di atasnya panjang / layar HP kecil. */
+            position: sticky;
+            bottom: 0;
+            background: white;
+            z-index: 5;
+            flex-shrink: 0;
+            padding-bottom: 4px;
+            box-shadow: 0 -10px 15px -10px rgba(0, 0, 0, 0.12);
         }
 
         .checkout-mode-info {
