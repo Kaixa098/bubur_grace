@@ -793,18 +793,6 @@
             max-height: 90vh;
             display: flex;
             flex-direction: column;
-            /* REDESAIN: pola "sticky checkout bar" ala GoFood/Shopee.
-               Modal dibagi jadi 3 lapis flexbox:
-               1) header + tombol kosongkan + hint (fixed di atas, flex-shrink:0)
-               2) .cart-scroll-area (SATU AREA SCROLL yang menampung
-                  daftar item + form checkout meja/nama + rincian biaya,
-                  otomatis memakai semua sisa ruang -> flex:1)
-               3) .sticky-checkout-bar (bar kecil PERMANEN di paling
-                  bawah modal, isinya cuma Total + tombol WhatsApp,
-                  flex-shrink:0, TIDAK PERNAH ikut ter-scroll / terdorong
-                  oleh panjangnya form di atasnya)
-               Dengan pola ini tombol checkout tidak akan pernah lagi
-               "hilang" walau daftar pesanan atau form-nya panjang. */
             overflow: hidden;
             animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
             align-self: flex-end;
@@ -892,9 +880,7 @@
         }
 
         /* ==============================
-           SCROLL HINT (baru)
-           Muncul otomatis kalau daftar pesanan cukup panjang sehingga
-           perlu discroll, supaya user sadar masih ada item di bawah.
+           SCROLL HINT
         ============================== */
         .cart-scroll-hint {
             display: none;
@@ -1014,17 +1000,9 @@
         }
 
         /* ==============================
-           CART SCROLL AREA (item + form checkout jadi satu)
+           CART SCROLL AREA
         ============================== */
         .cart-scroll-wrapper {
-            /* REDESAIN: wrapper INI (bukan si kotak scroll itu sendiri)
-               yang jadi acuan posisi bayangan atas/bawah. flex:1
-               membuatnya otomatis mengambil semua sisa tinggi modal
-               (setelah dikurangi header & sticky bar bawah). Wrapper
-               ini sendiri TIDAK scroll -- yang scroll adalah
-               .cart-scroll-area di dalamnya -- supaya bayangan
-               atas/bawah tetap diam menempel di tepi wrapper walau
-               isinya digulir. */
             position: relative;
             flex: 1 1 auto;
             min-height: 90px;
@@ -1033,11 +1011,6 @@
         }
 
         .cart-scroll-area {
-            /* REDESAIN: SATU-SATUNYA kotak scroll di dalam modal.
-               Di dalamnya ada daftar item DAN form checkout
-               (meja/nama/rincian biaya) yang dulu terpisah --
-               sekarang digabung supaya scroll bersama satu sama lain,
-               sementara total & tombol WhatsApp di luar sini (sticky). */
             flex: 1 1 auto;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
@@ -1068,8 +1041,6 @@
             flex-shrink: 0;
         }
 
-        /* Bayangan halus di atas/bawah daftar item, menandakan masih ada
-           konten yang bisa discroll (muncul/hilang otomatis lewat JS) */
         .scroll-fade {
             position: absolute;
             left: 0;
@@ -1280,7 +1251,7 @@
         }
 
         /* ==============================
-           CHECKOUT FORM FIELDS (ikut scroll bersama item)
+           CHECKOUT FORM FIELDS
         ============================== */
         .checkout-form-fields {
             margin-top: 6px;
@@ -1397,10 +1368,7 @@
         }
 
         /* ==============================
-           STICKY CHECKOUT BAR (baru)
-           Bar kecil PERMANEN di paling bawah modal -- gaya GoFood/Shopee.
-           Isinya cuma ringkasan total + tombol pesan WhatsApp, jadi
-           TIDAK PERNAH ikut terdorong walau isi/​form di atasnya panjang.
+           STICKY CHECKOUT BAR
         ============================== */
         .sticky-checkout-bar {
             flex-shrink: 0;
@@ -1474,9 +1442,6 @@
             opacity: 0.7;
         }
 
-        /* Saat keyboard HP muncul (input fokus), body diberi class ini
-           lewat JS supaya modal sedikit menyesuaikan & area scroll
-           tetap bisa dijangkau tanpa menutupi sticky bar bawah. */
         body.keyboard-open .cart-modal {
             max-height: 96vh;
         }
@@ -2751,15 +2716,10 @@
             <button class="btn-clear-cart-big" id="btnClearCart"><i class="fa-solid fa-trash-can"></i> Kosongkan
                 Keranjang</button>
 
-            <!-- Hint muncul otomatis kalau daftar item cukup panjang untuk discroll -->
             <div class="cart-scroll-hint" id="cartScrollHint">
                 <i class="fa-solid fa-arrows-up-down"></i> Geser daftar pesanan untuk lihat semua item
             </div>
 
-            <!-- REDESAIN: SATU area scroll untuk daftar item + form checkout.
-                 Wrapper ini diam (tidak ikut scroll) supaya bayangan
-                 atas/bawah tetap menempel di tepi, sementara kotak di
-                 dalamnya (.cart-scroll-area) yang benar-benar digulir. -->
             <div class="cart-scroll-wrapper">
                 <div class="cart-scroll-area" id="cartScrollArea">
                     <div class="cart-items" id="cartItems">
@@ -2792,7 +2752,6 @@
                 <div class="scroll-fade scroll-fade-bottom" id="fadeBottom"></div>
             </div>
 
-            <!-- STICKY CHECKOUT BAR: total + tombol WhatsApp, permanen di bawah -->
             <div class="sticky-checkout-bar" id="stickyCheckoutBar" style="display:none;">
                 <div class="total-row">
                     <span class="total-label-group">Total
@@ -2852,10 +2811,6 @@
         /* Kategori makanan berat — kena biaya takeaway Rp 3.000/pcs */
         var MAKANAN_BERAT = ['paket-bubur', 'bubur', 'mie-kecil', 'mie-lebar', 'mie-yamin', 'kwetiau', 'bihun', 'baso', 'nasi-uduk'];
 
-        /*
-           Mapping kategori admin switch ke kategori user.
-           Key harus EXACTLY sama dengan key di CAT_SWITCH_CONFIG admin.
-        */
         var CAT_SWITCH_MAP = {
             bubur: ['bubur'],
             mieKecil: ['mie-kecil'],
@@ -2880,9 +2835,6 @@
         var cart = [];
         var db = null;
         var storeIsOpen = true;
-        /* currentStoreMode menyimpan mode override dari admin: 'auto' | 'open' | 'close'
-           Dipakai supaya saat admin "Paksa Buka", menu Nasi Uduk (weekend-only)
-           ikut terbuka walaupun hari ini bukan weekend. */
         var currentStoreMode = 'auto';
         var stockData = {};
         var weekendStockData = {};
@@ -2969,14 +2921,11 @@
                 });
 
                 if (kw) {
-                    // Saat sedang mencari: sembunyikan section & grid yang tidak ada hasilnya,
-                    // supaya menu yang cocok langsung tampil di atas tanpa harus scroll.
                     grid.style.display = hasMatch ? '' : 'none';
                     if (sectionHeader && sectionHeader.classList.contains('section-header')) {
                         sectionHeader.classList.toggle('hidden', !hasMatch);
                     }
                 } else {
-                    // Search dikosongkan: kembalikan tampilan sesuai filter kategori aktif
                     grid.style.display = '';
                     if (sectionHeader && sectionHeader.classList.contains('section-header')) {
                         sectionHeader.classList.remove('hidden');
@@ -3223,8 +3172,6 @@
 
         /* ================================================================
            UX SCROLL: fade atas/bawah + hint "geser untuk lihat semua"
-           Dipanggil setiap kali isi keranjang berubah (renderCart) dan
-           setiap kali user scroll daftar item / ubah ukuran layar.
         ================================================================ */
         function updateCartScrollUI() {
             var itemsEl = document.getElementById('cartScrollArea');
@@ -3257,8 +3204,7 @@
         });
 
         /* ================================================================
-           KEYBOARD HP: pastikan sticky bar & field yang difokus tetap
-           terlihat begitu keyboard muncul (pakai visualViewport bila ada).
+           KEYBOARD HP
         ================================================================ */
         function scrollFieldIntoView(field) {
             setTimeout(function () {
@@ -3396,6 +3342,9 @@
 
         /* ================================================================
            CHECKOUT VIA WHATSAPP
+           (Format pesan disesuaikan: hanya NO MEJA/NAMA, lalu daftar
+           DINE IN / TAKE AWAY per item beserta catatannya, tanpa header
+           "PESANAN BARU", tanpa baris Waktu, dan tanpa garis pemisah "---")
         ================================================================ */
         document.getElementById('btnCheckout').addEventListener('click', function () {
             var hasDine = false;
@@ -3433,12 +3382,9 @@
             var subtotal = 0;
             var takeawayCount = 0;
             var lines = [];
-            lines.push('*PESANAN BARU - Bubur GRace*');
-            lines.push('Waktu: ' + new Date().toLocaleString('id-ID'));
-            lines.push('---');
+
             if (hasDine) lines.push('*NO MEJA - ' + mejaVal + '*');
             if (hasAway) lines.push('*NAMA - ' + namaVal + '*');
-            lines.push('---');
 
             var dineItems = cart.filter(function (item) { return item.status === 'dine'; });
             var awayItems = cart.filter(function (item) { return item.status === 'away'; });
@@ -3465,7 +3411,6 @@
                 pushItemLines(awayItems);
             }
 
-            lines.push('---');
             lines.push('Subtotal: ' + fmtRp(subtotal));
             if (takeawayCount > 0) {
                 var fee = takeawayCount * TAKEAWAY_FEE;
@@ -3569,9 +3514,6 @@
            TERAPKAN STOK & SWITCH KE KARTU MENU
         ================================================================ */
         function applyStockAndSwitch() {
-            /* Nasi Uduk (weekend-only) otomatis ikut terbuka kalau admin
-               sedang mengaktifkan mode "Paksa Buka" (currentStoreMode === 'open'),
-               meskipun hari ini bukan Sabtu/Minggu. */
             var weekend = isWeekendNow() || currentStoreMode === 'open';
             document.querySelectorAll('.menu-card').forEach(function (card) {
                 var titleEl = card.querySelector('.card-title');
@@ -3624,8 +3566,6 @@
                     storeIsOpen = false; badge.className = 'store-status-badge closed'; text.textContent = 'TUTUP';
                 }
             }
-            /* Setiap kali mode/status berubah, hitung ulang lock stok
-               (terutama untuk sinkronisasi Nasi Uduk saat Paksa Buka/Tutup/Otomatis) */
             applyStockAndSwitch();
         }
 
