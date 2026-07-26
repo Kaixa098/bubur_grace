@@ -21,1708 +21,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-    <style>
-        /* ==============================
-           CSS VARIABLES
-        ============================== */
-        :root {
-            --primary: #D35400;
-            --primary-dark: #A04000;
-            --primary-light: #FCEADC;
-            --secondary: #2C3E50;
-            --bg-color: #FDFBF7;
-            --card-bg: #FFFFFF;
-            --text-main: #444444;
-            --text-light: #888888;
-            --success: #25D366;
-            --danger: #E74C3C;
-            --header-height-mobile: 110px;
-            --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.05);
-            --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.08);
-            --radius-card: 12px;
-            --transition-speed: 0.3s;
-        }
-
-        /* ==============================
-           RESET & BASE
-        ============================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        button,
-        .no-select {
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        html,
-        body {
-            height: 100%;
-            width: 100%;
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.5;
-            padding-bottom: calc(80px + env(safe-area-inset-bottom));
-            -webkit-font-smoothing: antialiased;
-        }
-
-        h1,
-        h2,
-        h3 {
-            font-family: 'Playfair Display', serif;
-            color: var(--secondary);
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        ul {
-            list-style: none;
-        }
-
-        button,
-        .add-btn,
-        .cat-pill,
-        .menu-card,
-        .qty-btn {
-            touch-action: manipulation;
-        }
-
-        /* ==============================
-           HEADER
-        ============================== */
-        header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 10px 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: var(--shadow-soft);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .brand-logo {
-            width: 45px;
-            height: 45px;
-            object-fit: contain;
-            flex-shrink: 0;
-            border-radius: 50%;
-        }
-
-        .brand-text h1 {
-            font-size: 1.2rem;
-            line-height: 1.1;
-            color: var(--primary);
-            margin: 0;
-        }
-
-        .brand-text span {
-            font-size: 0.7rem;
-            font-weight: 300;
-            letter-spacing: 1px;
-            color: var(--secondary);
-            text-transform: uppercase;
-        }
-
-        .store-status-badge {
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #f0f0f0;
-            color: #888;
-            transition: all var(--transition-speed);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-
-        .store-status-badge.open {
-            background: #e8f5e9;
-            color: var(--success);
-            border: 1px solid rgba(37, 211, 102, 0.2);
-        }
-
-        .store-status-badge.closed {
-            background: #ffebee;
-            color: var(--danger);
-            border: 1px solid rgba(231, 76, 60, 0.2);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-
-        .store-status-badge.open .status-dot {
-            animation: pulse-green 2s infinite;
-        }
-
-        .queue-counter {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--secondary);
-            background: rgba(44, 62, 80, 0.05);
-            padding: 4px 10px;
-            border-radius: 12px;
-        }
-
-        /* ==============================
-           SEARCH
-        ============================== */
-        .search-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .search-wrapper i.fa-magnifying-glass {
-            position: absolute;
-            left: 15px;
-            top: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            padding-bottom: 2px;
-            color: #aaa;
-            font-size: 0.9rem;
-            pointer-events: none;
-        }
-
-        #searchInput {
-            width: 100%;
-            padding: 12px 45px;
-            border: 1px solid #eee;
-            border-radius: 25px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 15px;
-            background: #f8f9fa;
-            transition: all var(--transition-speed);
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        #searchInput:focus {
-            background: white;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1);
-        }
-
-        /* Matikan ikon search & tombol clear bawaan browser (khusus input type="search"),
-           supaya tidak bentrok/dobel dengan ikon Font Awesome custom kita */
-        #searchInput::-webkit-search-decoration,
-        #searchInput::-webkit-search-cancel-button,
-        #searchInput::-webkit-search-results-button,
-        #searchInput::-webkit-search-results-decoration {
-            -webkit-appearance: none;
-            appearance: none;
-            display: none;
-        }
-
-        .clear-search {
-            position: absolute;
-            right: 6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            background: rgba(211, 84, 0, 0.08);
-            cursor: pointer;
-            display: none;
-            font-size: 0.85rem;
-            pointer-events: auto;
-            transition: background var(--transition-speed), transform 0.15s;
-            z-index: 2;
-        }
-
-        .clear-search:hover {
-            background: rgba(211, 84, 0, 0.15);
-        }
-
-        .clear-search:active {
-            transform: translateY(-50%) scale(0.9);
-        }
-
-        /* ==============================
-           CATEGORY NAV
-        ============================== */
-        .category-nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 10px 0;
-            position: sticky;
-            top: var(--header-height-mobile);
-            z-index: 950;
-            overflow-x: auto;
-            white-space: nowrap;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            box-shadow: 0 4px 6px -6px rgba(0, 0, 0, 0.1);
-        }
-
-        .category-nav::-webkit-scrollbar {
-            display: none;
-        }
-
-        .cat-list {
-            display: flex;
-            justify-content: flex-start;
-            padding: 0 15px;
-            gap: 8px;
-        }
-
-        .cat-pill {
-            padding: 0 18px;
-            height: 38px;
-            background: white;
-            border: 1px solid #eee;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--text-main);
-            cursor: pointer;
-            transition: all var(--transition-speed);
-            flex-shrink: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .cat-pill.active,
-        .cat-pill:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(211, 84, 0, 0.25);
-            transform: translateY(-2px);
-        }
-
-        /* ==============================
-           HERO BANNER
-        ============================== */
-        .hero-banner {
-            background: linear-gradient(135deg, var(--primary), #E67E22);
-            padding: 30px 20px;
-            color: white;
-            text-align: center;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(211, 84, 0, 0.2);
-        }
-
-        .hero-banner::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
-            animation: rotateBg 20s linear infinite;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-            font-family: 'Playfair Display', serif;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .hero-subtitle {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-bottom: 15px;
-            font-weight: 300;
-        }
-
-        .hero-info {
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 8px 20px;
-            border-radius: 30px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        /* ==============================
-           CONTAINER & SECTION
-        ============================== */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 15px;
-            position: relative;
-        }
-
-        .section-header {
-            margin: 40px 0 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: opacity 0.3s;
-        }
-
-        .section-header.hidden {
-            display: none !important;
-        }
-
-        .section-header h2 {
-            font-size: 1.4rem;
-            margin: 0;
-            position: relative;
-            padding-left: 15px;
-        }
-
-        .section-header h2::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 4px;
-            height: 70%;
-            background: var(--primary);
-            border-radius: 2px;
-        }
-
-        .section-line {
-            height: 1px;
-            background: #eee;
-            flex-grow: 1;
-            opacity: 0.5;
-        }
-
-        /* ==============================
-           MENU GRID & CARD
-        ============================== */
-        .menu-grid {
-            display: grid;
-            gap: 16px;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            position: relative;
-        }
-
-        .menu-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-card);
-            box-shadow: var(--shadow-soft);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            position: relative;
-            opacity: 0;
-            animation: fadeInUp 0.6s ease forwards;
-            height: 100%;
-        }
-
-        .menu-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .menu-card.stock-empty {
-            pointer-events: none;
-            opacity: 0.6;
-            filter: grayscale(1);
-            border: 1px dashed #ccc;
-        }
-
-        .menu-card.stock-empty .add-btn {
-            display: none;
-        }
-
-        .menu-card.stock-empty::after {
-            content: 'HABIS';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-15deg);
-            font-size: 2rem;
-            font-weight: 900;
-            color: rgba(0, 0, 0, 0.1);
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            padding: 10px 20px;
-            border-radius: 10px;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        .menu-card.weekend-locked {
-            pointer-events: none;
-            opacity: 0.7;
-            filter: grayscale(1);
-            border: 1px dashed #aaa;
-            background: #f9f9f9;
-        }
-
-        .menu-card.weekend-locked::before {
-            content: 'WEEKEND ONLY';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #333;
-            color: white;
-            font-size: 0.6rem;
-            font-weight: 700;
-            padding: 4px 8px;
-            border-radius: 4px;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .menu-card.cat-disabled {
-            pointer-events: none;
-            opacity: 0.5;
-            filter: grayscale(0.5);
-        }
-
-        .card-img-wrapper {
-            width: 100%;
-            height: 140px;
-            overflow: hidden;
-            background-color: #f0f0f0;
-            position: relative;
-            flex-shrink: 0;
-            cursor: zoom-in;
-        }
-
-        .card-img-top {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-            display: block;
-        }
-
-        .menu-card:not(.weekend-locked):not(.stock-empty):hover .card-img-top {
-            transform: scale(1.05);
-        }
-
-        .card-body {
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .badge {
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background: #FFE0B2;
-            color: #E65100;
-            font-weight: 700;
-            width: fit-content;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: inline-block;
-        }
-
-        .card-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: var(--secondary);
-            line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .card-desc {
-            font-size: 0.75rem;
-            color: #999;
-            margin-bottom: 10px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .card-footer {
-            margin-top: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #f0f0f0;
-            padding-top: 10px;
-        }
-
-        .price {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 0.95rem;
-            flex-grow: 1;
-        }
-
-        .add-btn {
-            background: var(--primary-light);
-            color: var(--primary);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            border: none;
-            cursor: pointer;
-            margin-left: 8px;
-            flex-shrink: 0;
-        }
-
-        .add-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .add-btn:active {
-            transform: scale(0.9);
-        }
-
-        /* ==============================
-           FLOATING BUTTONS
-        ============================== */
-        .fab-cart {
-            position: fixed;
-            bottom: 30px;
-            left: 20px;
-            background: var(--secondary);
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            box-shadow: 0 4px 20px rgba(44, 62, 80, 0.4);
-            z-index: 2000;
-            transition: transform 0.2s;
-            border: 2px solid white;
-            cursor: pointer;
-        }
-
-        .fab-cart:active {
-            transform: scale(0.9);
-        }
-
-        .cart-badge {
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            background: var(--danger);
-            color: white;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            font-size: 0.7rem;
-            font-weight: bold;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid white;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .cart-badge.pulse {
-            transform: scale(1.3);
-        }
-
-        .fab-wa {
-            position: fixed;
-            bottom: 30px;
-            right: 20px;
-            background: #25D366;
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
-            z-index: 2000;
-            border: 2px solid white;
-            transition: transform 0.2s;
-        }
-
-        .fab-wa:active {
-            transform: scale(0.9);
-        }
-
-        #scrollTopBtn {
-            display: none;
-            position: fixed;
-            bottom: 100px;
-            right: 20px;
-            z-index: 1999;
-            border: none;
-            outline: none;
-            background-color: rgba(44, 62, 80, 0.8);
-            color: white;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 50%;
-            font-size: 14px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s, transform 0.3s;
-            backdrop-filter: blur(4px);
-        }
-
-        #scrollTopBtn:hover {
-            background-color: var(--secondary);
-            transform: translateY(-3px);
-        }
-
-        /* ==============================
-           MODALS
-        ============================== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 3000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(3px);
-        }
-
-        .modal-overlay.active {
-            display: flex;
-            animation: fadeIn 0.2s;
-        }
-
-        .image-modal-content {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        .close-image-zoom {
-            position: absolute;
-            top: -40px;
-            right: 0;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            background: rgba(0, 0, 0, 0.5);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Cart Modal */
-        .cart-modal {
-            background: white;
-            width: 100%;
-            max-width: 500px;
-            border-radius: 20px 20px 0 0;
-            padding: 20px;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-            align-self: flex-end;
-            transition: max-height 0.2s ease;
-            position: relative;
-        }
-
-        .cart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 15px;
-            flex-shrink: 0;
-        }
-
-        .cart-header h3 {
-            font-size: 1.2rem;
-            margin: 0;
-            color: var(--secondary);
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .cart-header-count {
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.72rem;
-            font-weight: 600;
-            color: var(--primary);
-            background: var(--primary-light);
-            padding: 3px 10px;
-            border-radius: 20px;
-        }
-
-        .btn-close-cart {
-            background: #f0f0f0;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #666;
-            transition: 0.2s;
-        }
-
-        .btn-close-cart:hover {
-            background: #e0e0e0;
-            color: var(--danger);
-        }
-
-        .btn-clear-cart-big {
-            width: 100%;
-            background: #FFF5F5;
-            color: var(--danger);
-            border: 1px dashed #FFCDD2;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 15px;
-            margin-top: 5px;
-            font-family: 'Poppins', sans-serif;
-            flex-shrink: 0;
-        }
-
-        .btn-clear-cart-big:hover {
-            background: #FFEBEE;
-            border-color: #EF9A9A;
-        }
-
-        .btn-clear-cart-big:active {
-            transform: scale(0.98);
-        }
-
-        /* ==============================
-           SCROLL HINT
-        ============================== */
-        .cart-scroll-hint {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-size: 0.7rem;
-            color: var(--text-light);
-            font-style: italic;
-            margin-bottom: 8px;
-            flex-shrink: 0;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .cart-scroll-hint i {
-            color: var(--primary);
-            animation: bounceHint 1.4s ease-in-out infinite;
-        }
-
-        /* Variant Modal */
-        .variant-modal {
-            background: white;
-            width: 100%;
-            max-width: 400px;
-            border-radius: 20px 20px 0 0;
-            padding: 25px 20px;
-            animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-            max-height: 85vh;
-            overflow-y: auto;
-            align-self: flex-end;
-        }
-
-        .variant-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--secondary);
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .variant-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .variant-option-label {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .variant-option-label:hover {
-            background-color: #f9f9f9;
-        }
-
-        .variant-option-label.selected {
-            border-color: var(--primary);
-            background-color: #fff5eb;
-        }
-
-        .variant-option-label input {
-            display: none;
-        }
-
-        .radio-circle {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #ccc;
-            border-radius: 50%;
-            margin-right: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .variant-option-label.selected .radio-circle {
-            border-color: var(--primary);
-        }
-
-        .radio-circle::after {
-            content: '';
-            width: 10px;
-            height: 10px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: none;
-        }
-
-        .variant-option-label.selected .radio-circle::after {
-            display: block;
-        }
-
-        .btn-confirm-variant {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary);
-            color: white;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .btn-confirm-variant:active {
-            background: var(--primary-dark);
-            transform: scale(0.98);
-        }
-
-        /* ==============================
-           CART SCROLL AREA
-        ============================== */
-        .cart-scroll-wrapper {
-            position: relative;
-            flex: 1 1 auto;
-            min-height: 90px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .cart-scroll-area {
-            flex: 1 1 auto;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            padding-right: 6px;
-            padding-top: 2px;
-            padding-bottom: 4px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary) #f0f0f0;
-        }
-
-        .cart-scroll-area::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .cart-scroll-area::-webkit-scrollbar-track {
-            background: #f5f5f5;
-            border-radius: 10px;
-        }
-
-        .cart-scroll-area::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-            opacity: 0.7;
-        }
-
-        .cart-items {
-            flex-shrink: 0;
-        }
-
-        .scroll-fade {
-            position: absolute;
-            left: 0;
-            right: 6px;
-            height: 20px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.25s ease;
-            z-index: 3;
-        }
-
-        .scroll-fade-top {
-            top: 0;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0));
-        }
-
-        .scroll-fade-bottom {
-            bottom: 0;
-            background: linear-gradient(to top, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0));
-        }
-
-        .scroll-fade.visible {
-            opacity: 1;
-        }
-
-        .cart-item {
-            background: #fff;
-            border: 1px solid #f0f0f0;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .cart-item-row1 {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .item-info {
-            flex: 1;
-            padding-right: 10px;
-        }
-
-        .item-title {
-            font-size: 0.95rem;
-            color: var(--secondary);
-            font-weight: 600;
-            margin-bottom: 2px;
-            line-height: 1.2;
-        }
-
-        .item-price-row {
-            font-size: 0.8rem;
-            color: #999;
-            font-weight: 500;
-        }
-
-        .cart-item-row2 {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
-        }
-
-        .item-controls {
-            display: flex;
-            align-items: center;
-            background: #f8f8f8;
-            border-radius: 20px;
-            padding: 2px 6px;
-            flex-shrink: 0;
-        }
-
-        .qty-btn {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: white;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            color: var(--primary);
-            cursor: pointer;
-            border: none;
-        }
-
-        .qty-btn:active {
-            background: #eee;
-        }
-
-        .qty-num {
-            font-size: 0.9rem;
-            font-weight: 600;
-            min-width: 22px;
-            text-align: center;
-        }
-
-        .item-note-input {
-            flex: 1;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 0.8rem;
-            font-family: 'Poppins', sans-serif;
-            outline: none;
-            color: #555;
-            background: #fafafa;
-            min-width: 0;
-        }
-
-        .item-note-input:focus {
-            border-color: var(--primary);
-            background: white;
-        }
-
-        /* ==============================
-           SWITCH DINE IN / BAWA PULANG
-        ============================== */
-        .status-toggle-area {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 2px;
-            flex-shrink: 0;
-        }
-
-        .item-status-badge {
-            font-size: 0.72rem;
-            font-weight: 600;
-            padding: 7px 12px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.25s;
-            user-select: none;
-            white-space: nowrap;
-            position: relative;
-            animation: badgeAttention 0.6s ease;
-        }
-
-        .item-status-badge .swap-icon {
-            font-size: 0.65rem;
-            opacity: 0.6;
-            transition: transform 0.3s;
-        }
-
-        .item-status-badge:active .swap-icon {
-            transform: rotate(180deg);
-        }
-
-        .item-status-badge:active {
-            transform: scale(0.95);
-        }
-
-        .tap-hint {
-            font-size: 0.55rem;
-            color: #bbb;
-            font-style: italic;
-            text-align: right;
-            line-height: 1;
-            animation: fadeIn 0.8s ease;
-        }
-
-        .badge-dine {
-            background: #FFE0B2;
-            color: #D35400;
-            border: 1.5px solid #D35400;
-        }
-
-        .badge-dine:hover {
-            background: #FFCC80;
-            box-shadow: 0 2px 8px rgba(211, 84, 0, 0.2);
-        }
-
-        .badge-away {
-            background: #e8f5e9;
-            color: #25D366;
-            border: 1.5px solid #25D366;
-        }
-
-        .badge-away:hover {
-            background: #d1e7dd;
-            box-shadow: 0 2px 8px rgba(37, 211, 102, 0.2);
-        }
-
-        /* ==============================
-           TAKEAWAY FEE TAG
-        ============================== */
-        .takeaway-fee-tag {
-            font-size: 0.6rem;
-            font-weight: 700;
-            color: var(--danger);
-            background: #FFF5F5;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 4px;
-            white-space: nowrap;
-            border: 1px solid #FFCDD2;
-        }
-
-        /* ==============================
-           CHECKOUT FORM FIELDS
-        ============================== */
-        .checkout-form-fields {
-            margin-top: 6px;
-            border-top: 2px dashed #eee;
-            padding-top: 15px;
-            flex-shrink: 0;
-        }
-
-        .checkout-mode-info {
-            background: #f8f9fa;
-            border: 1px solid #eee;
-            border-radius: 10px;
-            padding: 10px 14px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.8rem;
-            color: var(--secondary);
-            font-weight: 500;
-            flex-wrap: wrap;
-        }
-
-        .checkout-mode-info i {
-            font-size: 1.1rem;
-            flex-shrink: 0;
-        }
-
-        .checkout-mode-info .mode-icons {
-            display: flex;
-            gap: 6px;
-            margin-left: auto;
-            flex-shrink: 0;
-        }
-
-        .checkout-mode-info .mode-icon-chip {
-            font-size: 0.65rem;
-            font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 10px;
-            white-space: nowrap;
-        }
-
-        .mode-icon-chip.chip-dine {
-            background: #FFE0B2;
-            color: #D35400;
-        }
-
-        .mode-icon-chip.chip-away {
-            background: #e8f5e9;
-            color: #25D366;
-        }
-
-        .input-section-container {
-            margin-bottom: 12px;
-        }
-
-        .input-label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: var(--secondary);
-            font-size: 0.85rem;
-        }
-
-        .input-label i {
-            margin-right: 6px;
-            color: var(--primary);
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.95rem;
-            outline: none;
-            transition: all 0.2s;
-            background: #fafafa;
-        }
-
-        .input-field:focus {
-            border-color: var(--primary);
-            background: white;
-        }
-
-        .input-error {
-            border-color: var(--danger) !important;
-            background-color: #fff5f5 !important;
-            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
-        }
-
-        .fee-detail-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            color: var(--text-light);
-            margin-bottom: 5px;
-        }
-
-        .fee-detail-row span:last-child {
-            font-weight: 600;
-            color: var(--text-main);
-        }
-
-        .fee-detail-row.takeaway-row {
-            color: var(--danger);
-        }
-
-        .fee-detail-row.takeaway-row span:last-child {
-            color: var(--danger);
-        }
-
-        /* ==============================
-           STICKY CHECKOUT BAR
-        ============================== */
-        .sticky-checkout-bar {
-            flex-shrink: 0;
-            background: white;
-            border-top: 2px solid #f5f5f5;
-            padding-top: 12px;
-            margin-top: 8px;
-            box-shadow: 0 -8px 20px -10px rgba(0, 0, 0, 0.15);
-            position: relative;
-            z-index: 6;
-        }
-
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1rem;
-            font-weight: 600;
-            margin: 0 0 10px;
-            color: var(--secondary);
-        }
-
-        .total-row .total-label-group {
-            display: flex;
-            flex-direction: column;
-            gap: 1px;
-        }
-
-        .total-row .total-label-sub {
-            font-size: 0.68rem;
-            font-weight: 400;
-            color: var(--text-light);
-        }
-
-        .final-total {
-            font-size: 1.35rem;
-            color: var(--primary);
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-        }
-
-        .btn-checkout {
-            width: 100%;
-            padding: 16px;
-            background: var(--success);
-            color: white;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-            transition: background-color 0.2s, transform 0.2s;
-            border: none;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .btn-checkout:active {
-            transform: scale(0.98);
-            background: #1ebc57;
-        }
-
-        .btn-checkout:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-            opacity: 0.7;
-        }
-
-        body.keyboard-open .cart-modal {
-            max-height: 96vh;
-        }
-
-        /* ==============================
-           TOAST
-        ============================== */
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 30px;
-            padding: 12px 20px;
-            position: fixed;
-            z-index: 4000;
-            left: 50%;
-            bottom: 110px;
-            transform: translateX(-50%);
-            font-size: 0.9rem;
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s, transform 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        #toast.error {
-            background-color: var(--danger);
-        }
-
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-            bottom: 120px;
-            transform: translateX(-50%) translateY(-10px);
-        }
-
-        /* ==============================
-           FOOTER
-        ============================== */
-        footer {
-            background: var(--secondary);
-            color: white;
-            text-align: center;
-            padding: 50px 20px 120px;
-            margin-top: 60px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(211, 84, 0, 0.1), transparent 50%);
-        }
-
-        .footer-brand {
-            position: relative;
-            z-index: 2;
-        }
-
-        .footer-brand h2 {
-            color: white;
-            margin-bottom: 5px;
-        }
-
-        .contact-box {
-            background: rgba(255, 255, 255, 0.1);
-            display: inline-block;
-            padding: 20px 30px;
-            border-radius: 15px;
-            margin-top: 20px;
-            backdrop-filter: blur(5px);
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin: 8px 0;
-            font-size: 0.95rem;
-        }
-
-        .hours-box {
-            margin-top: 20px;
-            font-size: 0.85rem;
-            opacity: 0.8;
-        }
-
-        /* ==============================
-           RESPONSIVE
-        ============================== */
-        @media (min-width: 768px) {
-            .modal-overlay {
-                align-items: center;
-            }
-
-            .cart-modal,
-            .variant-modal {
-                border-radius: 20px;
-                max-width: 500px;
-                align-self: center;
-            }
-
-            .menu-grid {
-                gap: 25px;
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            }
-
-            .card-img-wrapper {
-                height: 180px;
-            }
-
-            .card-body {
-                padding: 20px;
-            }
-
-            .card-title {
-                font-size: 1rem;
-            }
-
-            .add-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 1.1rem;
-            }
-
-            .category-nav {
-                top: 110px;
-            }
-
-            header {
-                padding: 20px 5%;
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-
-            .brand-text h1 {
-                font-size: 1.8rem;
-            }
-
-            .brand-logo {
-                width: 60px;
-                height: 60px;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .menu-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        /* ==============================
-           ANIMATIONS
-        ============================== */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-            }
-
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes shake {
-
-            10%,
-            90% {
-                transform: translate3d(-1px, 0, 0)
-            }
-
-            20%,
-            80% {
-                transform: translate3d(2px, 0, 0)
-            }
-
-            30%,
-            50%,
-            70% {
-                transform: translate3d(-4px, 0, 0)
-            }
-
-            40%,
-            60% {
-                transform: translate3d(4px, 0, 0)
-            }
-        }
-
-        @keyframes pulse-green {
-            0% {
-                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4)
-            }
-
-            70% {
-                box-shadow: 0 0 0 6px rgba(46, 204, 113, 0)
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0)
-            }
-        }
-
-        @keyframes rotateBg {
-            0% {
-                transform: rotate(0deg)
-            }
-
-            100% {
-                transform: rotate(360deg)
-            }
-        }
-
-        @keyframes zoomIn {
-            from {
-                transform: scale(0.8);
-                opacity: 0
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1
-            }
-        }
-
-        @keyframes badgeAttention {
-            0% {
-                opacity: 0;
-                transform: scale(0.8)
-            }
-
-            50% {
-                transform: scale(1.05)
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1)
-            }
-        }
-
-        @keyframes bounceHint {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(3px);
-            }
-        }
-    </style>
+    <!-- CSS terpisah -->
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -1938,7 +238,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="mie-kecil" data-price="20000">
+            <div class="menu-card" data-category="mie-kecil" data-price="27000">
                 <div class="card-img-wrapper"><img src="foto/mieayambiasa.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/miebkecil/300/200'"></div>
                 <div class="card-body">
@@ -1947,7 +247,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="mie-kecil" data-price="25000">
+            <div class="menu-card" data-category="mie-kecil" data-price="32000">
                 <div class="card-img-wrapper"><img src="foto/miekecilbaso.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/miebskecil/300/200'"></div>
                 <div class="card-body">
@@ -1956,7 +256,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="mie-kecil" data-price="28000">
+            <div class="menu-card" data-category="mie-kecil" data-price="32000">
                 <div class="card-img-wrapper"><img src="foto/miekecilpngsitrebus.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/miepskecil/300/200'"></div>
                 <div class="card-body">
@@ -1965,7 +265,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="mie-kecil" data-price="35000">
+            <div class="menu-card" data-category="mie-kecil" data-price="37000">
                 <div class="card-img-wrapper"><img src="zoom/mieayamkomplit.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/miekkecil/300/200'"></div>
                 <div class="card-body">
@@ -1982,7 +282,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="mie-lebar" data-price="22000">
+            <div class="menu-card" data-category="mie-lebar" data-price="27000">
                 <div class="card-img-wrapper"><img src="zoom/mielebarbiasa.jpg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/mieblebar/300/200'"></div>
                 <div class="card-body">
@@ -1991,7 +291,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="mie-lebar" data-price="27000">
+            <div class="menu-card" data-category="mie-lebar" data-price="32000">
                 <div class="card-img-wrapper"><img src="foto/mielebarbaso.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/miebslebar/300/200'"></div>
                 <div class="card-body">
@@ -2000,7 +300,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="mie-lebar" data-price="30000">
+            <div class="menu-card" data-category="mie-lebar" data-price="32000">
                 <div class="card-img-wrapper"><img src="foto/mielebarpgstrebus.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/miepslebar/300/200'"></div>
                 <div class="card-body">
@@ -2026,7 +326,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="mie-yamin" data-price="20000">
+            <div class="menu-card" data-category="mie-yamin" data-price="27000">
                 <div class="card-img-wrapper"><img src="zoom/mieyaminbiasa.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/yaminbiasa/300/200'"></div>
                 <div class="card-body">
@@ -2035,7 +335,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="mie-yamin" data-price="25000">
+            <div class="menu-card" data-category="mie-yamin" data-price="32000">
                 <div class="card-img-wrapper"><img src="zoom/mieyaminbaso.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/yaminbaso/300/200'"></div>
                 <div class="card-body">
@@ -2044,7 +344,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="mie-yamin" data-price="28000">
+            <div class="menu-card" data-category="mie-yamin" data-price="32000">
                 <div class="card-img-wrapper"><img src="zoom/mieyaminpngstrebus.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/yaminpangsit/300/200'"></div>
                 <div class="card-body">
@@ -2053,7 +353,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="mie-yamin" data-price="35000">
+            <div class="menu-card" data-category="mie-yamin" data-price="37000">
                 <div class="card-img-wrapper"><img src="foto/mieyaminkomplit.PNG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/yaminkomplit/300/200'"></div>
                 <div class="card-body">
@@ -2070,7 +370,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="kwetiau" data-price="22000">
+            <div class="menu-card" data-category="kwetiau" data-price="27000">
                 <div class="card-img-wrapper"><img src="zoom/kwetiaubiasa.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/kwbiasa/300/200'"></div>
                 <div class="card-body">
@@ -2079,7 +379,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="kwetiau" data-price="27000">
+            <div class="menu-card" data-category="kwetiau" data-price="32000">
                 <div class="card-img-wrapper"><img src="foto/kwetiaubaso.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/kwbaso/300/200'"></div>
                 <div class="card-body">
@@ -2088,7 +388,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="kwetiau" data-price="30000">
+            <div class="menu-card" data-category="kwetiau" data-price="32000">
                 <div class="card-img-wrapper"><img src="foto/kwetiaupngsitrebus.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/kwpangsit/300/200'"></div>
                 <div class="card-body">
@@ -2114,7 +414,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="bihun" data-price="22000">
+            <div class="menu-card" data-category="bihun" data-price="27000">
                 <div class="card-img-wrapper"><img src="zoom/bihunbiasa.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/bhbiasa/300/200'"></div>
                 <div class="card-body">
@@ -2123,7 +423,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="bihun" data-price="27000">
+            <div class="menu-card" data-category="bihun" data-price="32000">
                 <div class="card-img-wrapper"><img src="foto/bihunbaso.JPG" class="card-img-top" width="250"
                         height="200" onerror="this.src='https://picsum.photos/seed/bhbaso/300/200'"></div>
                 <div class="card-body">
@@ -2132,7 +432,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="bihun" data-price="30000">
+            <div class="menu-card" data-category="bihun" data-price="32000">
                 <div class="card-img-wrapper"><img src="foto/bihunpngstrebus.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/bhpangsit/300/200'"></div>
                 <div class="card-body">
@@ -2158,7 +458,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="baso" data-price="20000">
+            <div class="menu-card" data-category="baso" data-price="27000">
                 <div class="card-img-wrapper"><img src="zoom/pngsitrebus.jpg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/psrebus/300/200'"></div>
                 <div class="card-body">
@@ -2167,7 +467,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="baso" data-price="20000">
+            <div class="menu-card" data-category="baso" data-price="27000">
                 <div class="card-img-wrapper"><img src="foto/baso5ril.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/bsapi/300/200'"></div>
                 <div class="card-body">
@@ -2176,7 +476,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="baso" data-price="20000">
+            <div class="menu-card" data-category="baso" data-price="27000">
                 <div class="card-img-wrapper"><img src="foto/basoayamsawi2.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/basawi/300/200'"></div>
                 <div class="card-body">
@@ -2185,7 +485,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="baso" data-price="25000">
+            <div class="menu-card" data-category="baso" data-price="27000">
                 <div class="card-img-wrapper"><img src="foto/basomix2.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/bscampur/300/200'"></div>
                 <div class="card-body">
@@ -2194,7 +494,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="baso" data-price="25000">
+            <div class="menu-card" data-category="baso" data-price="27000">
                 <div class="card-img-wrapper"><img src="foto/basoayamsawi2.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/bspangsit/300/200'"></div>
                 <div class="card-body">
@@ -2211,7 +511,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="nasi-uduk" data-price="25000" data-weekend="true"
+            <div class="menu-card" data-category="nasi-uduk" data-price="37000" data-weekend="true"
                 data-has-variants="true" data-options="Dada,Paha" data-variant-name="Bagian Ayam">
                 <div class="card-img-wrapper"><img src="foto/nasdukpaha.PNG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/nuayam/300/200'"></div>
@@ -2221,7 +521,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="nasi-uduk" data-price="18000" data-weekend="true"
+            <div class="menu-card" data-category="nasi-uduk" data-price="25000" data-weekend="true"
                 data-has-variants="true" data-options="Dada,Paha" data-variant-name="Bagian Ayam">
                 <div class="card-img-wrapper"><img src="foto/ayamgoreng2.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/agoreng/300/200'"></div>
@@ -2240,7 +540,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="nasi-uduk" data-price="20000" data-weekend="true">
+            <div class="menu-card" data-category="nasi-uduk" data-price="25000" data-weekend="true">
                 <div class="card-img-wrapper"><img src="foto/nasdukdadar3.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/nudadar/300/200'"></div>
                 <div class="card-body">
@@ -2249,7 +549,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="nasi-uduk" data-price="22000" data-weekend="true">
+            <div class="menu-card" data-category="nasi-uduk" data-price="25000" data-weekend="true">
                 <div class="card-img-wrapper"><img src="foto/nasdukceplok.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/nuceplok/300/200'"></div>
                 <div class="card-body">
@@ -2266,7 +566,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="sate-manis" data-price="15000">
+            <div class="menu-card" data-category="sate-manis" data-price="25000">
                 <div class="card-img-wrapper"><img src="zoom/sate3tusuk.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/sate3/300/200'"></div>
                 <div class="card-body">
@@ -2275,7 +575,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="sate-manis" data-price="25000">
+            <div class="menu-card" data-category="sate-manis" data-price="35000">
                 <div class="card-img-wrapper"><img src="zoom/sate5tusuk.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/sate5/300/200'"></div>
                 <div class="card-body">
@@ -2284,7 +584,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="sate-manis" data-price="45000">
+            <div class="menu-card" data-category="sate-manis" data-price="67000">
                 <div class="card-img-wrapper"><img src="zoom/sate10tusuk.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/sate10/300/200'"></div>
                 <div class="card-body">
@@ -2301,7 +601,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="santan" data-price="15000">
+            <div class="menu-card" data-category="santan" data-price="20000">
                 <div class="card-img-wrapper"><img src="foto/buburkcngijo2.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/bki/300/200'"></div>
                 <div class="card-body">
@@ -2310,7 +610,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="santan" data-price="15000">
+            <div class="menu-card" data-category="santan" data-price="20000">
                 <div class="card-img-wrapper"><img src="foto/ketanitem.jpg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/bkh/300/200'"></div>
                 <div class="card-body">
@@ -2319,7 +619,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="santan" data-price="18000">
+            <div class="menu-card" data-category="santan" data-price="20000">
                 <div class="card-img-wrapper"><img src="foto/mix.jpg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/bmix/300/200'"></div>
                 <div class="card-body">
@@ -2328,7 +628,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="santan" data-price="12000">
+            <div class="menu-card" data-category="santan" data-price="20000">
                 <div class="card-img-wrapper"><img src="foto/ijocrispy.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/kicrispy/300/200'"></div>
                 <div class="card-body">
@@ -2337,7 +637,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="santan" data-price="12000">
+            <div class="menu-card" data-category="santan" data-price="20000">
                 <div class="card-img-wrapper"><img src="foto/itemcrispy.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/khcrispy/300/200'"></div>
                 <div class="card-body">
@@ -2346,7 +646,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="santan" data-price="15000">
+            <div class="menu-card" data-category="santan" data-price="20000">
                 <div class="card-img-wrapper"><img src="foto/mixcrispy.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/mixcrispy/300/200'"></div>
                 <div class="card-body">
@@ -2363,7 +663,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="dimsum" data-price="15000">
+            <div class="menu-card" data-category="dimsum" data-price="25000">
                 <div class="card-img-wrapper"><img src="foto/dimsum2.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/ds3/300/200'"></div>
                 <div class="card-body">
@@ -2372,7 +672,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="dimsum" data-price="22000">
+            <div class="menu-card" data-category="dimsum" data-price="35000">
                 <div class="card-img-wrapper"><img src="foto/dimsum5pcs2.png" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/ds5/300/200'"></div>
                 <div class="card-body">
@@ -2381,7 +681,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="dimsum" data-price="40000">
+            <div class="menu-card" data-category="dimsum" data-price="67000">
                 <div class="card-img-wrapper"><img src="foto/dimsum10pcs2.png" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/ds10/300/200'"></div>
                 <div class="card-body">
@@ -2390,7 +690,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="dimsum" data-price="50000">
+            <div class="menu-card" data-category="dimsum" data-price="95000">
                 <div class="card-img-wrapper"><img src="zoom/dimsumfrozen15pcs.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/dsf15/300/200'"></div>
                 <div class="card-body">
@@ -2416,7 +716,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="gorengan" data-price="15000">
+            <div class="menu-card" data-category="gorengan" data-price="27000">
                 <div class="card-img-wrapper"><img src="foto/pangsit5pcs.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/pgoreng/300/200'"></div>
                 <div class="card-body">
@@ -2425,7 +725,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="gorengan" data-price="5000">
+            <div class="menu-card" data-category="gorengan" data-price="10000">
                 <div class="card-img-wrapper"><img src="foto/pangsit3pcs.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/kpangsit/300/200'"></div>
                 <div class="card-body">
@@ -2434,7 +734,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="gorengan" data-price="8000">
+            <div class="menu-card" data-category="gorengan" data-price="15000">
                 <div class="card-img-wrapper"><img src="foto/kuliatpnagitbsh10.jpg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/kpbasah/300/200'"></div>
                 <div class="card-body">
@@ -2451,7 +751,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="jajanan" data-price="5000">
+            <div class="menu-card" data-category="jajanan" data-price="6000">
                 <div class="card-img-wrapper"><img src="foto/ati.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/sati/300/200'"></div>
                 <div class="card-body">
@@ -2460,7 +760,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="5000">
+            <div class="menu-card" data-category="jajanan" data-price="6000">
                 <div class="card-img-wrapper"><img src="foto/ampla.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/satamp/300/200'"></div>
                 <div class="card-body">
@@ -2469,7 +769,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="5000">
+            <div class="menu-card" data-category="jajanan" data-price="6000">
                 <div class="card-img-wrapper"><img src="foto/usus.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/satusus/300/200'"></div>
                 <div class="card-body">
@@ -2478,7 +778,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="8000">
+            <div class="menu-card" data-category="jajanan" data-price="6000">
                 <div class="card-img-wrapper"><img src="foto/puyuh.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/satpuyuh/300/200'"></div>
                 <div class="card-body">
@@ -2487,7 +787,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="5000">
+            <div class="menu-card" data-category="jajanan" data-price="6000">
                 <div class="card-img-wrapper"><img src="foto/jantung.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/satjantung/300/200'"></div>
                 <div class="card-body">
@@ -2496,7 +796,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="jajanan" data-price="5000">
+            <div class="menu-card" data-category="jajanan" data-price="6000">
                 <div class="card-img-wrapper"><img src="foto/jendil.jpeg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/satjendil/300/200'"></div>
                 <div class="card-body">
@@ -2513,7 +813,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="kopi" data-price="8000">
+            <div class="menu-card" data-category="kopi" data-price="15000">
                 <div class="card-img-wrapper"><img src="zoom/kopiO.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/kopio/300/200'"></div>
                 <div class="card-body">
@@ -2522,7 +822,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="kopi" data-price="10000">
+            <div class="menu-card" data-category="kopi" data-price="17000">
                 <div class="card-img-wrapper"><img src="zoom/kopiOGula.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/kopiog/300/200'"></div>
                 <div class="card-body">
@@ -2531,7 +831,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="kopi" data-price="12000">
+            <div class="menu-card" data-category="kopi" data-price="17000">
                 <div class="card-img-wrapper"><img src="zoom/kopiOSusu.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/kopios/300/200'"></div>
                 <div class="card-body">
@@ -2540,7 +840,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="kopi" data-price="15000">
+            <div class="menu-card" data-category="kopi" data-price="25000">
                 <div class="card-img-wrapper"><img src="zoom/kopiO2telur.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/kopi2e/300/200'"></div>
                 <div class="card-body">
@@ -2549,7 +849,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="kopi" data-price="20000">
+            <div class="menu-card" data-category="kopi" data-price="35000">
                 <div class="card-img-wrapper"><img src="zoom/kopiO4telur.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/kopi4e/300/200'"></div>
                 <div class="card-body">
@@ -2566,7 +866,7 @@
             <div class="section-line"></div>
         </div>
         <div class="menu-grid">
-            <div class="menu-card" data-category="minuman" data-price="5000">
+            <div class="menu-card" data-category="minuman" data-price="8000">
                 <div class="card-img-wrapper"><img src="zoom/telurrebus.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/trebus/300/200'"></div>
                 <div class="card-body">
@@ -2575,7 +875,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="12000">
+            <div class="menu-card" data-category="minuman" data-price="17000">
                 <div class="card-img-wrapper"><img src="foto/kacangijo.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/ski/300/200'"></div>
                 <div class="card-body">
@@ -2584,7 +884,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="12000">
+            <div class="menu-card" data-category="minuman" data-price="17000">
                 <div class="card-img-wrapper"><img src="foto/kedelai.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/skk/300/200'"></div>
                 <div class="card-body">
@@ -2593,7 +893,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="15000">
+            <div class="menu-card" data-category="minuman" data-price="17000">
                 <div class="card-img-wrapper"><img src="foto/thaitea.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/thaitea/300/200'"></div>
                 <div class="card-body">
@@ -2602,7 +902,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="15000">
+            <div class="menu-card" data-category="minuman" data-price="17000">
                 <div class="card-img-wrapper"><img src="zoom/koffiesusu.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/ksusu/300/200'"></div>
                 <div class="card-body">
@@ -2611,7 +911,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="18000">
+            <div class="menu-card" data-category="minuman" data-price="17000">
                 <div class="card-img-wrapper"><img src="zoom/koffielatte.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/klatte/300/200'"></div>
                 <div class="card-body">
@@ -2620,7 +920,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="12000">
+            <div class="menu-card" data-category="minuman" data-price="17000">
                 <div class="card-img-wrapper"><img src="foto/jerukmurni.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/jmurni/300/200'"></div>
                 <div class="card-body">
@@ -2629,7 +929,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="5000">
+            <div class="menu-card" data-category="minuman" data-price="8000">
                 <div class="card-img-wrapper"><img src="foto/estehmapa.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/ett/300/200'"></div>
                 <div class="card-body">
@@ -2638,7 +938,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="7000">
+            <div class="menu-card" data-category="minuman" data-price="8000">
                 <div class="card-img-wrapper"><img src="foto/estehmapa.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/etm/300/200'"></div>
                 <div class="card-body">
@@ -2647,7 +947,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="5000">
+            <div class="menu-card" data-category="minuman" data-price="6000">
                 <div class="card-img-wrapper"><img src="foto/tehtawarpa.jpg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/ttp/300/200'"></div>
                 <div class="card-body">
@@ -2656,7 +956,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="7000">
+            <div class="menu-card" data-category="minuman" data-price="8000">
                 <div class="card-img-wrapper"><img src="foto/tehtawarpa.jpg" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/tmp/300/200'"></div>
                 <div class="card-body">
@@ -2665,7 +965,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="5000">
+            <div class="menu-card" data-category="minuman" data-price="6000">
                 <div class="card-img-wrapper"><img src="zoom/aquabotol.webp" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/aqua/300/200'"></div>
                 <div class="card-body">
@@ -2674,7 +974,7 @@
                                 class="fa-solid fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="menu-card" data-category="minuman" data-price="5000">
+            <div class="menu-card" data-category="minuman" data-price="6000">
                 <div class="card-img-wrapper"><img src="foto/s-tee.JPG" class="card-img-top"
                         onerror="this.src='https://picsum.photos/seed/stee/300/200'"></div>
                 <div class="card-body">
@@ -2800,795 +1100,8 @@
     <!-- TOAST -->
     <div id="toast"></div>
 
-    <script>
-        /* ================================================================
-           KONFIGURASI
-        ================================================================ */
-        var LOGO_URL = 'https://z-cdn-media.chatglm.cn/files/50ca2c37-9a98-4c90-923b-ae99959846b9.png?auth_key=1876671393-5447ef07c70045b48cce9108e1c0bf25-0-4f77a9446e7fe2d91efdbbfa00385980';
-        var WA_NUMBER = '62817776175';
-        var TAKEAWAY_FEE = 3000;
-
-        /* Kategori makanan berat — kena biaya takeaway Rp 3.000/pcs */
-        var MAKANAN_BERAT = ['paket-bubur', 'bubur', 'mie-kecil', 'mie-lebar', 'mie-yamin', 'kwetiau', 'bihun', 'baso', 'nasi-uduk'];
-
-        var CAT_SWITCH_MAP = {
-            bubur: ['bubur'],
-            mieKecil: ['mie-kecil'],
-            mieLebar: ['mie-lebar'],
-            mieYamin: ['mie-yamin'],
-            kwetiau: ['kwetiau'],
-            bihun: ['bihun'],
-            baso: ['baso'],
-            nasiUduk: ['nasi-uduk']
-        };
-
-        var firebaseConfig = {
-            apiKey: "AIzaSyCj__JH5w__RdSEqtR59Cr7ctEOyl6lzUg",
-            authDomain: "buburgrace.firebaseapp.com",
-            databaseURL: "https://buburgrace-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "buburgrace"
-        };
-
-        /* ================================================================
-           STATE
-        ================================================================ */
-        var cart = [];
-        var db = null;
-        var storeIsOpen = true;
-        var currentStoreMode = 'auto';
-        var stockData = {};
-        var weekendStockData = {};
-        var categorySwitches = {
-            bubur: true,
-            mieKecil: true,
-            mieLebar: true,
-            mieYamin: true,
-            kwetiau: true,
-            bihun: true,
-            baso: true,
-            nasiUduk: true
-        };
-        var scheduleData = null;
-        var pendingVariantCard = null;
-        var selectedVariant = '';
-        var activeFilter = 'all';
-
-        /* ================================================================
-           UTILITY
-        ================================================================ */
-        function fmtRp(n) {
-            return 'Rp ' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        }
-
-        function showToast(msg, isError) {
-            var t = document.getElementById('toast');
-            t.textContent = msg;
-            t.className = (isError ? 'error ' : '') + 'show';
-            clearTimeout(t._timer);
-            t._timer = setTimeout(function () { t.className = ''; }, 2500);
-        }
-
-        function parseTime(str) {
-            if (!str || str.indexOf(':') === -1) return null;
-            var p = str.split(':');
-            return parseInt(p[0]) * 60 + parseInt(p[1]);
-        }
-
-        function getTodayDay() { return new Date().getDay(); }
-        function isWeekendNow() { var d = getTodayDay(); return d === 0 || d === 6; }
-
-        function isMakananBerat(category, isTopping) {
-            if (isTopping) return false;
-            return MAKANAN_BERAT.indexOf(category) !== -1;
-        }
-
-        /* ================================================================
-           FILTER KATEGORI
-        ================================================================ */
-        function filterCat(catId) {
-            activeFilter = catId;
-            document.querySelectorAll('.cat-pill').forEach(function (p) {
-                p.classList.toggle('active', p.getAttribute('data-target') === catId);
-            });
-            document.querySelectorAll('.section-header').forEach(function (sh) {
-                if (catId === 'all') { sh.classList.remove('hidden'); return; }
-                sh.classList.toggle('hidden', sh.getAttribute('data-category') !== catId);
-            });
-            document.querySelectorAll('.menu-grid').forEach(function (grid) {
-                var gridCat = grid.previousElementSibling ? grid.previousElementSibling.getAttribute('data-category') : null;
-                if (catId === 'all') { grid.style.display = ''; return; }
-                grid.style.display = (gridCat === catId) ? '' : 'none';
-            });
-        }
-
-        /* ================================================================
-           SEARCH
-        ================================================================ */
-        document.getElementById('searchInput').addEventListener('input', function () {
-            var kw = this.value.toLowerCase().trim();
-           document.getElementById('clearSearchBtn').style.display = kw ? 'flex' : 'none';
-
-            document.querySelectorAll('.menu-grid').forEach(function (grid) {
-                var sectionHeader = grid.previousElementSibling;
-                var hasMatch = false;
-
-                grid.querySelectorAll('.menu-card').forEach(function (card) {
-                    var title = card.querySelector('.card-title');
-                    var name = title ? title.textContent.toLowerCase() : '';
-                    var match = (!kw || name.indexOf(kw) !== -1);
-                    card.style.display = match ? '' : 'none';
-                    if (match) hasMatch = true;
-                });
-
-                if (kw) {
-                    grid.style.display = hasMatch ? '' : 'none';
-                    if (sectionHeader && sectionHeader.classList.contains('section-header')) {
-                        sectionHeader.classList.toggle('hidden', !hasMatch);
-                    }
-                } else {
-                    grid.style.display = '';
-                    if (sectionHeader && sectionHeader.classList.contains('section-header')) {
-                        sectionHeader.classList.remove('hidden');
-                    }
-                }
-            });
-
-            if (!kw && activeFilter !== 'all') filterCat(activeFilter);
-        });
-
-        document.getElementById('clearSearchBtn').addEventListener('click', function () {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('searchInput').focus();
-            this.style.display = 'none';
-            document.querySelectorAll('.menu-card').forEach(function (card) { card.style.display = ''; });
-            document.querySelectorAll('.menu-grid').forEach(function (grid) { grid.style.display = ''; });
-            document.querySelectorAll('.section-header').forEach(function (sh) { sh.classList.remove('hidden'); });
-            if (activeFilter !== 'all') filterCat(activeFilter);
-        });
-
-        /* ================================================================
-           IMAGE ZOOM
-        ================================================================ */
-        document.addEventListener('click', function (e) {
-            var wrapper = e.target.closest('.card-img-wrapper');
-            if (wrapper) {
-                var img = wrapper.querySelector('img');
-                if (img) {
-                    document.getElementById('zoomedImg').src = img.src;
-                    document.getElementById('imageModal').classList.add('active');
-                }
-                return;
-            }
-        });
-
-        document.getElementById('closeImageZoom').addEventListener('click', function () {
-            document.getElementById('imageModal').classList.remove('active');
-        });
-
-        document.getElementById('imageModal').addEventListener('click', function (e) {
-            if (e.target === this) this.classList.remove('active');
-        });
-
-        /* ================================================================
-           VARIANT MODAL
-        ================================================================ */
-        document.addEventListener('click', function (e) {
-            var btn = e.target.closest('.add-btn');
-            if (!btn) return;
-            var card = btn.closest('.menu-card');
-            if (!card) return;
-            if (!storeIsOpen) { showToast('Maaf, toko sedang tutup.', true); return; }
-            if (card.classList.contains('stock-empty') || card.classList.contains('weekend-locked') || card.classList.contains('cat-disabled')) return;
-
-            var hasVariants = card.getAttribute('data-has-variants') === 'true';
-            if (hasVariants) {
-                pendingVariantCard = card;
-                openVariantModal(card);
-            } else {
-                addToCart(card, '');
-            }
-        });
-
-        function openVariantModal(card) {
-            var name = card.querySelector('.card-title').textContent;
-            var variantName = card.getAttribute('data-variant-name') || 'Variant';
-            var options = (card.getAttribute('data-options') || '').split(',');
-
-            document.getElementById('variantTitle').textContent = 'Pilih ' + variantName;
-            var html = '';
-            options.forEach(function (opt, i) {
-                html += '<label class="variant-option-label' + (i === 0 ? ' selected' : '') + '" data-value="' + opt.trim() + '">';
-                html += '<input type="radio" name="variant" value="' + opt.trim() + '"' + (i === 0 ? ' checked' : '') + '>';
-                html += '<div class="radio-circle"></div>';
-                html += '<span>' + opt.trim() + '</span></label>';
-            });
-            document.getElementById('variantOptions').innerHTML = html;
-            selectedVariant = options[0].trim();
-
-            document.querySelectorAll('.variant-option-label').forEach(function (label) {
-                label.addEventListener('click', function () {
-                    document.querySelectorAll('.variant-option-label').forEach(function (l) { l.classList.remove('selected'); });
-                    this.classList.add('selected');
-                    this.querySelector('input').checked = true;
-                    selectedVariant = this.getAttribute('data-value');
-                });
-            });
-
-            document.getElementById('variantModal').classList.add('active');
-        }
-
-        document.getElementById('btnConfirmVariant').addEventListener('click', function () {
-            if (pendingVariantCard) {
-                addToCart(pendingVariantCard, selectedVariant);
-                pendingVariantCard = null;
-                selectedVariant = '';
-            }
-            document.getElementById('variantModal').classList.remove('active');
-        });
-
-        document.getElementById('variantModal').addEventListener('click', function (e) {
-            if (e.target === this) this.classList.remove('active');
-        });
-
-        /* ================================================================
-           CART LOGIC
-        ================================================================ */
-        function addToCart(card, variant) {
-            var name = card.querySelector('.card-title').textContent;
-            var price = parseInt(card.getAttribute('data-price')) || 0;
-            var category = card.getAttribute('data-category') || '';
-            var isTopping = card.getAttribute('data-topping') === 'true';
-
-            var existIdx = -1;
-            for (var i = 0; i < cart.length; i++) {
-                if (cart[i].name === name && cart[i].variant === variant) { existIdx = i; break; }
-            }
-
-            if (existIdx >= 0) {
-                cart[existIdx].qty++;
-            } else {
-                cart.push({
-                    name: name,
-                    price: price,
-                    category: category,
-                    isTopping: isTopping,
-                    qty: 1,
-                    note: '',
-                    status: 'dine',
-                    variant: variant
-                });
-            }
-            updateCartBadge();
-            showToast(name + ' ditambahkan');
-        }
-
-        function updateCartBadge() {
-            var total = 0;
-            cart.forEach(function (c) { total += c.qty; });
-            var badge = document.getElementById('cartBadge');
-            if (total > 0) {
-                badge.style.display = 'flex';
-                badge.textContent = total;
-                badge.classList.add('pulse');
-                setTimeout(function () { badge.classList.remove('pulse'); }, 200);
-            } else {
-                badge.style.display = 'none';
-            }
-        }
-
-        /* ================================================================
-           RENDER CART
-        ================================================================ */
-        function renderCart() {
-            var container = document.getElementById('cartItems');
-            var formFields = document.getElementById('checkoutFormFields');
-            var stickyBar = document.getElementById('stickyCheckoutBar');
-            var headerCount = document.getElementById('cartHeaderCount');
-            var scrollHint = document.getElementById('cartScrollHint');
-
-            if (cart.length === 0) {
-                container.innerHTML = '<div style="text-align:center;padding:30px;color:#ccc;"><i class="fa-solid fa-bag-shopping" style="font-size:2rem;margin-bottom:10px;display:block;"></i>Keranjang kosong</div>';
-                formFields.style.display = 'none';
-                stickyBar.style.display = 'none';
-                if (headerCount) headerCount.style.display = 'none';
-                if (scrollHint) scrollHint.style.display = 'none';
-                updateCartScrollUI();
-                return;
-            }
-
-            formFields.style.display = '';
-            stickyBar.style.display = '';
-            var html = '';
-            var totalQty = 0;
-
-            cart.forEach(function (item, idx) {
-                totalQty += item.qty;
-                var heavy = isMakananBerat(item.category, item.isTopping);
-                var isAway = item.status === 'away';
-                var displayName = item.name + (item.variant ? ' (' + item.variant + ')' : '');
-
-                html += '<div class="cart-item">';
-                html += '<div class="cart-item-row1">';
-                html += '<div class="item-info"><div class="item-title">' + displayName + '</div>';
-                html += '<div class="item-price-row">' + fmtRp(item.price) + '/pcs</div></div>';
-                html += '<div class="status-toggle-area">';
-                html += '<span class="item-status-badge ' + (isAway ? 'badge-away' : 'badge-dine') + '" data-idx="' + idx + '">';
-                html += '<i class="fa-solid ' + (isAway ? 'fa-bag-shopping' : 'fa-utensils') + '"></i> ';
-                html += (isAway ? 'Take Away' : 'Dine In');
-                html += ' <i class="fa-solid fa-repeat swap-icon"></i>';
-                html += '</span>';
-                if (isAway && heavy) {
-                    html += '<span class="takeaway-fee-tag">+' + fmtRp(TAKEAWAY_FEE) + '</span>';
-                }
-                html += '<span class="tap-hint">ketuk untuk ubah</span>';
-                html += '</div>';
-                html += '</div>';
-                html += '<div class="cart-item-row2">';
-                html += '<div class="item-controls">';
-                html += '<button class="qty-btn" data-idx="' + idx + '" data-delta="-1"><i class="fa-solid fa-minus"></i></button>';
-                html += '<span class="qty-num">' + item.qty + '</span>';
-                html += '<button class="qty-btn" data-idx="' + idx + '" data-delta="1"><i class="fa-solid fa-plus"></i></button>';
-                html += '</div>';
-                html += '<input type="text" class="item-note-input" data-idx="' + idx + '" placeholder="Catatan..." value="' + (item.note || '').replace(/"/g, '&quot;') + '">';
-                html += '</div>';
-                html += '</div>';
-            });
-
-            container.innerHTML = html;
-
-            if (headerCount) {
-                headerCount.textContent = totalQty + ' item';
-                headerCount.style.display = 'inline-block';
-            }
-
-            container.querySelectorAll('.item-status-badge').forEach(function (b) {
-                b.addEventListener('click', function () {
-                    var idx = parseInt(this.getAttribute('data-idx'));
-                    cart[idx].status = cart[idx].status === 'dine' ? 'away' : 'dine';
-                    renderCart();
-                });
-            });
-            container.querySelectorAll('.qty-btn').forEach(function (b) {
-                b.addEventListener('click', function () {
-                    var idx = parseInt(this.getAttribute('data-idx'));
-                    var delta = parseInt(this.getAttribute('data-delta'));
-                    cart[idx].qty += delta;
-                    if (cart[idx].qty <= 0) cart.splice(idx, 1);
-                    renderCart();
-                    updateCartBadge();
-                });
-            });
-            container.querySelectorAll('.item-note-input').forEach(function (inp) {
-                inp.addEventListener('input', function () {
-                    cart[parseInt(this.getAttribute('data-idx'))].note = this.value;
-                });
-                inp.addEventListener('focus', function () { scrollFieldIntoView(this); });
-            });
-
-            updateTotals();
-            updateCheckoutForm();
-            updateCartScrollUI();
-        }
-
-        /* ================================================================
-           UX SCROLL: fade atas/bawah + hint "geser untuk lihat semua"
-        ================================================================ */
-        function updateCartScrollUI() {
-            var itemsEl = document.getElementById('cartScrollArea');
-            var fadeTop = document.getElementById('fadeTop');
-            var fadeBottom = document.getElementById('fadeBottom');
-            var hint = document.getElementById('cartScrollHint');
-            if (!itemsEl) return;
-
-            function refresh() {
-                var scrollable = itemsEl.scrollHeight > itemsEl.clientHeight + 2;
-                if (hint) hint.style.display = (scrollable && cart.length > 0) ? 'flex' : 'none';
-                if (!scrollable) {
-                    if (fadeTop) fadeTop.classList.remove('visible');
-                    if (fadeBottom) fadeBottom.classList.remove('visible');
-                    return;
-                }
-                var atTop = itemsEl.scrollTop <= 2;
-                var atBottom = (itemsEl.scrollTop + itemsEl.clientHeight) >= (itemsEl.scrollHeight - 2);
-                if (fadeTop) fadeTop.classList.toggle('visible', !atTop);
-                if (fadeBottom) fadeBottom.classList.toggle('visible', !atBottom);
-            }
-
-            refresh();
-            itemsEl.onscroll = refresh;
-            window._cartScrollRefresh = refresh;
-        }
-
-        window.addEventListener('resize', function () {
-            if (window._cartScrollRefresh) window._cartScrollRefresh();
-        });
-
-        /* ================================================================
-           KEYBOARD HP
-        ================================================================ */
-        function scrollFieldIntoView(field) {
-            setTimeout(function () {
-                if (field && typeof field.scrollIntoView === 'function') {
-                    field.scrollIntoView({ block: 'center', behavior: 'smooth' });
-                }
-                if (window._cartScrollRefresh) window._cartScrollRefresh();
-            }, 300);
-        }
-
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', function () {
-                var cartModalEl = document.getElementById('cartModal');
-                var isCartOpen = cartModalEl && cartModalEl.classList.contains('active');
-                var keyboardLikelyOpen = window.visualViewport.height < window.innerHeight * 0.75;
-                document.body.classList.toggle('keyboard-open', isCartOpen && keyboardLikelyOpen);
-                if (window._cartScrollRefresh) window._cartScrollRefresh();
-            });
-        }
-
-        document.addEventListener('focusin', function (e) {
-            if (e.target && e.target.classList && e.target.classList.contains('input-field')) {
-                scrollFieldIntoView(e.target);
-            }
-        });
-        document.addEventListener('focusout', function (e) {
-            if (e.target && e.target.classList && e.target.classList.contains('input-field')) {
-                setTimeout(function () { document.body.classList.remove('keyboard-open'); }, 100);
-            }
-        });
-
-        /* ================================================================
-           UPDATE FORM CHECKOUT (DINAMIS)
-        ================================================================ */
-        function updateCheckoutForm() {
-            if (cart.length === 0) return;
-
-            var hasDine = false;
-            var hasAway = false;
-            var dineCount = 0;
-            var awayCount = 0;
-
-            cart.forEach(function (item) {
-                if (item.status === 'dine') { hasDine = true; dineCount += item.qty; }
-                else { hasAway = true; awayCount += item.qty; }
-            });
-
-            var mejaSection = document.getElementById('mejaSection');
-            var namaSection = document.getElementById('namaSection');
-            var modeText = document.getElementById('checkoutModeText');
-            var modeIcons = document.getElementById('checkoutModeIcons');
-
-            var iconsHtml = '';
-            if (hasDine) iconsHtml += '<span class="mode-icon-chip chip-dine"><i class="fa-solid fa-utensils"></i> Dine In ' + dineCount + '</span>';
-            if (hasAway) iconsHtml += '<span class="mode-icon-chip chip-away"><i class="fa-solid fa-bag-shopping"></i> Bawa Pulang ' + awayCount + '</span>';
-            modeIcons.innerHTML = iconsHtml;
-
-            if (hasDine && hasAway) {
-                mejaSection.style.display = '';
-                namaSection.style.display = '';
-                modeText.textContent = 'Anda memiliki pesanan Dine In & Bawa Pulang';
-            } else if (hasDine) {
-                mejaSection.style.display = '';
-                namaSection.style.display = 'none';
-                modeText.textContent = 'Semua pesanan Dine In — isi nomor meja';
-            } else {
-                mejaSection.style.display = 'none';
-                namaSection.style.display = '';
-                modeText.textContent = 'Semua pesanan Bawa Pulang — isi nama';
-            }
-        }
-
-        /* ================================================================
-           HITUNG TOTAL
-        ================================================================ */
-        function updateTotals() {
-            var subtotal = 0;
-            var takeawayCount = 0;
-
-            cart.forEach(function (item) {
-                subtotal += item.price * item.qty;
-                if (item.status === 'away' && isMakananBerat(item.category, item.isTopping)) {
-                    takeawayCount += item.qty;
-                }
-            });
-
-            var takeawayFee = takeawayCount * TAKEAWAY_FEE;
-            var total = subtotal + takeawayFee;
-
-            document.getElementById('subtotalDisplay').textContent = fmtRp(subtotal);
-            document.getElementById('totalDisplay').textContent = fmtRp(total);
-
-            var feeRow = document.getElementById('takeawayFeeRow');
-            var totalSubLabel = document.getElementById('totalSubLabel');
-            if (takeawayFee > 0) {
-                feeRow.style.display = 'flex';
-                document.getElementById('takeawayCount').textContent = takeawayCount;
-                document.getElementById('takeawayFeeDisplay').textContent = fmtRp(takeawayFee);
-                if (totalSubLabel) totalSubLabel.textContent = 'termasuk biaya takeaway';
-            } else {
-                feeRow.style.display = 'none';
-                if (totalSubLabel) totalSubLabel.textContent = 'termasuk semua biaya';
-            }
-        }
-
-        /* ================================================================
-           CART MODAL OPEN / CLOSE
-        ================================================================ */
-        document.getElementById('fabCart').addEventListener('click', function () {
-            renderCart();
-            document.getElementById('cartModal').classList.add('active');
-            setTimeout(updateCartScrollUI, 50);
-        });
-
-        document.getElementById('btnCloseCart').addEventListener('click', function () {
-            document.getElementById('cartModal').classList.remove('active');
-            document.body.classList.remove('keyboard-open');
-        });
-
-        document.getElementById('cartModal').addEventListener('click', function (e) {
-            if (e.target === this) {
-                this.classList.remove('active');
-                document.body.classList.remove('keyboard-open');
-            }
-        });
-
-        document.getElementById('btnClearCart').addEventListener('click', function () {
-            if (cart.length === 0) return;
-            if (confirm('Kosongkan seluruh keranjang?')) {
-                cart = [];
-                renderCart();
-                updateCartBadge();
-            }
-        });
-
-        /* ================================================================
-           CHECKOUT VIA WHATSAPP
-           (Format pesan disesuaikan: hanya NO MEJA/NAMA, lalu daftar
-           DINE IN / TAKE AWAY per item beserta catatannya, tanpa header
-           "PESANAN BARU", tanpa baris Waktu, dan tanpa garis pemisah "---")
-        ================================================================ */
-        document.getElementById('btnCheckout').addEventListener('click', function () {
-            var hasDine = false;
-            var hasAway = false;
-            cart.forEach(function (item) {
-                if (item.status === 'dine') hasDine = true;
-                else hasAway = true;
-            });
-
-            var mejaVal = '';
-            var namaVal = '';
-
-            if (hasDine) {
-                mejaVal = document.getElementById('inputMeja').value.trim();
-                if (!mejaVal) {
-                    document.getElementById('inputMeja').classList.add('input-error');
-                    document.getElementById('inputMeja').focus();
-                    setTimeout(function () { document.getElementById('inputMeja').classList.remove('input-error'); }, 600);
-                    showToast('Nomor meja wajib diisi!', true);
-                    return;
-                }
-            }
-
-            if (hasAway) {
-                namaVal = document.getElementById('inputNama').value.trim();
-                if (!namaVal) {
-                    document.getElementById('inputNama').classList.add('input-error');
-                    document.getElementById('inputNama').focus();
-                    setTimeout(function () { document.getElementById('inputNama').classList.remove('input-error'); }, 600);
-                    showToast('Nama pemesan wajib diisi!', true);
-                    return;
-                }
-            }
-
-            var subtotal = 0;
-            var takeawayCount = 0;
-            var lines = [];
-
-            if (hasDine) lines.push('*NO MEJA - ' + mejaVal + '*');
-            if (hasAway) lines.push('*NAMA - ' + namaVal + '*');
-
-            var dineItems = cart.filter(function (item) { return item.status === 'dine'; });
-            var awayItems = cart.filter(function (item) { return item.status === 'away'; });
-
-            function pushItemLines(items) {
-                items.forEach(function (item) {
-                    var sub = item.price * item.qty;
-                    subtotal += sub;
-                    var displayName = item.name + (item.variant ? ' (' + item.variant + ')' : '');
-                    lines.push('- (' + item.qty + 'x) ' + displayName);
-                    if (item.note) lines.push('*' + item.note);
-                    if (item.status === 'away' && isMakananBerat(item.category, item.isTopping)) {
-                        takeawayCount += item.qty;
-                    }
-                });
-            }
-
-            if (dineItems.length > 0) {
-                lines.push('*DINE IN:*');
-                pushItemLines(dineItems);
-            }
-            if (awayItems.length > 0) {
-                lines.push('*TAKE AWAY:*');
-                pushItemLines(awayItems);
-            }
-
-            lines.push('Subtotal: ' + fmtRp(subtotal));
-            if (takeawayCount > 0) {
-                var fee = takeawayCount * TAKEAWAY_FEE;
-                lines.push('Biaya Takeaway (' + takeawayCount + ' item makanan berat): ' + fmtRp(fee));
-                lines.push('*TOTAL: ' + fmtRp(subtotal + fee) + '*');
-            } else {
-                lines.push('*TOTAL: ' + fmtRp(subtotal) + '*');
-            }
-
-            var msg = encodeURIComponent(lines.join('\n'));
-            window.open('https://wa.me/' + WA_NUMBER + '?text=' + msg, '_blank');
-
-            saveOrderToFirebase(mejaVal, namaVal, subtotal, takeawayCount * TAKEAWAY_FEE);
-        });
-
-        document.getElementById('inputMeja').addEventListener('input', function () { this.classList.remove('input-error'); });
-        document.getElementById('inputNama').addEventListener('input', function () { this.classList.remove('input-error'); });
-
-        /* ================================================================
-           SIMPAN ORDER KE FIREBASE
-        ================================================================ */
-        function saveOrderToFirebase(meja, nama, subtotal, takeawayFee) {
-            if (!db) return;
-            var orderRef = db.ref('bubur_grace/orders').push();
-            var items = cart.map(function (c) {
-                return { name: c.name, variant: c.variant || '', qty: c.qty, price: c.price, note: c.note, status: c.status };
-            });
-            var orderData = { items: items, subtotal: subtotal, takeawayFee: takeawayFee, total: subtotal + takeawayFee, timestamp: Date.now() };
-            if (meja) orderData.meja = meja;
-            if (nama) orderData.nama = nama;
-            orderRef.set(orderData);
-            var today = new Date().toISOString().slice(0, 10);
-            var statsRef = db.ref('bubur_grace/daily_stats/' + today);
-            statsRef.transaction(function (current) {
-                if (!current) return { total: subtotal + takeawayFee, count: 1 };
-                return { total: (current.total || 0) + subtotal + takeawayFee, count: (current.count || 0) + 1 };
-            });
-        }
-
-        /* ================================================================
-           SCROLL TO TOP
-        ================================================================ */
-        var scrollBtn = document.getElementById('scrollTopBtn');
-        window.addEventListener('scroll', function () {
-            scrollBtn.style.display = window.scrollY > 400 ? 'block' : 'none';
-        });
-        scrollBtn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
-
-        /* ================================================================
-           FIREBASE INIT
-        ================================================================ */
-        function initFirebase() {
-            if (typeof firebase === 'undefined') return;
-            try {
-                var existing = firebase.apps.find(function (a) { return a.name === '[DEFAULT]'; });
-                if (!existing) firebase.initializeApp(firebaseConfig);
-                db = firebase.database();
-                startListeners();
-            } catch (e) { console.error('Firebase init error:', e); }
-        }
-
-        /* ================================================================
-           FIREBASE LISTENERS
-        ================================================================ */
-        function startListeners() {
-            if (!db) return;
-            db.ref('bubur_grace/status').on('value', function (snap) {
-                determineStoreStatus(snap.val() || 'auto');
-            });
-            db.ref('bubur_grace/config/schedule').on('value', function (snap) {
-                scheduleData = snap.val();
-                updateHoursDisplay();
-                db.ref('bubur_grace/status').once('value', function (s) { determineStoreStatus(s.val() || 'auto'); });
-            });
-            db.ref('bubur_grace/queue').on('value', function (snap) {
-                var q = snap.val();
-                document.getElementById('queueNum').textContent = (q !== null && q !== undefined) ? q : '-';
-            });
-            db.ref('bubur_grace/stock').on('value', function (snap) {
-                stockData = {};
-                var raw = snap.val() || {};
-                for (var k in raw) stockData[k] = !!raw[k];
-                applyStockAndSwitch();
-            });
-            db.ref('bubur_grace/weekendStock').on('value', function (snap) {
-                weekendStockData = {};
-                var raw = snap.val() || {};
-                for (var k in raw) weekendStockData[k] = !!raw[k];
-                applyStockAndSwitch();
-            });
-            db.ref('bubur_grace/categorySwitches').on('value', function (snap) {
-                var raw = snap.val();
-                if (raw && typeof raw === 'object') {
-                    for (var k in categorySwitches) { if (raw[k] !== undefined) categorySwitches[k] = !!raw[k]; }
-                }
-                applyStockAndSwitch();
-            });
-        }
-
-        /* ================================================================
-           TERAPKAN STOK & SWITCH KE KARTU MENU
-        ================================================================ */
-        function applyStockAndSwitch() {
-            var weekend = isWeekendNow() || currentStoreMode === 'open';
-            document.querySelectorAll('.menu-card').forEach(function (card) {
-                var titleEl = card.querySelector('.card-title');
-                if (!titleEl) return;
-                var name = titleEl.textContent;
-                var isWeekendItem = card.getAttribute('data-weekend') === 'true';
-                card.classList.remove('stock-empty', 'weekend-locked', 'cat-disabled');
-                if (isWeekendItem) { if (weekendStockData[name] === false) card.classList.add('stock-empty'); }
-                else { if (stockData[name] === false) card.classList.add('stock-empty'); }
-                if (isWeekendItem && !weekend) card.classList.add('weekend-locked');
-                var cat = card.getAttribute('data-category') || '';
-                for (var swKey in CAT_SWITCH_MAP) {
-                    if (CAT_SWITCH_MAP[swKey].indexOf(cat) !== -1 && categorySwitches[swKey] === false) {
-                        card.classList.add('cat-disabled');
-                        break;
-                    }
-                }
-            });
-            if (activeFilter !== 'all') filterCat(activeFilter);
-        }
-
-        /* ================================================================
-           TENTUKAN STATUS TOKO
-        ================================================================ */
-        function determineStoreStatus(mode) {
-            currentStoreMode = mode;
-            var badge = document.getElementById('storeStatusBadge');
-            var text = document.getElementById('storeStatusText');
-            if (mode === 'open') {
-                storeIsOpen = true;
-                badge.className = 'store-status-badge open'; text.textContent = 'BUKA';
-            } else if (mode === 'close') {
-                storeIsOpen = false;
-                badge.className = 'store-status-badge closed'; text.textContent = 'TUTUP';
-            } else {
-                var now = new Date();
-                var day = now.getDay();
-                var minutes = now.getHours() * 60 + now.getMinutes();
-                var sched = null;
-                if (scheduleData) sched = scheduleData[day] || scheduleData[String(day)];
-                if (sched && sched.isOpen) {
-                    var openT = parseTime(sched.open);
-                    var closeT = parseTime(sched.close);
-                    if (openT !== null && closeT !== null && minutes >= openT && minutes < closeT) {
-                        storeIsOpen = true; badge.className = 'store-status-badge open'; text.textContent = 'BUKA';
-                    } else {
-                        storeIsOpen = false; badge.className = 'store-status-badge closed'; text.textContent = 'TUTUP';
-                    }
-                } else {
-                    storeIsOpen = false; badge.className = 'store-status-badge closed'; text.textContent = 'TUTUP';
-                }
-            }
-            applyStockAndSwitch();
-        }
-
-        /* ================================================================
-           TAMPILKAN JAM OPERASIONAL
-        ================================================================ */
-        function updateHoursDisplay() {
-            if (!scheduleData) return;
-            var day = getTodayDay();
-            var sched = scheduleData[day] || scheduleData[String(day)];
-            var dayName = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][day];
-            var text = '';
-            if (sched && sched.isOpen) { text = dayName + ': ' + sched.open + ' - ' + sched.close; }
-            else { text = dayName + ': Tutup'; }
-            document.getElementById('heroHours').textContent = text;
-            document.getElementById('footerHours').textContent = text;
-        }
-
-        /* ================================================================
-           INIT
-        ================================================================ */
-        document.addEventListener('DOMContentLoaded', function () { initFirebase(); });
-    </script>
+    <!-- JS terpisah -->
+    <script src="script.js"></script>
 </body>
 
 </html>
