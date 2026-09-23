@@ -31,11 +31,11 @@ var AREA_LABELS = {
    4. Ganti nilai lat & lng di bawah ini
 ================================================================ */
 var LEGENDA_WISATA_CENTER = { lat: -6.3904804, lng: 106.9482188 };
-var LEGENDA_WISATA_RADIUS_KM = 2.5; // radius dianggap "dalam kawasan" — sesuaikan dgn luas perumahan
+var LEGENDA_WISATA_RADIUS_KM = 1.2; // radius dianggap "dalam kawasan" — sesuaikan dgn luas perumahan
 
 // Koordinat gerbang utama Kota Wisata (diberikan oleh pemilik toko).
 var KOTA_WISATA_CENTER = { lat: -6.3892107, lng: 106.9463115 };
-var KOTA_WISATA_RADIUS_KM = 3; // sesuaikan dgn luas perumahan Kota Wisata
+var KOTA_WISATA_RADIUS_KM = 1.2; // sesuaikan dgn luas perumahan Kota Wisata
 
 /* Kategori makanan berat — kena biaya takeaway Rp 3.000/pcs */
 var MAKANAN_BERAT = ['paket-bubur', 'bubur', 'mie-kecil', 'mie-lebar', 'mie-yamin', 'kwetiau', 'bihun', 'baso', 'nasi-uduk'];
