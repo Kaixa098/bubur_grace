@@ -5,6 +5,24 @@ var LOGO_URL = 'https://z-cdn-media.chatglm.cn/files/50ca2c37-9a98-4c90-923b-ae9
 var WA_NUMBER = '62817776175';
 var TAKEAWAY_FEE = 3000;
 
+/* Minimum belanja khusus untuk pesanan Delivery, tergantung area */
+var DELIVERY_MIN = {
+    dalam: 50000,  // Dalam Perumahan Legenda Wisata
+    luar: 100000   // Luar Perumahan Legenda Wisata
+};
+
+/* ----------------------------------------------------------------
+   KOORDINAT PUSAT PERUMAHAN LEGENDA WISATA (untuk deteksi GPS)
+   Koordinat gerbang utama Legenda Wisata (diberikan oleh pemilik toko).
+   Kalau titik acuan berubah, cara update:
+   1. Buka Google Maps
+   2. Klik kanan (di HP: tekan lama) pada titik acuan baru
+   3. Salin koordinat yang muncul (format: -6.xxxxx, 106.xxxxx)
+   4. Ganti nilai lat & lng di bawah ini
+================================================================ */
+var LEGENDA_WISATA_CENTER = { lat: -6.3904804, lng: 106.9482188 };
+var LEGENDA_WISATA_RADIUS_KM = 2.5; // radius dianggap "dalam kawasan" — sesuaikan dgn luas perumahan
+
 /* Kategori makanan berat — kena biaya takeaway Rp 3.000/pcs */
 var MAKANAN_BERAT = ['paket-bubur', 'bubur', 'mie-kecil', 'mie-lebar', 'mie-yamin', 'kwetiau', 'bihun', 'baso', 'nasi-uduk'];
 
@@ -49,6 +67,12 @@ var scheduleData = null;
 var pendingVariantCard = null;
 var selectedVariant = '';
 var activeFilter = 'all';
+var pendingModeCard = null;
+var pendingVariantMode = 'dine';
+var lastUsedMode = 'dine';
+var MODE_LABELS = { dine: 'Dine In', away: 'Take Away', delivery: 'Delivery' };
+var MODE_ICONS = { dine: 'fa-utensils', away: 'fa-bag-shopping', delivery: 'fa-motorcycle' };
+var deliveryArea = 'dalam';
 
 /* ================================================================
    UTILITY
@@ -177,14 +201,168 @@ document.addEventListener('click', function (e) {
     if (!storeIsOpen) { showToast('Maaf, toko sedang tutup.', true); return; }
     if (card.classList.contains('stock-empty') || card.classList.contains('weekend-locked') || card.classList.contains('cat-disabled')) return;
 
+    pendingModeCard = card;
+    openModeModal();
+});
+
+/* ================================================================
+   MODE MODAL (Dine In / Take Away / Delivery)
+   Ditampilkan setiap kali user menekan "+" pada menu, supaya user
+   sadar bahwa metode pesanan (dine in/takeaway/delivery) bisa
+   dipilih/diganti per item — bukan cuma satu metode untuk semua.
+================================================================ */
+function openModeModal() {
+    document.querySelectorAll('#modeOptions .mode-option').forEach(function (label) {
+        var isSelected = label.getAttribute('data-value') === lastUsedMode;
+        label.classList.toggle('selected', isSelected);
+    });
+    document.getElementById('modeModal').classList.add('active');
+}
+
+document.querySelectorAll('#modeOptions .mode-option').forEach(function (label) {
+    label.addEventListener('click', function () {
+        document.querySelectorAll('#modeOptions .mode-option').forEach(function (l) { l.classList.remove('selected'); });
+        this.classList.add('selected');
+    });
+});
+
+document.getElementById('modeModal').addEventListener('click', function (e) {
+    if (e.target === this) this.classList.remove('active');
+});
+
+document.getElementById('btnConfirmMode').addEventListener('click', function () {
+    var selectedLabel = document.querySelector('#modeOptions .mode-option.selected');
+    var mode = selectedLabel ? selectedLabel.getAttribute('data-value') : 'dine';
+    lastUsedMode = mode;
+    document.getElementById('modeModal').classList.remove('active');
+
+    var card = pendingModeCard;
+    pendingModeCard = null;
+    if (!card) return;
+
     var hasVariants = card.getAttribute('data-has-variants') === 'true';
     if (hasVariants) {
         pendingVariantCard = card;
+        pendingVariantMode = mode;
         openVariantModal(card);
     } else {
-        addToCart(card, '');
+        addToCart(card, '', mode);
     }
 });
+
+/* ================================================================
+   AREA PENGIRIMAN (Dalam/Luar Legenda Wisata) — menentukan
+   minimum belanja untuk pesanan Delivery
+================================================================ */
+document.querySelectorAll('#deliveryAreaToggle .area-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        document.querySelectorAll('#deliveryAreaToggle .area-btn').forEach(function (b) { b.classList.remove('selected'); });
+        this.classList.add('selected');
+        deliveryArea = this.getAttribute('data-area');
+        updateDeliveryMinInfo();
+    });
+});
+
+/* ================================================================
+   DETEKSI LOKASI OTOMATIS via GPS Browser (Geolocation API)
+   Dijalankan sendiri begitu website dibuka (browser akan memunculkan
+   pop-up izin lokasi ke user). Kalau diizinkan, jarak user ke titik
+   pusat Legenda Wisata dihitung pakai rumus Haversine, lalu toggle
+   area di form Delivery otomatis ter-set sebelum user sempat
+   membuka keranjang. Toggle manual tetap ada sebagai cadangan kalau
+   GPS meleset, izin ditolak, atau perangkat tidak mendukung.
+================================================================ */
+function haversineDistanceKm(lat1, lng1, lat2, lng2) {
+    var R = 6371; // radius bumi (km)
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLng = (lng2 - lng1) * Math.PI / 180;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
+function setDeliveryAreaUI(area) {
+    deliveryArea = area;
+    document.querySelectorAll('#deliveryAreaToggle .area-btn').forEach(function (b) {
+        b.classList.toggle('selected', b.getAttribute('data-area') === area);
+    });
+    updateDeliveryMinInfo();
+}
+
+function autoDetectLocation() {
+    var statusEl = document.getElementById('locationStatus');
+
+    if (!navigator.geolocation) {
+        if (statusEl) {
+            statusEl.className = 'location-status error';
+            statusEl.textContent = 'Perangkat/browser tidak mendukung deteksi lokasi otomatis. Silakan pilih area manual.';
+        }
+        return;
+    }
+
+    // Geolocation API butuh koneksi HTTPS (atau localhost) agar berfungsi
+    if (statusEl) {
+        statusEl.className = 'location-status detecting';
+        statusEl.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> Mendeteksi lokasi kamu...';
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        function (pos) {
+            var userLat = pos.coords.latitude;
+            var userLng = pos.coords.longitude;
+            var distKm = haversineDistanceKm(userLat, userLng, LEGENDA_WISATA_CENTER.lat, LEGENDA_WISATA_CENTER.lng);
+            var isInside = distKm <= LEGENDA_WISATA_RADIUS_KM;
+
+            setDeliveryAreaUI(isInside ? 'dalam' : 'luar');
+
+            if (statusEl) {
+                statusEl.className = 'location-status success';
+                statusEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (isInside
+                    ? 'Lokasi anda di dalam Perumahan Legenda Wisata'
+                    : 'Lokasi anda di luar dari perumahan Legenda Wisata');
+            }
+        },
+        function (err) {
+            if (statusEl) {
+                statusEl.className = 'location-status error';
+                if (err.code === err.PERMISSION_DENIED) {
+                    statusEl.textContent = 'Izin lokasi ditolak — silakan pilih area pengiriman secara manual.';
+                } else {
+                    statusEl.textContent = 'Lokasi tidak terdeteksi — silakan pilih area pengiriman secara manual.';
+                }
+            }
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+}
+
+function getDeliverySubtotal() {
+    var total = 0;
+    cart.forEach(function (item) { if (item.status === 'delivery') total += item.price * item.qty; });
+    return total;
+}
+
+function updateDeliveryMinInfo() {
+    var infoEl = document.getElementById('deliveryMinInfo');
+    if (!infoEl) return;
+    var hasDelivery = cart.some(function (item) { return item.status === 'delivery'; });
+    if (!hasDelivery) { infoEl.innerHTML = ''; infoEl.className = 'delivery-min-info'; return; }
+
+    var deliverySubtotal = getDeliverySubtotal();
+    var min = DELIVERY_MIN[deliveryArea];
+    var areaLabel = deliveryArea === 'dalam' ? 'Dalam Legenda Wisata' : 'Luar Legenda Wisata';
+
+    if (deliverySubtotal < min) {
+        var kurang = min - deliverySubtotal;
+        infoEl.className = 'delivery-min-info warning';
+        infoEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Min. belanja Delivery (' + areaLabel + ') ' + fmtRp(min) + ' — kurang ' + fmtRp(kurang) + ' lagi';
+    } else {
+        infoEl.className = 'delivery-min-info ok';
+        infoEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> Minimum belanja Delivery terpenuhi';
+    }
+}
 
 function openVariantModal(card) {
     var name = card.querySelector('.card-title').textContent;
@@ -216,9 +394,10 @@ function openVariantModal(card) {
 
 document.getElementById('btnConfirmVariant').addEventListener('click', function () {
     if (pendingVariantCard) {
-        addToCart(pendingVariantCard, selectedVariant);
+        addToCart(pendingVariantCard, selectedVariant, pendingVariantMode);
         pendingVariantCard = null;
         selectedVariant = '';
+        pendingVariantMode = 'dine';
     }
     document.getElementById('variantModal').classList.remove('active');
 });
@@ -230,15 +409,19 @@ document.getElementById('variantModal').addEventListener('click', function (e) {
 /* ================================================================
    CART LOGIC
 ================================================================ */
-function addToCart(card, variant) {
+function addToCart(card, variant, mode) {
     var name = card.querySelector('.card-title').textContent;
     var price = parseInt(card.getAttribute('data-price')) || 0;
     var category = card.getAttribute('data-category') || '';
     var isTopping = card.getAttribute('data-topping') === 'true';
+    var status = mode || 'dine';
 
     var existIdx = -1;
     for (var i = 0; i < cart.length; i++) {
-        if (cart[i].name === name && cart[i].variant === variant) { existIdx = i; break; }
+        // Item digabung hanya jika nama, variant, DAN metode pesanannya sama.
+        // Item yang sama tapi metodenya beda (mis. dine in vs delivery) harus
+        // jadi baris terpisah supaya tidak salah hitung saat checkout.
+        if (cart[i].name === name && cart[i].variant === variant && cart[i].status === status) { existIdx = i; break; }
     }
 
     if (existIdx >= 0) {
@@ -251,12 +434,12 @@ function addToCart(card, variant) {
             isTopping: isTopping,
             qty: 1,
             note: '',
-            status: 'dine',
+            status: status,
             variant: variant
         });
     }
     updateCartBadge();
-    showToast(name + ' ditambahkan');
+    showToast(name + ' ditambahkan (' + MODE_LABELS[status] + ')');
 }
 
 function updateCartBadge() {
@@ -301,7 +484,7 @@ function renderCart() {
     cart.forEach(function (item, idx) {
         totalQty += item.qty;
         var heavy = isMakananBerat(item.category, item.isTopping);
-        var isAway = item.status === 'away';
+        var status = item.status || 'dine';
         var displayName = item.name + (item.variant ? ' (' + item.variant + ')' : '');
 
         html += '<div class="cart-item">';
@@ -309,15 +492,15 @@ function renderCart() {
         html += '<div class="item-info"><div class="item-title">' + displayName + '</div>';
         html += '<div class="item-price-row">' + fmtRp(item.price) + '/pcs</div></div>';
         html += '<div class="status-toggle-area">';
-        html += '<span class="item-status-badge ' + (isAway ? 'badge-away' : 'badge-dine') + '" data-idx="' + idx + '">';
-        html += '<i class="fa-solid ' + (isAway ? 'fa-bag-shopping' : 'fa-utensils') + '"></i> ';
-        html += (isAway ? 'Take Away' : 'Dine In');
+        html += '<span class="item-status-badge badge-' + status + '" data-idx="' + idx + '">';
+        html += '<i class="fa-solid ' + MODE_ICONS[status] + '"></i> ';
+        html += MODE_LABELS[status];
         html += ' <i class="fa-solid fa-repeat swap-icon"></i>';
         html += '</span>';
-        if (isAway && heavy) {
+        if (status !== 'dine' && heavy) {
             html += '<span class="takeaway-fee-tag">+' + fmtRp(TAKEAWAY_FEE) + '</span>';
         }
-        html += '<span class="tap-hint">ketuk untuk ubah</span>';
+        html += '<span class="tap-hint">ketuk untuk ganti metode</span>';
         html += '</div>';
         html += '</div>';
         html += '<div class="cart-item-row2">';
@@ -338,10 +521,12 @@ function renderCart() {
         headerCount.style.display = 'inline-block';
     }
 
+    var MODE_CYCLE = ['dine', 'away', 'delivery'];
     container.querySelectorAll('.item-status-badge').forEach(function (b) {
         b.addEventListener('click', function () {
             var idx = parseInt(this.getAttribute('data-idx'));
-            cart[idx].status = cart[idx].status === 'dine' ? 'away' : 'dine';
+            var curIdx = MODE_CYCLE.indexOf(cart[idx].status);
+            cart[idx].status = MODE_CYCLE[(curIdx + 1) % MODE_CYCLE.length];
             renderCart();
         });
     });
@@ -364,6 +549,7 @@ function renderCart() {
 
     updateTotals();
     updateCheckoutForm();
+    updateDeliveryMinInfo();
     updateCartScrollUI();
 }
 
@@ -439,38 +625,47 @@ document.addEventListener('focusout', function (e) {
 function updateCheckoutForm() {
     if (cart.length === 0) return;
 
-    var hasDine = false;
-    var hasAway = false;
-    var dineCount = 0;
-    var awayCount = 0;
+    var hasDine = false, hasAway = false, hasDelivery = false;
+    var dineCount = 0, awayCount = 0, deliveryCount = 0;
 
     cart.forEach(function (item) {
         if (item.status === 'dine') { hasDine = true; dineCount += item.qty; }
-        else { hasAway = true; awayCount += item.qty; }
+        else if (item.status === 'away') { hasAway = true; awayCount += item.qty; }
+        else if (item.status === 'delivery') { hasDelivery = true; deliveryCount += item.qty; }
     });
 
     var mejaSection = document.getElementById('mejaSection');
     var namaSection = document.getElementById('namaSection');
+    var alamatSection = document.getElementById('alamatSection');
     var modeText = document.getElementById('checkoutModeText');
     var modeIcons = document.getElementById('checkoutModeIcons');
 
     var iconsHtml = '';
     if (hasDine) iconsHtml += '<span class="mode-icon-chip chip-dine"><i class="fa-solid fa-utensils"></i> Dine In ' + dineCount + '</span>';
-    if (hasAway) iconsHtml += '<span class="mode-icon-chip chip-away"><i class="fa-solid fa-bag-shopping"></i> Bawa Pulang ' + awayCount + '</span>';
+    if (hasAway) iconsHtml += '<span class="mode-icon-chip chip-away"><i class="fa-solid fa-bag-shopping"></i> Take Away ' + awayCount + '</span>';
+    if (hasDelivery) iconsHtml += '<span class="mode-icon-chip chip-delivery"><i class="fa-solid fa-motorcycle"></i> Delivery ' + deliveryCount + '</span>';
     modeIcons.innerHTML = iconsHtml;
 
-    if (hasDine && hasAway) {
-        mejaSection.style.display = '';
-        namaSection.style.display = '';
-        modeText.textContent = 'Anda memiliki pesanan Dine In & Bawa Pulang';
+    // Nomor meja hanya untuk item dine in
+    mejaSection.style.display = hasDine ? '' : 'none';
+    // Nama pemesan dibutuhkan untuk take away maupun delivery
+    namaSection.style.display = (hasAway || hasDelivery) ? '' : 'none';
+    // Alamat hanya untuk item delivery
+    alamatSection.style.display = hasDelivery ? '' : 'none';
+
+    var activeModes = [];
+    if (hasDine) activeModes.push('Dine In');
+    if (hasAway) activeModes.push('Take Away');
+    if (hasDelivery) activeModes.push('Delivery');
+
+    if (activeModes.length > 1) {
+        modeText.textContent = 'Pesanan kamu campur: ' + activeModes.join(' + ');
     } else if (hasDine) {
-        mejaSection.style.display = '';
-        namaSection.style.display = 'none';
         modeText.textContent = 'Semua pesanan Dine In — isi nomor meja';
+    } else if (hasAway) {
+        modeText.textContent = 'Semua pesanan Take Away — isi nama';
     } else {
-        mejaSection.style.display = 'none';
-        namaSection.style.display = '';
-        modeText.textContent = 'Semua pesanan Bawa Pulang — isi nama';
+        modeText.textContent = 'Semua pesanan Delivery — isi nama & alamat';
     }
 }
 
@@ -483,7 +678,9 @@ function updateTotals() {
 
     cart.forEach(function (item) {
         subtotal += item.price * item.qty;
-        if (item.status === 'away' && isMakananBerat(item.category, item.isTopping)) {
+        // Biaya kemasan berlaku untuk item makanan berat yang dibawa keluar
+        // (take away ATAU delivery), bukan hanya take away.
+        if (item.status !== 'dine' && isMakananBerat(item.category, item.isTopping)) {
             takeawayCount += item.qty;
         }
     });
@@ -532,6 +729,11 @@ document.getElementById('btnClearCart').addEventListener('click', function () {
     if (cart.length === 0) return;
     if (confirm('Kosongkan seluruh keranjang?')) {
         cart = [];
+        // Area pengiriman & status GPS TIDAK direset — biarkan tetap pakai
+        // hasil deteksi lokasi otomatis dari awal buka website, hanya
+        // alamat teks & keranjang yang dikosongkan.
+        var alamatInput = document.getElementById('inputAlamat');
+        if (alamatInput) alamatInput.value = '';
         renderCart();
         updateCartBadge();
     }
@@ -543,35 +745,48 @@ document.getElementById('btnClearCart').addEventListener('click', function () {
    DINE IN / TAKE AWAY per item beserta catatannya, tanpa header
    "PESANAN BARU", tanpa baris Waktu, dan tanpa garis pemisah "---")
 ================================================================ */
+function flagError(id, msg) {
+    var el = document.getElementById(id);
+    el.classList.add('input-error');
+    el.focus();
+    setTimeout(function () { el.classList.remove('input-error'); }, 600);
+    showToast(msg, true);
+}
+
 document.getElementById('btnCheckout').addEventListener('click', function () {
-    var hasDine = false;
-    var hasAway = false;
+    var hasDine = false, hasAway = false, hasDelivery = false;
     cart.forEach(function (item) {
         if (item.status === 'dine') hasDine = true;
-        else hasAway = true;
+        else if (item.status === 'away') hasAway = true;
+        else if (item.status === 'delivery') hasDelivery = true;
     });
 
     var mejaVal = '';
     var namaVal = '';
+    var alamatVal = '';
 
     if (hasDine) {
         mejaVal = document.getElementById('inputMeja').value.trim();
-        if (!mejaVal) {
-            document.getElementById('inputMeja').classList.add('input-error');
-            document.getElementById('inputMeja').focus();
-            setTimeout(function () { document.getElementById('inputMeja').classList.remove('input-error'); }, 600);
-            showToast('Nomor meja wajib diisi!', true);
-            return;
-        }
+        if (!mejaVal) { flagError('inputMeja', 'Nomor meja wajib diisi!'); return; }
     }
 
-    if (hasAway) {
+    if (hasAway || hasDelivery) {
         namaVal = document.getElementById('inputNama').value.trim();
-        if (!namaVal) {
-            document.getElementById('inputNama').classList.add('input-error');
-            document.getElementById('inputNama').focus();
-            setTimeout(function () { document.getElementById('inputNama').classList.remove('input-error'); }, 600);
-            showToast('Nama pemesan wajib diisi!', true);
+        if (!namaVal) { flagError('inputNama', 'Nama pemesan wajib diisi!'); return; }
+    }
+
+    if (hasDelivery) {
+        alamatVal = document.getElementById('inputAlamat').value.trim();
+        if (!alamatVal) { flagError('inputAlamat', 'Alamat pengiriman wajib diisi!'); return; }
+
+        // Cek minimum belanja khusus item Delivery, tergantung area
+        var deliverySubtotalCheck = getDeliverySubtotal();
+        var minRequired = DELIVERY_MIN[deliveryArea];
+        if (deliverySubtotalCheck < minRequired) {
+            var areaLabel = deliveryArea === 'dalam' ? 'Dalam Legenda Wisata' : 'Luar Legenda Wisata';
+            var kurang = minRequired - deliverySubtotalCheck;
+            showToast('Minimal belanja Delivery (' + areaLabel + ') adalah ' + fmtRp(minRequired) + '. Tambah ' + fmtRp(kurang) + ' lagi.', true);
+            document.getElementById('alamatSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         }
     }
@@ -579,12 +794,18 @@ document.getElementById('btnCheckout').addEventListener('click', function () {
     var subtotal = 0;
     var takeawayCount = 0;
     var lines = [];
+    var areaValLabel = deliveryArea === 'dalam' ? 'Dalam Legenda Wisata' : 'Luar Legenda Wisata';
 
     if (hasDine) lines.push('*NO MEJA - ' + mejaVal + '*');
-    if (hasAway) lines.push('*NAMA - ' + namaVal + '*');
+    if (hasAway || hasDelivery) lines.push('*NAMA - ' + namaVal + '*');
+    if (hasDelivery) {
+        lines.push('*ALAMAT - ' + alamatVal + '*');
+        lines.push('*AREA - ' + areaValLabel + '*');
+    }
 
     var dineItems = cart.filter(function (item) { return item.status === 'dine'; });
     var awayItems = cart.filter(function (item) { return item.status === 'away'; });
+    var deliveryItems = cart.filter(function (item) { return item.status === 'delivery'; });
 
     function pushItemLines(items) {
         items.forEach(function (item) {
@@ -593,7 +814,7 @@ document.getElementById('btnCheckout').addEventListener('click', function () {
             var displayName = item.name + (item.variant ? ' (' + item.variant + ')' : '');
             lines.push('- (' + item.qty + 'x) ' + displayName);
             if (item.note) lines.push('*' + item.note);
-            if (item.status === 'away' && isMakananBerat(item.category, item.isTopping)) {
+            if (item.status !== 'dine' && isMakananBerat(item.category, item.isTopping)) {
                 takeawayCount += item.qty;
             }
         });
@@ -607,11 +828,15 @@ document.getElementById('btnCheckout').addEventListener('click', function () {
         lines.push('*TAKE AWAY:*');
         pushItemLines(awayItems);
     }
+    if (deliveryItems.length > 0) {
+        lines.push('*DELIVERY:*');
+        pushItemLines(deliveryItems);
+    }
 
     lines.push('Subtotal: ' + fmtRp(subtotal));
     if (takeawayCount > 0) {
         var fee = takeawayCount * TAKEAWAY_FEE;
-        lines.push('Biaya Takeaway (' + takeawayCount + ' item makanan berat): ' + fmtRp(fee));
+        lines.push('Biaya Kemasan (' + takeawayCount + ' item makanan berat): ' + fmtRp(fee));
         lines.push('*TOTAL: ' + fmtRp(subtotal + fee) + '*');
     } else {
         lines.push('*TOTAL: ' + fmtRp(subtotal) + '*');
@@ -620,16 +845,17 @@ document.getElementById('btnCheckout').addEventListener('click', function () {
     var msg = encodeURIComponent(lines.join('\n'));
     window.open('https://wa.me/' + WA_NUMBER + '?text=' + msg, '_blank');
 
-    saveOrderToFirebase(mejaVal, namaVal, subtotal, takeawayCount * TAKEAWAY_FEE);
+    saveOrderToFirebase(mejaVal, namaVal, alamatVal, (hasDelivery ? deliveryArea : ''), subtotal, takeawayCount * TAKEAWAY_FEE);
 });
 
 document.getElementById('inputMeja').addEventListener('input', function () { this.classList.remove('input-error'); });
 document.getElementById('inputNama').addEventListener('input', function () { this.classList.remove('input-error'); });
+document.getElementById('inputAlamat').addEventListener('input', function () { this.classList.remove('input-error'); });
 
 /* ================================================================
    SIMPAN ORDER KE FIREBASE
 ================================================================ */
-function saveOrderToFirebase(meja, nama, subtotal, takeawayFee) {
+function saveOrderToFirebase(meja, nama, alamat, area, subtotal, takeawayFee) {
     if (!db) return;
     var orderRef = db.ref('bubur_grace/orders').push();
     var items = cart.map(function (c) {
@@ -638,6 +864,8 @@ function saveOrderToFirebase(meja, nama, subtotal, takeawayFee) {
     var orderData = { items: items, subtotal: subtotal, takeawayFee: takeawayFee, total: subtotal + takeawayFee, timestamp: Date.now() };
     if (meja) orderData.meja = meja;
     if (nama) orderData.nama = nama;
+    if (alamat) orderData.alamat = alamat;
+    if (area) orderData.area = area;
     orderRef.set(orderData);
     var today = new Date().toISOString().slice(0, 10);
     var statsRef = db.ref('bubur_grace/daily_stats/' + today);
@@ -784,4 +1012,7 @@ function updateHoursDisplay() {
 /* ================================================================
    INIT
 ================================================================ */
-document.addEventListener('DOMContentLoaded', function () { initFirebase(); });
+document.addEventListener('DOMContentLoaded', function () {
+    initFirebase();
+    autoDetectLocation();
+});

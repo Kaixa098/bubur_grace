@@ -1050,9 +1050,25 @@
                             <label class="input-label"><i class="fa-solid fa-user"></i>Nama Pemesan</label>
                             <input type="text" class="input-field" id="inputNama" placeholder="Masukkan nama Anda">
                         </div>
+                        <div class="input-section-container" id="alamatSection" style="display:none;">
+                            <label class="input-label"><i class="fa-solid fa-map-location-dot"></i>Area
+                                Pengiriman</label>
+                            <div class="location-status" id="locationStatus"></div>
+                            <div class="delivery-area-toggle" id="deliveryAreaToggle">
+                                <button type="button" class="area-btn selected" data-area="dalam"><i
+                                        class="fa-solid fa-house"></i> Dalam Legenda Wisata</button>
+                                <button type="button" class="area-btn" data-area="luar"><i
+                                        class="fa-solid fa-road"></i> Luar Legenda Wisata</button>
+                            </div>
+                            <label class="input-label" style="margin-top:12px;"><i
+                                    class="fa-solid fa-location-dot"></i>Alamat Pengiriman</label>
+                            <textarea class="input-field" id="inputAlamat" rows="2"
+                                placeholder="Contoh: Jl. Merdeka No. 10, RT/RW, patokan terdekat"></textarea>
+                            <div class="delivery-min-info" id="deliveryMinInfo"></div>
+                        </div>
                         <div class="fee-detail-row"><span>Subtotal</span><span id="subtotalDisplay">Rp 0</span></div>
                         <div class="fee-detail-row takeaway-row" id="takeawayFeeRow" style="display:none;">
-                            <span>Biaya Takeaway (<span id="takeawayCount">0</span> item makanan berat)</span>
+                            <span>Biaya Kemasan (<span id="takeawayCount">0</span> item makanan berat)</span>
                             <span id="takeawayFeeDisplay">Rp 0</span>
                         </div>
                     </div>
@@ -1080,6 +1096,38 @@
             <div class="variant-title" id="variantTitle">Pilih Variant</div>
             <div class="variant-options" id="variantOptions"></div>
             <button class="btn-confirm-variant" id="btnConfirmVariant">Konfirmasi</button>
+        </div>
+    </div>
+
+    <!-- MODE MODAL (Dine In / Take Away / Delivery) -->
+    <div class="modal-overlay" id="modeModal">
+        <div class="variant-modal">
+            <div class="variant-title">Mau dimakan gimana? <i class="fa-solid fa-circle-question"
+                    style="font-size:0.8rem;color:#bbb;" title="Metode ini bisa diganti lagi nanti di keranjang"></i>
+            </div>
+            <div class="variant-options" id="modeOptions">
+                <label class="variant-option-label mode-option selected" data-value="dine">
+                    <div class="radio-circle"></div>
+                    <div class="mode-opt-icon"><i class="fa-solid fa-utensils"></i></div>
+                    <div class="mode-opt-text"><strong>Dine In</strong><span class="mode-opt-desc">Makan di
+                            tempat</span></div>
+                </label>
+                <label class="variant-option-label mode-option" data-value="away">
+                    <div class="radio-circle"></div>
+                    <div class="mode-opt-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                    <div class="mode-opt-text"><strong>Take Away</strong><span class="mode-opt-desc">Dibungkus,
+                            bawa pulang sendiri</span></div>
+                </label>
+                <label class="variant-option-label mode-option" data-value="delivery">
+                    <div class="radio-circle"></div>
+                    <div class="mode-opt-icon"><i class="fa-solid fa-motorcycle"></i></div>
+                    <div class="mode-opt-text"><strong>Delivery</strong><span class="mode-opt-desc">Diantar ke
+                            alamat kamu</span></div>
+                </label>
+            </div>
+            <div class="mode-hint"><i class="fa-solid fa-repeat"></i> Setiap item bisa punya metode
+                berbeda &mdash; ubah kapan saja lewat keranjang</div>
+            <button class="btn-confirm-variant" id="btnConfirmMode">Lanjut</button>
         </div>
     </div>
 
