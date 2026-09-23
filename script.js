@@ -5,23 +5,37 @@ var LOGO_URL = 'https://z-cdn-media.chatglm.cn/files/50ca2c37-9a98-4c90-923b-ae9
 var WA_NUMBER = '62817776175';
 var TAKEAWAY_FEE = 3000;
 
-/* Minimum belanja khusus untuk pesanan Delivery, tergantung area */
+/* Resto hanya melayani pengantaran ke 2 perumahan berikut.
+   Minimum belanja berbeda untuk masing-masing perumahan. */
 var DELIVERY_MIN = {
-    dalam: 50000,  // Dalam Perumahan Legenda Wisata
-    luar: 100000   // Luar Perumahan Legenda Wisata
+    legenda: 50000,   // Perumahan Legenda Wisata
+    kota: 100000      // Perumahan Kota Wisata
+};
+
+/* Label tampilan untuk masing-masing area, dipakai di beberapa tempat
+   (info minimum belanja, pesan error, ringkasan pesanan ke WhatsApp) */
+var AREA_LABELS = {
+    legenda: 'Legenda Wisata',
+    kota: 'Kota Wisata'
 };
 
 /* ----------------------------------------------------------------
-   KOORDINAT PUSAT PERUMAHAN LEGENDA WISATA (untuk deteksi GPS)
-   Koordinat gerbang utama Legenda Wisata (diberikan oleh pemilik toko).
-   Kalau titik acuan berubah, cara update:
+   KOORDINAT PUSAT PERUMAHAN (untuk deteksi GPS otomatis)
+   Dipakai untuk menebak perumahan mana yang paling dekat dengan user
+   begitu website dibuka. Kalau titik acuan berubah / kurang akurat,
+   cara update:
    1. Buka Google Maps
-   2. Klik kanan (di HP: tekan lama) pada titik acuan baru
+   2. Klik kanan (di HP: tekan lama) pada titik acuan baru (mis. gerbang
+      utama perumahan)
    3. Salin koordinat yang muncul (format: -6.xxxxx, 106.xxxxx)
    4. Ganti nilai lat & lng di bawah ini
 ================================================================ */
 var LEGENDA_WISATA_CENTER = { lat: -6.3904804, lng: 106.9482188 };
 var LEGENDA_WISATA_RADIUS_KM = 2.5; // radius dianggap "dalam kawasan" — sesuaikan dgn luas perumahan
+
+// Koordinat gerbang utama Kota Wisata (diberikan oleh pemilik toko).
+var KOTA_WISATA_CENTER = { lat: -6.3892107, lng: 106.9463115 };
+var KOTA_WISATA_RADIUS_KM = 3; // sesuaikan dgn luas perumahan Kota Wisata
 
 /* Kategori makanan berat — kena biaya takeaway Rp 3.000/pcs */
 var MAKANAN_BERAT = ['paket-bubur', 'bubur', 'mie-kecil', 'mie-lebar', 'mie-yamin', 'kwetiau', 'bihun', 'baso', 'nasi-uduk'];
@@ -72,7 +86,7 @@ var pendingVariantMode = 'dine';
 var lastUsedMode = 'dine';
 var MODE_LABELS = { dine: 'Dine In', away: 'Take Away', delivery: 'Delivery' };
 var MODE_ICONS = { dine: 'fa-utensils', away: 'fa-bag-shopping', delivery: 'fa-motorcycle' };
-var deliveryArea = 'dalam';
+var deliveryArea = 'legenda';
 
 /* ================================================================
    UTILITY
@@ -251,7 +265,7 @@ document.getElementById('btnConfirmMode').addEventListener('click', function () 
 });
 
 /* ================================================================
-   AREA PENGIRIMAN (Dalam/Luar Legenda Wisata) — menentukan
+   AREA PENGIRIMAN (Legenda Wisata / Kota Wisata) — menentukan
    minimum belanja untuk pesanan Delivery
 ================================================================ */
 document.querySelectorAll('#deliveryAreaToggle .area-btn').forEach(function (btn) {
@@ -267,10 +281,11 @@ document.querySelectorAll('#deliveryAreaToggle .area-btn').forEach(function (btn
    DETEKSI LOKASI OTOMATIS via GPS Browser (Geolocation API)
    Dijalankan sendiri begitu website dibuka (browser akan memunculkan
    pop-up izin lokasi ke user). Kalau diizinkan, jarak user ke titik
-   pusat Legenda Wisata dihitung pakai rumus Haversine, lalu toggle
-   area di form Delivery otomatis ter-set sebelum user sempat
-   membuka keranjang. Toggle manual tetap ada sebagai cadangan kalau
-   GPS meleset, izin ditolak, atau perangkat tidak mendukung.
+   pusat Legenda Wisata & Kota Wisata dihitung pakai rumus Haversine,
+   lalu toggle area di form Delivery otomatis ter-set ke perumahan yang
+   paling cocok, sebelum user sempat membuka keranjang. Toggle manual
+   tetap ada sebagai cadangan kalau GPS meleset, izin ditolak, atau
+   perangkat tidak mendukung.
 ================================================================ */
 function haversineDistanceKm(lat1, lng1, lat2, lng2) {
     var R = 6371; // radius bumi (km)
@@ -282,6 +297,14 @@ function haversineDistanceKm(lat1, lng1, lat2, lng2) {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
 }
+
+/* Ambang batas akurasi GPS (dalam meter). Kalau akurasi device lebih
+   buruk dari ini (misal: dari WiFi/IP di laptop tanpa chip GPS, atau
+   sinyal GPS lemah di dalam ruangan), hasil deteksi otomatis dianggap
+   tidak bisa dipercaya dan sistem TIDAK akan memaksa pilih salah satu
+   area — user diminta pilih manual supaya tidak salah kena minimum
+   belanja yang salah. */
+var GPS_ACCURACY_THRESHOLD_M = 800;
 
 function setDeliveryAreaUI(area) {
     deliveryArea = area;
@@ -312,16 +335,50 @@ function autoDetectLocation() {
         function (pos) {
             var userLat = pos.coords.latitude;
             var userLng = pos.coords.longitude;
-            var distKm = haversineDistanceKm(userLat, userLng, LEGENDA_WISATA_CENTER.lat, LEGENDA_WISATA_CENTER.lng);
-            var isInside = distKm <= LEGENDA_WISATA_RADIUS_KM;
+            var accuracyM = pos.coords.accuracy || 0;
 
-            setDeliveryAreaUI(isInside ? 'dalam' : 'luar');
+            // Kalau akurasi GPS terlalu kasar, jangan tebak-tebak — biarkan
+            // user pilih area secara manual daripada salah deteksi.
+            if (accuracyM > GPS_ACCURACY_THRESHOLD_M) {
+                if (statusEl) {
+                    statusEl.className = 'location-status error';
+                    statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Akurasi lokasi kurang presisi (±' +
+                        Math.round(accuracyM) + ' m). Mohon pilih area pengiriman secara manual di bawah ini.';
+                }
+                return;
+            }
+
+            var distLegenda = haversineDistanceKm(userLat, userLng, LEGENDA_WISATA_CENTER.lat, LEGENDA_WISATA_CENTER.lng);
+            var distKota = haversineDistanceKm(userLat, userLng, KOTA_WISATA_CENTER.lat, KOTA_WISATA_CENTER.lng);
+            var insideLegenda = distLegenda <= LEGENDA_WISATA_RADIUS_KM;
+            var insideKota = distKota <= KOTA_WISATA_RADIUS_KM;
+
+            var chosenArea, statusMsg, isError = false;
+
+            if (insideLegenda && insideKota) {
+                // Radius kedua area tumpang tindih — pilih yang jaraknya lebih dekat
+                chosenArea = distLegenda <= distKota ? 'legenda' : 'kota';
+                statusMsg = 'Lokasi anda terdeteksi dekat ' + AREA_LABELS[chosenArea] + ' (perkiraan, silakan koreksi manual jika keliru)';
+            } else if (insideLegenda) {
+                chosenArea = 'legenda';
+                statusMsg = 'Lokasi anda terdeteksi di Perumahan Legenda Wisata';
+            } else if (insideKota) {
+                chosenArea = 'kota';
+                statusMsg = 'Lokasi anda terdeteksi di Perumahan Kota Wisata';
+            } else {
+                // Di luar kedua area — jangan paksa pilih salah satu, biarkan
+                // user pilih manual sendiri
+                isError = true;
+                statusMsg = 'Lokasi anda diluar kawasan tertentu.';
+            }
+
+            if (!isError) {
+                setDeliveryAreaUI(chosenArea);
+            }
 
             if (statusEl) {
-                statusEl.className = 'location-status success';
-                statusEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (isInside
-                    ? 'Lokasi anda di dalam Perumahan Legenda Wisata'
-                    : 'Lokasi anda di luar dari perumahan Legenda Wisata');
+                statusEl.className = 'location-status ' + (isError ? 'error' : 'success');
+                statusEl.innerHTML = '<i class="fa-solid fa-circle-' + (isError ? 'exclamation' : 'check') + '"></i> ' + statusMsg;
             }
         },
         function (err) {
@@ -340,7 +397,14 @@ function autoDetectLocation() {
 
 function getDeliverySubtotal() {
     var total = 0;
-    cart.forEach(function (item) { if (item.status === 'delivery') total += item.price * item.qty; });
+    cart.forEach(function (item) {
+        if (item.status === 'delivery') {
+            total += item.price * item.qty;
+            if (isMakananBerat(item.category, item.isTopping)) {
+                total += TAKEAWAY_FEE * item.qty;
+            }
+        }
+    });
     return total;
 }
 
@@ -352,7 +416,7 @@ function updateDeliveryMinInfo() {
 
     var deliverySubtotal = getDeliverySubtotal();
     var min = DELIVERY_MIN[deliveryArea];
-    var areaLabel = deliveryArea === 'dalam' ? 'Dalam Legenda Wisata' : 'Luar Legenda Wisata';
+    var areaLabel = AREA_LABELS[deliveryArea];
 
     if (deliverySubtotal < min) {
         var kurang = min - deliverySubtotal;
@@ -783,7 +847,7 @@ document.getElementById('btnCheckout').addEventListener('click', function () {
         var deliverySubtotalCheck = getDeliverySubtotal();
         var minRequired = DELIVERY_MIN[deliveryArea];
         if (deliverySubtotalCheck < minRequired) {
-            var areaLabel = deliveryArea === 'dalam' ? 'Dalam Legenda Wisata' : 'Luar Legenda Wisata';
+            var areaLabel = AREA_LABELS[deliveryArea];
             var kurang = minRequired - deliverySubtotalCheck;
             showToast('Minimal belanja Delivery (' + areaLabel + ') adalah ' + fmtRp(minRequired) + '. Tambah ' + fmtRp(kurang) + ' lagi.', true);
             document.getElementById('alamatSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -794,7 +858,7 @@ document.getElementById('btnCheckout').addEventListener('click', function () {
     var subtotal = 0;
     var takeawayCount = 0;
     var lines = [];
-    var areaValLabel = deliveryArea === 'dalam' ? 'Dalam Legenda Wisata' : 'Luar Legenda Wisata';
+    var areaValLabel = AREA_LABELS[deliveryArea];
 
     if (hasDine) lines.push('*NO MEJA - ' + mejaVal + '*');
     if (hasAway || hasDelivery) lines.push('*NAMA - ' + namaVal + '*');
