@@ -76,6 +76,21 @@ button,
 }
 
 /* ==============================
+   ANTI-ZOOM (pinch & double-tap)
+   Dipasang ke semua elemen (bukan cuma html/body) karena touch-action
+   dihitung per area scroll, jadi modal/keranjang yang bisa di-scroll
+   sendiri tetap ikut terkunci. Scroll biasa (atas-bawah / kiri-kanan)
+   tetap normal.
+============================== */
+html,
+body,
+* {
+    touch-action: pan-x pan-y;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* ==============================
    HEADER
 ============================== */
 header {
@@ -1884,4 +1899,16 @@ footer::before {
     50% {
         transform: translateY(3px);
     }
+}
+
+/* ==============================
+   FONT INPUT MIN. 16px
+   iOS Safari otomatis nge-zoom halaman kalau user tap input dengan
+   font-size < 16px (mis. kolom cari, nama, catatan). Ditaruh paling
+   bawah supaya menimpa ukuran font input di atas.
+============================== */
+#searchInput,
+.input-field,
+.item-note-input {
+    font-size: 16px;
 }

@@ -1,4 +1,24 @@
 /* ================================================================
+   ANTI-ZOOM
+   Cadangan untuk iOS Safari, yang mengabaikan user-scalable=no di
+   meta viewport. Pinch (2 jari) dan gesture zoom diblokir; scroll 1
+   jari dan tap biasa tidak terpengaruh.
+================================================================ */
+(function () {
+    function blockZoom(e) { e.preventDefault(); }
+
+    // Gesture pinch khusus Safari iOS
+    ["gesturestart", "gesturechange", "gestureend"].forEach(function (evt) {
+        document.addEventListener(evt, blockZoom, { passive: false });
+    });
+
+    // Pinch 2 jari di browser lain (Android WebView dll.)
+    document.addEventListener("touchmove", function (e) {
+        if (e.touches && e.touches.length > 1) e.preventDefault();
+    }, { passive: false });
+})();
+
+/* ================================================================
    KONFIGURASI
 ================================================================ */
 var LOGO_URL = 'https://z-cdn-media.chatglm.cn/files/50ca2c37-9a98-4c90-923b-ae99959846b9.png?auth_key=1876671393-5447ef07c70045b48cce9108e1c0bf25-0-4f77a9446e7fe2d91efdbbfa00385980';
